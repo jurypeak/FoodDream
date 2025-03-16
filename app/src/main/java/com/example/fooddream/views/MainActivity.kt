@@ -23,11 +23,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         var model: Account =getDataFromDb()
-        var view=this
 
         var controller= AccountController(
             model,
-            view
         )
         printDetails(model.getEmail())
         var button : Button = findViewById(R.id.btn)

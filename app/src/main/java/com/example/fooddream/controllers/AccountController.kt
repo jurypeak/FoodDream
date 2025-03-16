@@ -3,20 +3,19 @@ package com.example.fooddream.controllers
 import android.app.Activity
 import android.util.Log
 import com.example.fooddream.models.Account
-import com.example.fooddream.messages.Errors
+import com.example.fooddream.messengers.Errors
 import org.mindrot.jbcrypt.BCrypt
 
 // Create model and view.
 class AccountController (
-    private var model: Account,
-    private var view: Activity?
-    ){
+    private var account: Account,
+    ) {
 
     // Function for encrypting password with BCrypt algorithm
     private fun hashPassword(password:String) {
         try {
             val salt = BCrypt.gensalt(12)
-            model.setPassword(BCrypt.hashpw(password, salt))
+            account.setPassword(BCrypt.hashpw(password, salt))
         } catch (error: Errors.HashingException) {
             Log.d("Hashing Error", "$error")
         }

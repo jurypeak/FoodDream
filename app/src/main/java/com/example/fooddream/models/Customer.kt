@@ -1,11 +1,8 @@
 package com.example.fooddream.models
 
-import android.util.Log
-import com.example.fooddream.controllers.AccountController
-import com.example.fooddream.messages.Errors
-
 class Customer(
-    private var name: String,
+    private var fName: String,
+    private var lName: String,
     email: String,
     accountId: Int,
     accessLevel: Int,
@@ -16,23 +13,15 @@ class Customer(
     accessLevel,
     password
 ) {
-    var controller = AccountController(this, null)
     //Getters
-    fun getName(): String = name
+    fun getFName(): String = fName
+    fun getLName(): String = lName
 
     //Setters
-    fun setName(newName: String) {
-        name = newName
+    fun setFName(newFName: String) {
+        fName = newFName
     }
-
-    fun ResetPassword(newPassword: String, emailCode: Int): Boolean {
-        //TODO add a helper function to verify email codes.
-        try {
-            controller.setHashedPassword(newPassword)
-            return true
-        } catch (error: Errors.HashingException) {
-            return false
-            Log.d("Hashing Error", "$error")
-        }
+    fun setLName(newLName: String) {
+        lName = newLName
     }
 }
