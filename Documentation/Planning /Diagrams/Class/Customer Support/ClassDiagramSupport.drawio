@@ -1,0 +1,47 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0" version="26.0.16">
+  <diagram name="Page-1" id="qISgcYjnwUOz2vSlFR_o">
+    <mxGraphModel dx="971" dy="528" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="8BYaoe35CLygMWRhHjXa-2" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="86" width="830" height="344" as="geometry" />
+        </mxCell>
+        <mxCell id="tVpHzm5y3O8JbQEG2D6r-4" value="" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="90" y="1530" width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="iu5FGDQ2L1tklmnj5vUN-248" value="Notification" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="280" width="390" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="iu5FGDQ2L1tklmnj5vUN-249" value="+ SendEmail(emailAddress: string, message: string)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="iu5FGDQ2L1tklmnj5vUN-248" vertex="1">
+          <mxGeometry y="26" width="390" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="iu5FGDQ2L1tklmnj5vUN-250" value="+ SendNotification(message: string)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="iu5FGDQ2L1tklmnj5vUN-248" vertex="1">
+          <mxGeometry y="52" width="390" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="iu5FGDQ2L1tklmnj5vUN-251" value="Customer Support" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="130" y="120" width="470" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="iu5FGDQ2L1tklmnj5vUN-252" value="+ SubmittingTicket(emailAddress: string, requestMessage: string) " style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="iu5FGDQ2L1tklmnj5vUN-251" vertex="1">
+          <mxGeometry y="26" width="470" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="iu5FGDQ2L1tklmnj5vUN-253" value="" style="endArrow=none;html=1;rounded=0;entryX=0.714;entryY=1.072;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" parent="1" source="iu5FGDQ2L1tklmnj5vUN-248" target="iu5FGDQ2L1tklmnj5vUN-252" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="330" y="360" as="sourcePoint" />
+            <mxPoint x="380" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="iu5FGDQ2L1tklmnj5vUN-254" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="iu5FGDQ2L1tklmnj5vUN-253" vertex="1" connectable="0">
+          <mxGeometry x="0.5894" y="-3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="iu5FGDQ2L1tklmnj5vUN-255" value="0..*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="iu5FGDQ2L1tklmnj5vUN-253" vertex="1" connectable="0">
+          <mxGeometry x="-0.6619" y="-4" relative="1" as="geometry">
+            <mxPoint x="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
