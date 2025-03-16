@@ -1,10 +1,10 @@
 package com.example.fooddream.messengers
 
 class Notification {
-    fun SendEmail(email: String, message: String) {
+    fun sendEmail(email: String, message: String) {
 
     }
-    fun SendNotification(message: String) {
+    fun sendNotification(message: String) {
 
     }
 }

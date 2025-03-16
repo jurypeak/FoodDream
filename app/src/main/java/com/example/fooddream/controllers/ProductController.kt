@@ -12,7 +12,7 @@ class ProductController (
     }
     fun addIngredient(ingredient: Ingredient) {
         try {
-            product.setIngredients(ingredient)
+            product.addIngredients(ingredient)
         } catch (error: Errors.IngredientAdditionException) {
 
         }

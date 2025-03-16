@@ -9,8 +9,8 @@ open class Product (
     private var productDescription: String,
     private var productCategory: String,
     private var imageURL: String,
+    private var ingredients: MutableList<Ingredient> = mutableListOf()
 ) {
-    private var ingredients = mutableListOf<Ingredient>()
     // Getters
     fun getProductName(): String = productName
     fun getProductId(): Int = productId
@@ -47,7 +47,7 @@ open class Product (
     fun setImageURL(newImageURL: String) {
         imageURL = newImageURL
     }
-    fun setIngredients(newIngredient: Ingredient) {
+    fun addIngredients(newIngredient: Ingredient) {
         ingredients.add(newIngredient)
     }
 }

@@ -5,14 +5,14 @@ import com.example.fooddream.messengers.Errors
 import com.example.fooddream.models.Product
 
 class GuestController {
-    fun AddToBasket(product: Product) {
+    fun addToBasket(product: Product) {
         try {
 
         } catch (error: Errors.BasketAdditionException) {
             Log.d("Basket Error", "$error")
         }
     }
-    fun ViewBasket(): List<Product>? {
+    fun viewBasket(): List<Product>? {
         return try {
             listOf<Product>()
         } catch (error: Errors.ViewBasketException) {
