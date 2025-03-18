@@ -1,21 +1,20 @@
 package com.example.fooddream.controllers
 
-import android.app.Activity
 import android.util.Log
-import com.example.fooddream.models.Account
+import com.android.volley.RequestQueue
+import com.example.fooddream.interfaces.IAccountController
 import com.example.fooddream.messengers.Errors
+import com.example.fooddream.models.Manager
 import org.mindrot.jbcrypt.BCrypt
 
-// Create model and view.
-class AccountController (
-    private var account: Account,
-    ) {
-
+class AdminController(
+    private var manager: Manager
+): IAccountController {
     // Function for encrypting password with BCrypt algorithm
     private fun hashPassword(password:String) {
         try {
             val salt = BCrypt.gensalt(12)
-            account.setPassword(BCrypt.hashpw(password, salt))
+            manager.setPassword(BCrypt.hashpw(password, salt))
         } catch (error: Errors.HashingException) {
             Log.d("Hashing Error", "$error")
         }
@@ -32,9 +31,8 @@ class AccountController (
             false
         }
     }
-
     // Function to hash passwords without showing the algorithm
-    fun setHashedPassword(password: String): Boolean {
+    override fun setHashedPassword(password: String): Boolean {
         return try {
             hashPassword(password).toString()
             true
@@ -44,16 +42,17 @@ class AccountController (
         }
     }
     // Function to allow users to login into their account.
-    fun login(
+    override fun login(
         email:String,
-        password:String
-    ): Boolean {
+        password:String,
+        requestQueue: RequestQueue,
+        url: String
+    ) {
         //TODO Login needs database to check against username.
-        return true
     }
 
     // Function that closes users sessions and logs users out.
-    fun logout(
+    override fun logout(
         sessionId: Int
     ): Boolean {
         //TODO Logout needs sessions to be implemented.

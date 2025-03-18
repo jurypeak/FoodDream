@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">FoodDream</string>
+    <string name="support_icon">Customer Support Button</string>
+    <string name="help_icon">User Guide Button</string>
+    <string name="guest">Continue as a Guest</string>
+    <string name="login_button">Login</string>
+    <string name="password_placeholder">Password</string>
+    <string name="email_placeholder">Email</string>
+    <string name="login_placeholder">Login</string>
+    <string name="logo_placeholder">Food Dream</string>
+    <string name="logo">Logo of Food Dream</string>
+    <string name="signup">Sign Up</string>
+    <string name="forgotpass">Forgot Password?</string>
+    <string name="register_button">Sign Up</string>
+    <string name="signup_placeholder">Sign Up</string>
+    <string name="login">Login</string>
+    <string name="submit_button">Submit</string>
+    <string name="verify_placeholder">Verify Email</string>
+    <string name="code_placeholder">Enter Code</string>
+    <string name="exit">Exit</string>
 </resources>

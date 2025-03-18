@@ -10,4 +10,5 @@ class Errors {
     class ViewBasketException: Exception("Error occurred viewing basket.")
     class CreationException: Exception("Error occurred creating account.")
     class IngredientAdditionException: Exception("Error occurred adding ingredients to product.")
+    class LoginException: Exception("An error occurred when logging in.")
 }

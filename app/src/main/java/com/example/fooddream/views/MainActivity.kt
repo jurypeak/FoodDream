@@ -4,47 +4,72 @@ import com.example.fooddream.R
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import android.util.Log
 import android.view.View
 import android.widget.Button
-import com.example.fooddream.controllers.AccountController
-import com.example.fooddream.models.Account
+import android.widget.EditText
+import android.widget.TextView
+import com.example.fooddream.BuildConfig
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.Volley
+import com.example.fooddream.controllers.CustomerController
+import com.example.fooddream.messengers.Notification
+import com.example.fooddream.models.Customer
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var loginButton: Button
+    private lateinit var forgotPasswordButton: TextView
+    private lateinit var registerActivity: View
+    private lateinit var emailField: EditText
+    private lateinit var passwordField: EditText
+    private lateinit var customerController: CustomerController
+    private lateinit var requestQueue: RequestQueue
+    private lateinit var customer: Customer
+    private lateinit var notification: Notification
+    private val url = BuildConfig.URL_LOGIN
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-        var model: Account =getDataFromDb()
+        setContentView(R.layout.login_page)
 
-        var controller= AccountController(
-            model,
-        )
-        printDetails(model.getEmail())
-        var button : Button = findViewById(R.id.btn)
-        button.setOnClickListener(View.OnClickListener {
-            model.setEmail("acsa")
-            printDetails(model.getEmail());
-        })
+        // Initialize the components
+        initializeComponents()
     }
 
-    private fun getDataFromDb(): Account {
-        return Account(
-            "ged",
-            2,
-            2,
-            "d"
-        )
-    }
+    private fun initializeComponents() {
+        // Initialize views
+        loginButton = findViewById(R.id.login_button)
+        forgotPasswordButton = findViewById(R.id.forgotPassPlaceholder)
+        registerActivity = findViewById(R.id.register_page)
+        emailField = findViewById(R.id.email_login)
+        passwordField = findViewById(R.id.password_login)
 
-    private fun printDetails(email: String){
-        Log.d("Account", "email $email")
+        notification = Notification()
+        customer = Customer(
+            fName = "v",
+            lName = "sad",
+            email = "fsvs",
+            accountId = 1,
+            accessLevel = 1,
+            password = "dxvxv"
+        )
+        // Initialize the customerController and requestQueue
+        customerController = CustomerController(customer, notification, this) // Make sure to initialize your controller properly
+        requestQueue = Volley.newRequestQueue(this)
+
+                // Set up the login button click listener to call the login function
+            loginButton.setOnClickListener {
+                val email = emailField.text.toString()
+                val password = passwordField.text.toString()
+
+                if (email.isNotBlank() && password.isNotBlank()) {
+                    customerController.login(email, password, requestQueue, url)
+                } else {
+                    // Handle invalid email or password
+                    Log.e("MainActivity", "Email or password cannot be empty")
+                }
+            }
     }
 }

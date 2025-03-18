@@ -5,20 +5,20 @@ class Ingredient (
     private var ingredientId: Int,
     private var weight: Double,
     private var allergens: List<String>,
-    private var product: Product
+    private var productId: Int
 ) {
     //Getters
     fun getIngredientName(): String = ingredientName
     fun getIngredientId(): Int = ingredientId
     fun getWeight(): Double = weight
     fun getAllergens(): List<String> = allergens
-    fun getProduct(): Product = product
+    fun getProductId(): Int = productId
 
     // Setters
     fun setIngredientName(newIngredientName: String) {
         ingredientName = newIngredientName
     }
-    fun setIngredientID(newIngredientId: Int) {
+    fun setIngredientId(newIngredientId: Int) {
         ingredientId = newIngredientId
     }
     fun setWeight(newWeight: Double) {
@@ -26,5 +26,8 @@ class Ingredient (
     }
     fun setAllergens(newAllergens: List<String>) {
         allergens = newAllergens
+    }
+    fun setProductId(newProductId: Int) {
+        productId = newProductId
     }
 }
