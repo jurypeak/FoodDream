@@ -10,7 +10,7 @@ class CheckoutController (
     fun isBasketEmpty(): Boolean {
         return true
     }
-    fun editQuantity(Id: Int) {
+    fun editQuantity(id: Int) {
 
     }
     fun validateStock() {

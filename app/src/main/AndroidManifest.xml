@@ -15,9 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FoodDream"
         tools:targetApi="31">
-        <activity
-            android:name=".views.MainActivity"
-            android:exported="true">
+        <activity android:name=".views.LoginView"
+                  android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

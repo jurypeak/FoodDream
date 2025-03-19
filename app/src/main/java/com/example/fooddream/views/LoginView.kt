@@ -1,22 +1,22 @@
 package com.example.fooddream.views
 
-import com.example.fooddream.R
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import com.example.fooddream.BuildConfig
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
+import com.example.fooddream.BuildConfig
+import com.example.fooddream.R
 import com.example.fooddream.controllers.CustomerController
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Customer
 
-class MainActivity : AppCompatActivity() {
+class LoginView : AppCompatActivity() {
 
     private lateinit var loginButton: Button
     private lateinit var forgotPasswordButton: TextView
@@ -48,28 +48,28 @@ class MainActivity : AppCompatActivity() {
 
         notification = Notification()
         customer = Customer(
-            fName = "v",
-            lName = "sad",
-            email = "fsvs",
-            accountId = 1,
-            accessLevel = 1,
-            password = "dxvxv"
+            fName = "",
+            lName = "",
+            email = "",
+            accountId = 0,
+            accessLevel = 0,
+            password = ""
         )
         // Initialize the customerController and requestQueue
         customerController = CustomerController(customer, notification, this) // Make sure to initialize your controller properly
         requestQueue = Volley.newRequestQueue(this)
 
-                // Set up the login button click listener to call the login function
-            loginButton.setOnClickListener {
-                val email = emailField.text.toString()
-                val password = passwordField.text.toString()
+        // Set up the login button click listener to call the login function
+        loginButton.setOnClickListener {
+            val email = emailField.text.toString()
+            val password = passwordField.text.toString()
 
-                if (email.isNotBlank() && password.isNotBlank()) {
-                    customerController.login(email, password, requestQueue, url)
-                } else {
-                    // Handle invalid email or password
-                    Log.e("MainActivity", "Email or password cannot be empty")
-                }
+            if (email.isNotBlank() && password.isNotBlank()) {
+                customerController.login(email, password, requestQueue, url)
+            } else {
+                // Handle invalid email or password
+                Log.e("MainActivity", "Email or password cannot be empty")
             }
+        }
     }
 }

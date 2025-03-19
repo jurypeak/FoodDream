@@ -2,11 +2,9 @@ package com.example.fooddream.controllers
 
 import com.example.fooddream.interfaces.ICatalogController
 import com.example.fooddream.models.Catalog
-import com.example.fooddream.models.Manager
 import com.example.fooddream.models.Product
 
 class AdminCatalogController (
-    private var manager: Manager,
     private var catalog: Catalog,
 ): ICatalogController {
     fun addProduct(newProduct: Product) {

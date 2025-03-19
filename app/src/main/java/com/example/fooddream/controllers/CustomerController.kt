@@ -1,5 +1,6 @@
 package com.example.fooddream.controllers
 
+import android.app.Activity
 import android.util.Log
 import com.example.fooddream.interfaces.IAccountController
 import com.example.fooddream.interfaces.IBasketController
@@ -11,14 +12,13 @@ import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonObjectRequest
 import com.example.fooddream.messengers.Notification
-import com.example.fooddream.views.MainActivity
 import org.json.JSONObject
 import org.mindrot.jbcrypt.BCrypt
 
 class CustomerController (
     private var customer: Customer,
     private var notification: Notification,
-    private var view: MainActivity
+    private var view: Activity
 ) : IAccountController,
     IBasketController,
     ICustomerController {
