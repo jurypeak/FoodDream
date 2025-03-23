@@ -11,4 +11,5 @@ class Errors {
     class CreationException: Exception("Error occurred creating account.")
     class IngredientAdditionException: Exception("Error occurred adding ingredients to product.")
     class LoginException: Exception("An error occurred when logging in.")
+    class VerificationException: Exception("An error occured trying to verify your email.")
 }

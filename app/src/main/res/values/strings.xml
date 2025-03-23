@@ -10,7 +10,7 @@
     <string name="logo_placeholder">Food Dream</string>
     <string name="logo">Logo of Food Dream</string>
     <string name="signup">Sign Up</string>
-    <string name="forgotpass">Forgot Password?</string>
+    <string name="forgotPassword">Forgot Password?</string>
     <string name="register_button">Sign Up</string>
     <string name="signup_placeholder">Sign Up</string>
     <string name="login">Login</string>

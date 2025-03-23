@@ -15,6 +15,7 @@ interface ICustomerController {
     fun editEmail(newEmail: String)
     fun editName(newFName: String, newLName: String)
     fun editPassword(newPassword: String)
+    fun verifyEmail(email: String, requestQueue: RequestQueue, url: String)
 
     fun addToBasket(product: Product)
     fun viewBasket(): List<Product>?
@@ -26,6 +27,7 @@ interface ICustomerController {
     fun viewOrder()
     fun viewOrderHistory()
 
+    fun setHashedPassword(password: String): Boolean
     fun login(
         email: String,
         password: String,

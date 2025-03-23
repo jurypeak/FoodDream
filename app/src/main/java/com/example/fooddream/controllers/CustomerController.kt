@@ -1,13 +1,14 @@
 package com.example.fooddream.controllers
 
-import android.app.Activity
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.example.fooddream.R
 import com.example.fooddream.interfaces.IAccountController
 import com.example.fooddream.interfaces.IBasketController
 import com.example.fooddream.interfaces.ICustomerController
@@ -15,15 +16,16 @@ import com.example.fooddream.messengers.Errors
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Customer
 import com.example.fooddream.models.Product
+import com.example.fooddream.views.VerifyEmailView
 import org.json.JSONObject
 import org.mindrot.jbcrypt.BCrypt
 
-class CustomerController ( private var view: Activity):
+class CustomerController ( private var view: AppCompatActivity):
     IAccountController,
     IBasketController,
     ICustomerController {
 
-    private var customer = Customer(
+    private val customer = Customer(
         fName = "",
         lName = "",
         email = "",
@@ -96,6 +98,39 @@ class CustomerController ( private var view: Activity):
         }
     }
 
+    override fun verifyEmail(
+        email: String,
+        requestQueue: RequestQueue,
+        url: String
+    ) {
+        try {
+            val jsonObject = JSONObject().apply {
+                put("email", email)
+            }
+            val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.POST, url, jsonObject,
+                { response ->
+                    when {
+                        response.getString("status") == "Success" -> {
+                            Log.d("Response", "$response")
+                            notification.sendNotification(
+                                "Email Verified", view
+                            )
+                        } else -> {
+                            notification.sendNotification("Submitted code is incorrect", view)
+                        }
+                    }
+                },
+                { error ->
+                    notification.sendNotification("$error.toString", view)
+                    Log.d("Error", "$error")
+                })
+            requestQueue.add(jsonObjectRequest)
+        } catch (error: Errors.VerificationException) {
+            Log.d("Verification Error", "$error")
+        }
+    }
+
     override fun addToBasket(product: Product) {
         try {
 
@@ -139,6 +174,17 @@ class CustomerController ( private var view: Activity):
         Log.d("Order History", "Fetching past orders...")
     }
 
+    // Function to hash passwords without showing the algorithm
+    override fun setHashedPassword(password: String): Boolean {
+        return try {
+            hashPassword(password).toString()
+            true
+        } catch (error: Errors.HashingException) {
+            Log.d("Hashing Error", "$error")
+            false
+        }
+    }
+
     // Function for encrypting password with BCrypt algorithm
     private fun hashPassword(password: String): String? {
         try {
@@ -164,17 +210,6 @@ class CustomerController ( private var view: Activity):
         }
     }
 
-    // Function to hash passwords without showing the algorithm
-    override fun setHashedPassword(password: String): Boolean {
-        return try {
-            hashPassword(password).toString()
-            true
-        } catch (error: Errors.HashingException) {
-            Log.d("Hashing Error", "$error")
-            false
-        }
-    }
-
     // Function to allow users to login into their account.
     override fun login(
         email: String,
@@ -184,17 +219,18 @@ class CustomerController ( private var view: Activity):
     ) {
         try {
             val jsonObject = JSONObject().apply {
-                put("Email", email)
+                put("email", email)
                 Log.d("Email", email)
                 var password = hashPassword(password)
-                put("Password", password)
+                put("password", password)
                 Log.d("password", password.toString())
             }
             val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.POST, url, jsonObject,
                 { response ->
+                    Log.d("APIResponse", response.toString())
                     val returnedPassword = response.optString("password", "")
-                    Log.d("passwordreturned", returnedPassword)
+                    Log.d("passwordReturned", returnedPassword)
                     if (verifyPassword(password, returnedPassword)) {
                         Log.d("Response", "$response")
                         notification.sendNotification(
@@ -205,6 +241,7 @@ class CustomerController ( private var view: Activity):
                                 )
                             }", view
                         )
+                        replaceWithFragment(VerifyEmailView())
                     } else {
                         notification.sendNotification("Password do not match", view)
                     }
@@ -219,6 +256,13 @@ class CustomerController ( private var view: Activity):
         }
     }
 
+    fun replaceWithFragment(fragment: androidx.fragment.app.Fragment) {
+        view.supportFragmentManager.beginTransaction()
+            .replace(R.id.verify_email_fragment, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
     // Function that closes users sessions and logs users out.
     override fun logout(
         sessionId: Int
@@ -226,7 +270,6 @@ class CustomerController ( private var view: Activity):
         //TODO Logout needs sessions to be implemented.
         return false
     }
-
 
     override fun handleLogin(
         loginButton: Button,

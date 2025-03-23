@@ -9,7 +9,6 @@ class Checkout (
     private var paymentMethod: String,
     private var totalPrice: Double
 ) {
-
     // Getters
     fun getBasketId(): Int = basketId
     fun getEmail(): String = email

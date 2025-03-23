@@ -13,14 +13,10 @@ android {
         buildConfig = true  // Enable BuildConfig fields generation
     }
 
-    buildFeatures {
-        buildConfig = true  // Enable BuildConfig fields generation
-    }
-
     defaultConfig {
         // Define a localProperties variable to load the local.properties file
-        val localProperties = Properties()  // Initialize Properties properly
-        val localPropertiesFile = rootProject.file("local.properties")
+        var localProperties = Properties()  // Initialize Properties properly
+        var localPropertiesFile = rootProject.file("local.properties")
 
         // Load the properties from the local.properties file
         if (localPropertiesFile.exists()) {
@@ -28,14 +24,16 @@ android {
         }
 
         // Retrieve the values from local.properties
-        val loginURL = localProperties.getProperty("URL_LOGIN", "defaultLoginURL")
-        val domain = localProperties.getProperty("DOMAIN", "defaultDomain")
-        val registerURL = localProperties.getProperty("URL_REGISTER", "defaultRegisterURL")
+        var loginURL = localProperties.getProperty("URL_LOGIN", "defaultLoginURL")
+        var domain = localProperties.getProperty("DOMAIN", "defaultDomain")
+        var registerURL = localProperties.getProperty("URL_REGISTER", "defaultRegisterURL")
+        var verifyEmailURL = localProperties.getProperty("URL_VERIFY_EMAIL", "defaultVerifyEmailURL")
 
         // Inject these values into BuildConfig
         buildConfigField("String", "URL_LOGIN", "\"$loginURL\"")
         buildConfigField("String", "DOMAIN", "\"$domain\"")
         buildConfigField("String", "URL_REGISTER", "\"$registerURL\"")
+        buildConfigField("String", "URL_VERIFY_EMAIL", "\"$verifyEmailURL\"")
 
         applicationId = "com.example.fooddream"
         minSdk = 24

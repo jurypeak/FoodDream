@@ -7,7 +7,6 @@ class Address(
     private var postcode: String,
     private var town: String
 ) {
-
     // Getters
     fun getAddressId(): Int = addressId
     fun getOrderId(): Int = orderId

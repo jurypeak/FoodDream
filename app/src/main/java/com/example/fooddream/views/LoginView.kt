@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
 import com.example.fooddream.controllers.CustomerController
@@ -21,9 +22,7 @@ class LoginView : AppCompatActivity() {
     private lateinit var emailField: EditText
     private lateinit var passwordField: EditText
     private lateinit var customerController: CustomerController
-    private lateinit var customer: Customer
-    private lateinit var notification: Notification
-    private val url = BuildConfig.URL_LOGIN
+    private var url = BuildConfig.URL_LOGIN
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,12 +31,11 @@ class LoginView : AppCompatActivity() {
 
         customerController = CustomerController( this )
 
-        // Initialize the components
-        initializeComponents()
-        loginUser()
+        initializeViewComponents()
+        handleUserLogin()
     }
 
-    private fun loginUser(){
+    private fun handleUserLogin(){
         customerController.handleLogin(
             loginButton,
             emailField,
@@ -46,12 +44,12 @@ class LoginView : AppCompatActivity() {
         )
     }
 
-    private fun initializeComponents() {
-        // Initialize elements
+    private fun initializeViewComponents() {
         loginButton = findViewById(R.id.login_button)
         forgotPasswordButton = findViewById(R.id.forgotPassPlaceholder)
         registerActivity = findViewById(R.id.register_page)
         emailField = findViewById(R.id.email_login)
         passwordField = findViewById(R.id.password_login)
     }
+
 }

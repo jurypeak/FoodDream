@@ -7,7 +7,6 @@ open class Account(
     private var accessLevel: Int,
     private var password: String
 ) {
-
     // Getters
     fun getEmail(): String = email
     fun getAccountId(): Int = accountId

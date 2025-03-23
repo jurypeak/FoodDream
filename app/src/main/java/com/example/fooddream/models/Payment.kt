@@ -9,7 +9,6 @@ class Payment(
     private var paymentMethod: String,
     private var amount: Double
 ) {
-
     // Getters
     fun getPaymentId(): Int = paymentId
     fun getOrderId(): Int = orderId
