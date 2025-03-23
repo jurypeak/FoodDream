@@ -13,15 +13,13 @@ class Customer(
     accessLevel,
     password
 ) {
-    //Getters
     fun getFName(): String = fName
     fun getLName(): String = lName
 
-    //Setters
-    fun setFName(newFName: String) {
-        fName = newFName
+    fun setFName(newName: String){
+        fName = newName
     }
-    fun setLName(newLName: String) {
-        lName = newLName
+    fun setLName(newName: String){
+        lName = newName
     }
 }

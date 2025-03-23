@@ -1,6 +1,8 @@
 package com.example.fooddream.controllers
 
 import android.util.Log
+import android.widget.Button
+import android.widget.EditText
 import com.android.volley.RequestQueue
 import com.example.fooddream.interfaces.IAccountController
 import com.example.fooddream.messengers.Errors
@@ -49,6 +51,15 @@ class AdminController(
         url: String
     ) {
         //TODO Login needs database to check against username.
+    }
+
+    override fun handleLogin(
+        loginButton: Button,
+        emailField: EditText,
+        passwordField: EditText,
+        url: String
+    ) {
+        TODO("Not yet implemented")
     }
 
     // Function that closes users sessions and logs users out.
