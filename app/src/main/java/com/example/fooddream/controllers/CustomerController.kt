@@ -4,10 +4,12 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
 import com.example.fooddream.interfaces.IAccountController
 import com.example.fooddream.interfaces.IBasketController
@@ -112,12 +114,18 @@ class CustomerController ( private var view: AppCompatActivity):
                 { response ->
                     when {
                         response.getString("status") == "Success" -> {
+                           val verificationCode = response.getString("verification_code")
+                            Log.d("Code2", verificationCode)
                             Log.d("Response", "$response")
                             notification.sendNotification(
-                                "Email Verified", view
+                                "Verification Code Sent.", view
                             )
+
+                            val submitButton = view.findViewById<Button>(R.id.submit_button)
+                            val codeField = view.findViewById<EditText>(R.id.code_verify)
+                            handleVerificationCode(submitButton, codeField, verificationCode)
                         } else -> {
-                            notification.sendNotification("Submitted code is incorrect", view)
+                            notification.sendNotification("Verification Failed To Send.", view)
                         }
                     }
                 },
@@ -241,6 +249,7 @@ class CustomerController ( private var view: AppCompatActivity):
                                 )
                             }", view
                         )
+                        verifyEmail(email, requestQueue, BuildConfig.URL_VERIFY_EMAIL)
                         replaceWithFragment(VerifyEmailView())
                     } else {
                         notification.sendNotification("Password do not match", view)
@@ -256,12 +265,20 @@ class CustomerController ( private var view: AppCompatActivity):
         }
     }
 
-    fun replaceWithFragment(fragment: androidx.fragment.app.Fragment) {
-        view.supportFragmentManager.beginTransaction()
-            .replace(R.id.verify_email_fragment, fragment)
-            .addToBackStack(null)
-            .commit()
+    private fun replaceWithFragment(fragment: Fragment) {
+        Log.d("FragmentTransaction", "Replacing fragment with ${fragment.javaClass.simpleName}")
+        try {
+            val transaction = view.supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.verify_email_fragment, fragment)
+            transaction.addToBackStack(null)
+            transaction.commit()
+            Log.d("FragmentTransaction", "Fragment replaced successfully")
+        } catch (e: Exception) {
+            Log.e("FragmentTransaction", "Error replacing fragment: ${e.message}")
+        }
     }
+
+
 
     // Function that closes users sessions and logs users out.
     override fun logout(
@@ -269,6 +286,37 @@ class CustomerController ( private var view: AppCompatActivity):
     ): Boolean {
         //TODO Logout needs sessions to be implemented.
         return false
+    }
+
+    fun handleVerificationCode(
+        submitButton: Button,
+        codeField: EditText,
+        verificationCode: String
+    ) {
+        submitButton.setOnClickListener {
+            val inputtedCode = codeField.text.toString()
+
+            Log.d("Code", verificationCode)
+            Log.d("View", "$view")
+
+            when {
+                inputtedCode.isBlank() -> {
+                    notification.sendNotification("Code cannot be empty.", view)
+                }
+
+                inputtedCode.length != 6 -> {
+                    notification.sendNotification("Code must be 6 digits long.", view)
+                }
+
+                inputtedCode == verificationCode -> {
+                    notification.sendNotification("Code is correct, account verified.", view)
+                }
+
+                else -> {
+                    notification.sendNotification("Incorrect verification code.", view)
+                }
+            }
+        }
     }
 
     override fun handleLogin(
@@ -280,15 +328,15 @@ class CustomerController ( private var view: AppCompatActivity):
         val requestQueue = Volley.newRequestQueue(view)
 
         loginButton.setOnClickListener {
-            val email = emailField.text.toString()
-            val password = passwordField.text.toString()
+            var email = emailField.text.toString()
+            var password = passwordField.text.toString()
 
             if (email.isNotBlank() && password.isNotBlank()) {
                 Log.d("Login", "$email, $password")
                 login(email, password, requestQueue, url)
             } else {
-                notification.sendNotification("Email or password cannot be empty", view)
-                Log.e("MainActivity", "Email or password cannot be empty")
+                notification.sendNotification("Email or password cannot be empty.", view)
+                Log.e("MainActivity", "Email or password cannot be empty.")
             }
         }
     }

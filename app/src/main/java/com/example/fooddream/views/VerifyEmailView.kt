@@ -20,12 +20,14 @@ class VerifyEmailView : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        return inflater.inflate(R.layout.verify_email, container, false)
+    }
 
-        var view = inflater.inflate(R.layout.verify_email, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initializeViewComponents(view)
 
-        return view
     }
 
     private fun initializeViewComponents(view: View) {
@@ -34,3 +36,4 @@ class VerifyEmailView : Fragment() {
         emailCodeField = view.findViewById(R.id.code_verify)
     }
 }
+
