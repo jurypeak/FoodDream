@@ -2,7 +2,6 @@ package com.example.fooddream.views
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,51 +12,57 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
-import com.android.volley.toolbox.Volley
-import com.example.fooddream.BuildConfig
+import androidx.fragment.app.Fragment
 import com.example.fooddream.R
 import com.example.fooddream.controllers.CustomerController
+import androidx.core.net.toUri
+import com.example.fooddream.BuildConfig
 
-class VerifyEmailView : Fragment() {
-
-    private lateinit var submitButton: Button
-    private lateinit var exitButton: TextView
-    private lateinit var emailCodeField: EditText
+class RegisterView : Fragment() {
+    private lateinit var registerButton: Button
+    private lateinit var loginButton: TextView
+    private lateinit var forgotPasswordButton: TextView
+    private lateinit var emailField: EditText
+    private lateinit var passwordField: EditText
+    private lateinit var nameField: EditText
     private lateinit var supportButton: ImageView
     private var urlUserGuide = BuildConfig.URL_USERGUIDE
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.verify_email_page, container, false)
+    ): View? {
+        return inflater.inflate(R.layout.register_page, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val email = arguments?.getString("email") ?: ""
         var controller = CustomerController(requireActivity() as AppCompatActivity)
 
         initializeViewComponents(view)
-        setListeners()
+        setUpListeners()
 
-        controller.sendVerificationEmailCode(
-            email,
-            Volley.newRequestQueue(requireActivity() as AppCompatActivity),
-            BuildConfig.URL_VERIFY_EMAIL,
+        controller.startRegistration(
+            registerButton,
+            emailField,
+            nameField,
+            passwordField,
         )
     }
 
     private fun initializeViewComponents(view: View) {
-        submitButton = view.findViewById(R.id.submit_button)
-        exitButton = view.findViewById(R.id.exitPlaceholder)
-        emailCodeField = view.findViewById(R.id.code_verify)
+        registerButton = view.findViewById(R.id.register_button)
+        loginButton = view.findViewById(R.id.loginPlaceholder)
         supportButton = view.findViewById(R.id.helpIcon)
+        forgotPasswordButton = view.findViewById(R.id.forgotPassPlaceholder)
+        emailField = view.findViewById(R.id.email_register)
+        nameField = view.findViewById(R.id.nameRegister)
+        passwordField = view.findViewById(R.id.password_register)
     }
-    private fun setListeners() {
-        exitButton.setOnClickListener {
+
+    private fun setUpListeners() {
+        loginButton.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
         supportButton.setOnClickListener {
@@ -74,4 +79,3 @@ class VerifyEmailView : Fragment() {
         }
     }
 }
-

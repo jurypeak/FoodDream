@@ -1,28 +1,31 @@
 package com.example.fooddream.views
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.core.net.toUri
 import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
 import com.example.fooddream.controllers.CustomerController
-import com.example.fooddream.messengers.Notification
-import com.example.fooddream.models.Customer
 
 class LoginView : AppCompatActivity() {
 
     private lateinit var loginButton: Button
     private lateinit var forgotPasswordButton: TextView
-    private lateinit var registerActivity: View
+    private lateinit var signUpText: TextView
     private lateinit var emailField: EditText
+    private lateinit var supportButton: ImageView
     private lateinit var passwordField: EditText
     private lateinit var customerController: CustomerController
-    private var url = BuildConfig.URL_LOGIN
+    private var urlLogin = BuildConfig.URL_LOGIN
+    private var urlUserGuide = BuildConfig.URL_USERGUIDE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,24 +35,41 @@ class LoginView : AppCompatActivity() {
         customerController = CustomerController( this )
 
         initializeViewComponents()
-        handleUserLogin()
-    }
-
-    private fun handleUserLogin(){
-        customerController.handleLogin(
-            loginButton,
-            emailField,
-            passwordField,
-            url
-        )
+        setUpListeners()
     }
 
     private fun initializeViewComponents() {
         loginButton = findViewById(R.id.login_button)
         forgotPasswordButton = findViewById(R.id.forgotPassPlaceholder)
-        registerActivity = findViewById(R.id.register_page)
+        signUpText = findViewById(R.id.signUpPlaceholder)
+        supportButton = findViewById(R.id.helpIcon)
         emailField = findViewById(R.id.email_login)
         passwordField = findViewById(R.id.password_login)
     }
 
+    private fun setUpListeners() {
+        signUpText.setOnClickListener {
+            customerController.createRegisterView()
+        }
+        loginButton.setOnClickListener {
+            customerController.startLogin(
+                loginButton,
+                emailField,
+                passwordField,
+                urlLogin
+            )
+        }
+        supportButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, urlUserGuide.toUri())
+            intent.setPackage("com.android.chrome")
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            try {
+                startActivity(intent)
+            } catch (error: ActivityNotFoundException) {
+                Log.e("Chrome Error", "$error")
+                intent.setPackage(null)
+                startActivity(intent)
+            }
+        }
+    }
 }

@@ -13,7 +13,7 @@ class AdminController(
     private var manager: Manager
 ): IAccountController {
     // Function for encrypting password with BCrypt algorithm
-    private fun hashPassword(password:String) {
+    private fun encryptPassword(password:String) {
         try {
             val salt = BCrypt.gensalt(12)
             manager.setPassword(BCrypt.hashpw(password, salt))
@@ -34,9 +34,9 @@ class AdminController(
         }
     }
     // Function to hash passwords without showing the algorithm
-    override fun setHashedPassword(password: String): Boolean {
+    override fun setEncryptedPassword(password: String): Boolean {
         return try {
-            hashPassword(password).toString()
+            encryptPassword(password).toString()
             true
         } catch (error: Errors.HashingException) {
             Log.d("Hashing Error", "$error")
@@ -53,7 +53,7 @@ class AdminController(
         //TODO Login needs database to check against username.
     }
 
-    override fun handleLogin(
+    override fun startLogin(
         loginButton: Button,
         emailField: EditText,
         passwordField: EditText,

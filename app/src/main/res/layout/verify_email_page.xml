@@ -117,7 +117,7 @@
 
         <RelativeLayout
             android:layout_width="284dp"
-            android:layout_height="433dp"
+            android:layout_height="404dp"
             android:layout_gravity="center">
 
             <TextView

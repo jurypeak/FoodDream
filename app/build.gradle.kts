@@ -27,6 +27,7 @@ android {
         var loginURL = localProperties.getProperty("URL_LOGIN", "defaultLoginURL")
         var domain = localProperties.getProperty("DOMAIN", "defaultDomain")
         var registerURL = localProperties.getProperty("URL_REGISTER", "defaultRegisterURL")
+        var userGuideURL = localProperties.getProperty("URL_USERGUIDE", "defaultUserGuideURL")
         var verifyEmailURL = localProperties.getProperty("URL_VERIFY_EMAIL", "defaultVerifyEmailURL")
 
         // Inject these values into BuildConfig
@@ -34,6 +35,7 @@ android {
         buildConfigField("String", "DOMAIN", "\"$domain\"")
         buildConfigField("String", "URL_REGISTER", "\"$registerURL\"")
         buildConfigField("String", "URL_VERIFY_EMAIL", "\"$verifyEmailURL\"")
+        buildConfigField("String", "URL_USERGUIDE", "\"$userGuideURL\"")
 
         applicationId = "com.example.fooddream"
         minSdk = 24

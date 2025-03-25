@@ -18,4 +18,6 @@
     <string name="verify_placeholder">Verify Email</string>
     <string name="code_placeholder">Enter Code</string>
     <string name="exit">Exit</string>
+    <string name="fname_placeholder">Firstname</string>
+    <string name="name_placeholder">Name</string>
 </resources>

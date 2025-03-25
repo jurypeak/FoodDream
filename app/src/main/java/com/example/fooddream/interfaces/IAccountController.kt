@@ -5,13 +5,13 @@ import android.widget.EditText
 import com.android.volley.RequestQueue
 
 interface IAccountController {
-    fun setHashedPassword(password: String): Boolean
+    fun setEncryptedPassword(password: String): Boolean
     fun login(email: String,
               password: String,
               requestQueue: RequestQueue,
               url: String
     )
-    fun handleLogin(
+    fun startLogin(
         loginButton: Button,
         emailField: EditText,
         passwordField: EditText,
