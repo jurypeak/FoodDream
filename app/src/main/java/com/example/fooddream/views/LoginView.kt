@@ -21,9 +21,10 @@ class LoginView : AppCompatActivity() {
     private lateinit var forgotPasswordButton: TextView
     private lateinit var signUpText: TextView
     private lateinit var emailField: EditText
-    private lateinit var supportButton: ImageView
+    private lateinit var userGuideButton: ImageView
     private lateinit var passwordField: EditText
-    private lateinit var customerController: CustomerController
+    private lateinit var customerSupportButton: ImageView
+    private lateinit var controller: CustomerController
     private var urlLogin = BuildConfig.URL_LOGIN
     private var urlUserGuide = BuildConfig.URL_USERGUIDE
 
@@ -32,7 +33,7 @@ class LoginView : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.login_page)
 
-        customerController = CustomerController( this )
+        controller = CustomerController( this )
 
         initializeViewComponents()
         setUpListeners()
@@ -42,24 +43,25 @@ class LoginView : AppCompatActivity() {
         loginButton = findViewById(R.id.login_button)
         forgotPasswordButton = findViewById(R.id.forgotPassPlaceholder)
         signUpText = findViewById(R.id.signUpPlaceholder)
-        supportButton = findViewById(R.id.helpIcon)
+        userGuideButton = findViewById(R.id.helpIcon)
         emailField = findViewById(R.id.email_login)
         passwordField = findViewById(R.id.password_login)
+        customerSupportButton = findViewById(R.id.customerSupportIcon)
     }
 
     private fun setUpListeners() {
         signUpText.setOnClickListener {
-            customerController.createRegisterView()
+            controller.createRegisterView()
         }
         loginButton.setOnClickListener {
-            customerController.startLogin(
+            controller.startLogin(
                 loginButton,
                 emailField,
                 passwordField,
                 urlLogin
             )
         }
-        supportButton.setOnClickListener {
+        userGuideButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, urlUserGuide.toUri())
             intent.setPackage("com.android.chrome")
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -70,6 +72,9 @@ class LoginView : AppCompatActivity() {
                 intent.setPackage(null)
                 startActivity(intent)
             }
+        }
+        customerSupportButton.setOnClickListener {
+            controller.replaceActivityWithFragment(CustomerSupportView(), R.id.customer_support_fragment)
         }
     }
 }

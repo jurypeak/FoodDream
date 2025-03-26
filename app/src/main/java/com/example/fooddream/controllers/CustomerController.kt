@@ -25,7 +25,9 @@ import com.example.fooddream.views.VerifyEmailView
 import org.json.JSONObject
 import org.mindrot.jbcrypt.BCrypt
 
-class CustomerController ( private var view: AppCompatActivity):
+class CustomerController (
+    private var view: AppCompatActivity
+):
     IAccountController,
     IBasketController,
     ICustomerController {
@@ -65,9 +67,11 @@ class CustomerController ( private var view: AppCompatActivity):
                         notification.sendNotification(
                             "Welcome $fName", view
                         )
+                        customer.setAccountId(response.optString("accountId", "").toInt())
+                        view.supportFragmentManager.popBackStack()
                         Log.d("Response", "$response")
                     } else {
-                        notification.sendNotification("Account creation failed, please try again later.", view)
+                        notification.sendNotification("${response.optString("message", "")}", view)
                         Log.d("Response", "$response")
                     }
                 },
@@ -147,23 +151,8 @@ class CustomerController ( private var view: AppCompatActivity):
                     }
                     inputtedCode == verificationCode -> {
                         notification.sendNotification("Code is correct, account verified.", view)
-
-                        if (isFragmentVisible(RegisterView::class.java)) {
-                            register(
-                                customer.getEmail(),
-                                customer.getFName(),
-                                customer.getLName(),
-                                customer.getPassword(),
-                                Volley.newRequestQueue(view),
-                                BuildConfig.URL_REGISTER
-                            )
-                        } else if (view is LoginView) {
-                            view.supportFragmentManager.popBackStack()
-                        } else {
-                            Log.d("Verification", "Unknown view state.")
-                        }
+                        view.supportFragmentManager.popBackStack()
                     }
-
                     else -> {
                         notification.sendNotification("Incorrect verification code.", view)
                     }
@@ -313,26 +302,32 @@ class CustomerController ( private var view: AppCompatActivity):
             val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.POST, url, jsonObject,
                 { response ->
-                    val returnedPassword = response.optString("password", "")
-                    if (verifyPassword(password, returnedPassword)) {
+                    if (response.optString("status","") != "Success") {
+                        notification.sendNotification("${response.optString("message", "")}", view)
                         Log.d("Response", "$response")
-                        notification.sendNotification(
-                            "Welcome ${
-                                response.optString(
-                                    "CustomerFName",
-                                    ""
-                                )
-                            }", view
-                        )
-                        val bundle = Bundle().apply {
-                            putString("email", email)
+                    }
+                    else{
+                        val returnedPassword = response.optString("password", "")
+                        if (verifyPassword(password, returnedPassword)) {
+                            Log.d("Response", "$response")
+                            notification.sendNotification(
+                                "Welcome ${
+                                    response.optString(
+                                        "CustomerFName",
+                                        ""
+                                    )
+                                }", view
+                            )
+                            val bundle = Bundle().apply {
+                                putString("email", email)
+                            }
+                            val verifyEmailFragment = VerifyEmailView()
+                            verifyEmailFragment.arguments = bundle
+                            replaceActivityWithFragment(verifyEmailFragment, R.id.verify_email_fragment)
+                        } else {
+                            notification.sendNotification("Password do not match", view)
+                            Log.d("Response", "$response")
                         }
-                        val verifyEmailFragment = VerifyEmailView()
-                        verifyEmailFragment.arguments = bundle
-                        replaceActivityWithFragment(verifyEmailFragment, R.id.verify_email_fragment)
-                    } else {
-                        notification.sendNotification("Password do not match", view)
-                        Log.d("Response", "$response")
                     }
                 },
                 { error ->
@@ -374,13 +369,17 @@ class CustomerController ( private var view: AppCompatActivity):
                     customer.setFName(lName)
                     customer.setEmail(email)
                     customer.setPassword(password)
+                    customer.setAccessLevel(1)
 
-                    val bundle = Bundle().apply {
-                        putString("email", email)
-                    }
-                    val verifyEmailFragment = VerifyEmailView()
-                    verifyEmailFragment.arguments = bundle
-                    replaceActivityWithFragment(verifyEmailFragment, R.id.verify_email_fragment)
+                    register(
+                        email,
+                        fName,
+                        lName,
+                        password,
+                        Volley.newRequestQueue(view),
+                        BuildConfig.URL_REGISTER
+                    )
+
                 }
             }
         } catch (error: Exception) {
@@ -413,7 +412,7 @@ class CustomerController ( private var view: AppCompatActivity):
         }
     }
 
-    private fun replaceActivityWithFragment(fragment: Fragment, id: Int) {
+    fun replaceActivityWithFragment(fragment: Fragment, id: Int) {
         Log.d("FragmentTransaction", "Replacing fragment with ${fragment.javaClass.simpleName}")
         try {
             val transaction = view.supportFragmentManager.beginTransaction()
@@ -423,17 +422,6 @@ class CustomerController ( private var view: AppCompatActivity):
             Log.d("FragmentTransaction", "Fragment replaced successfully")
         } catch (e: Exception) {
             Log.e("FragmentTransaction", "Error replacing fragment: ${e.message}")
-        }
-    }
-
-    private fun isFragmentVisible(fragmentClass: Class<*>): Boolean {
-        return try {
-            val fragment = view.supportFragmentManager.findFragmentByTag(fragmentClass.simpleName)
-            fragment != null && fragment.isVisible
-        } catch (error: Exception) {
-            notification.sendNotification("Error occured while checking fragment.", view)
-            Log.d("Fragment Visibility Error", "$error")
-            false
         }
     }
 

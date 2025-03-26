@@ -20,4 +20,6 @@
     <string name="exit">Exit</string>
     <string name="fname_placeholder">Firstname</string>
     <string name="name_placeholder">Name</string>
+    <string name="support_placeholder">Customer Support</string>
+    <string name="support_message_placeholder">Enter a message to send to our support team.</string>
 </resources>

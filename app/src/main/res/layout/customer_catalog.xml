@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#000000">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="96dp"
+            android:layout_height="128dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:contentDescription="@string/logo"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:id="@+id/textLogo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/logo"
+            android:paddingStart="24dp"
+            android:fontFamily="@font/transcity"
+            android:paddingTop="42dp"
+            android:textStyle="bold"
+            android:text="@string/logo_placeholder"
+            android:textColor="#ffffff"
+            android:textSize="48sp"
+            tools:ignore="RtlSymmetry" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:background="#404040"
+        tools:ignore="RtlSymmetry">
+
+        <ImageView
+            android:id="@+id/home_button"
+            android:layout_width="48dp"
+            android:layout_height="72dp"
+            android:layout_marginStart="20dp"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@string/logo"
+            android:src="@drawable/house" />
+
+        <ImageView
+            android:id="@+id/search_button"
+            android:layout_width="32dp"
+            android:layout_height="72dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="100dp"
+            android:contentDescription="@string/logo"
+            android:src="@drawable/search" />
+
+        <ImageView
+            android:id="@+id/basket_button"
+            android:layout_width="48dp"
+            android:layout_height="72dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="170dp"
+            android:contentDescription="@string/logo"
+            android:src="@drawable/basket" />
+
+        <ImageView
+            android:id="@+id/account_button"
+            android:layout_width="32dp"
+            android:layout_height="72dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="250dp"
+            android:contentDescription="@string/logo"
+            android:src="@drawable/user" />
+
+        <ImageView
+            android:id="@+id/dots_button"
+            android:layout_width="48dp"
+            android:layout_height="72dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="320dp"
+            android:contentDescription="@string/logo"
+            android:src="@drawable/dots" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

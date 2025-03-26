@@ -25,7 +25,9 @@ class RegisterView : Fragment() {
     private lateinit var emailField: EditText
     private lateinit var passwordField: EditText
     private lateinit var nameField: EditText
-    private lateinit var supportButton: ImageView
+    private lateinit var userGuideButton: ImageView
+    private lateinit var customerSupportButton: ImageView
+    private lateinit var controller: CustomerController
     private var urlUserGuide = BuildConfig.URL_USERGUIDE
 
     override fun onCreateView(
@@ -38,7 +40,7 @@ class RegisterView : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var controller = CustomerController(requireActivity() as AppCompatActivity)
+        controller = CustomerController(requireActivity() as AppCompatActivity)
 
         initializeViewComponents(view)
         setUpListeners()
@@ -54,18 +56,19 @@ class RegisterView : Fragment() {
     private fun initializeViewComponents(view: View) {
         registerButton = view.findViewById(R.id.register_button)
         loginButton = view.findViewById(R.id.loginPlaceholder)
-        supportButton = view.findViewById(R.id.helpIcon)
+        userGuideButton = view.findViewById(R.id.helpIcon)
         forgotPasswordButton = view.findViewById(R.id.forgotPassPlaceholder)
         emailField = view.findViewById(R.id.email_register)
         nameField = view.findViewById(R.id.nameRegister)
         passwordField = view.findViewById(R.id.password_register)
+        customerSupportButton = view.findViewById(R.id.customerSupportIcon)
     }
 
     private fun setUpListeners() {
         loginButton.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
-        supportButton.setOnClickListener {
+        userGuideButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, urlUserGuide.toUri())
             intent.setPackage("com.android.chrome")
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -76,6 +79,9 @@ class RegisterView : Fragment() {
                 intent.setPackage(null)
                 startActivity(intent)
             }
+        }
+        customerSupportButton.setOnClickListener {
+            controller.replaceActivityWithFragment(CustomerSupportView(), R.id.customer_support_fragment)
         }
     }
 }
