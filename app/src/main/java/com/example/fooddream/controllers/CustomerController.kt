@@ -19,6 +19,7 @@ import com.example.fooddream.messengers.Errors
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Customer
 import com.example.fooddream.models.Product
+import com.example.fooddream.views.CustomerSupportView
 import com.example.fooddream.views.LoginView
 import com.example.fooddream.views.RegisterView
 import com.example.fooddream.views.VerifyEmailView
@@ -427,5 +428,8 @@ class CustomerController (
 
     fun createRegisterView() {
         replaceActivityWithFragment(RegisterView(), R.id.register_fragment)
+    }
+    fun createCustomerSupportView() {
+        replaceActivityWithFragment(CustomerSupportView(), R.id.customer_support_fragment)
     }
 }

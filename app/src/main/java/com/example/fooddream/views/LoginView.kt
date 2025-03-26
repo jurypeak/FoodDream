@@ -74,7 +74,7 @@ class LoginView : AppCompatActivity() {
             }
         }
         customerSupportButton.setOnClickListener {
-            controller.replaceActivityWithFragment(CustomerSupportView(), R.id.customer_support_fragment)
+            controller.createCustomerSupportView()
         }
     }
 }
