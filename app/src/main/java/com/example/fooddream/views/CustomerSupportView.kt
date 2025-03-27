@@ -1,10 +1,7 @@
 package com.example.fooddream.views
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
 import androidx.fragment.app.Fragment
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +9,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.net.toUri
+import androidx.appcompat.app.AppCompatActivity
 import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
+import com.example.fooddream.controllers.NavigationController
 
 class CustomerSupportView : Fragment() {
 
@@ -22,6 +20,7 @@ class CustomerSupportView : Fragment() {
     private lateinit var exitButton: TextView
     private lateinit var messageField: EditText
     private lateinit var supportButton: ImageView
+    private lateinit var navigationController: NavigationController
     private var urlUserGuide = BuildConfig.URL_USERGUIDE
 
     override fun onCreateView(
@@ -33,6 +32,8 @@ class CustomerSupportView : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        navigationController = NavigationController(requireActivity() as AppCompatActivity)
 
         initializeViewComponents(view)
         setListeners()
@@ -50,16 +51,7 @@ class CustomerSupportView : Fragment() {
             requireActivity().supportFragmentManager.popBackStack()
         }
         supportButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, urlUserGuide.toUri())
-            intent.setPackage("com.android.chrome")
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            try {
-                startActivity(intent)
-            } catch (error: ActivityNotFoundException) {
-                Log.e("Chrome Error", "$error")
-                intent.setPackage(null)
-                startActivity(intent)
-            }
+            navigationController.navigateToUserGuide(urlUserGuide)
         }
     }
 }

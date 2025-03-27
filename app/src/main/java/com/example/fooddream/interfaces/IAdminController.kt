@@ -3,14 +3,7 @@ package com.example.fooddream.interfaces
 import android.widget.Button
 import android.widget.EditText
 
-interface ICustomerController {
-    fun handleRegistration(
-        registerButton: Button,
-        emailField: EditText,
-        nameField: EditText,
-        passwordField: EditText,
-    )
-
+interface IAdminController {
     fun handleLogin(
         loginButton: Button,
         emailField: EditText,
@@ -20,4 +13,3 @@ interface ICustomerController {
     fun startSession()
     fun clearSession()
 }
-

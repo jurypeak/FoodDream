@@ -26,8 +26,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".utils.SplashScreen" android:exported="true" />
+        <activity android:name=".views.SplashScreen" android:exported="true" />
         <activity android:name=".views.LoginView" android:exported="true" />
+        <activity android:name=".views.CustomerCatalogView" android:exported="true"/>
     </application>
 
 </manifest>

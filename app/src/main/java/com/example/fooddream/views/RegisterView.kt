@@ -1,9 +1,6 @@
 package com.example.fooddream.views
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +11,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.fooddream.R
-import com.example.fooddream.controllers.CustomerController
-import androidx.core.net.toUri
 import com.example.fooddream.BuildConfig
+import com.example.fooddream.controllers.CustomerController
+import com.example.fooddream.controllers.NavigationController
 
 class RegisterView : Fragment() {
     private lateinit var registerButton: Button
@@ -27,7 +24,8 @@ class RegisterView : Fragment() {
     private lateinit var nameField: EditText
     private lateinit var userGuideButton: ImageView
     private lateinit var customerSupportButton: ImageView
-    private lateinit var controller: CustomerController
+    private lateinit var customerController: CustomerController
+    private lateinit var navigationController: NavigationController
     private var urlUserGuide = BuildConfig.URL_USERGUIDE
 
     override fun onCreateView(
@@ -40,12 +38,13 @@ class RegisterView : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        controller = CustomerController(requireActivity() as AppCompatActivity)
+        customerController = CustomerController(requireActivity() as AppCompatActivity)
+        navigationController = NavigationController(requireActivity() as AppCompatActivity)
 
         initializeViewComponents(view)
         setUpListeners()
 
-        controller.startRegistration(
+        customerController.handleRegistration(
             registerButton,
             emailField,
             nameField,
@@ -69,19 +68,13 @@ class RegisterView : Fragment() {
             requireActivity().supportFragmentManager.popBackStack()
         }
         userGuideButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, urlUserGuide.toUri())
-            intent.setPackage("com.android.chrome")
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            try {
-                startActivity(intent)
-            } catch (error: ActivityNotFoundException) {
-                Log.e("Chrome Error", "$error")
-                intent.setPackage(null)
-                startActivity(intent)
-            }
+            navigationController.navigateToUserGuide(urlUserGuide)
         }
         customerSupportButton.setOnClickListener {
-            controller.createCustomerSupportView()
+            navigationController.navigateToFragment(
+                CustomerSupportView(),
+                R.id.customer_support_fragment
+            )
         }
     }
 }

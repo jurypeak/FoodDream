@@ -1,6 +1,5 @@
-package com.example.fooddream.utils
+package com.example.fooddream.views
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -9,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.fooddream.R
-import com.example.fooddream.views.LoginView
 
 class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +24,7 @@ class SplashScreen : AppCompatActivity() {
         // Use Handler to introduce a delay before starting the next activity
         Handler(mainLooper).postDelayed({
             startActivity(Intent(this@SplashScreen, LoginView::class.java))
-            finish() // Close the SplashScreen activity
-        }, 2000) // Delay of 2 seconds (2000 milliseconds)
+            finish()
+        }, 2000)
     }
 }

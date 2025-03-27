@@ -3,7 +3,7 @@ package com.example.fooddream
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.fooddream.utils.SplashScreen
+import com.example.fooddream.views.SplashScreen
 
 class MainActivity : AppCompatActivity() {
 

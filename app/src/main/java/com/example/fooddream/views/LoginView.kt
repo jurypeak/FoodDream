@@ -1,6 +1,5 @@
 package com.example.fooddream.views
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,10 +9,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
 import com.example.fooddream.controllers.CustomerController
+import com.example.fooddream.controllers.NavigationController
+import com.example.fooddream.utils.SessionManager
 
 class LoginView : AppCompatActivity() {
 
@@ -24,8 +24,8 @@ class LoginView : AppCompatActivity() {
     private lateinit var userGuideButton: ImageView
     private lateinit var passwordField: EditText
     private lateinit var customerSupportButton: ImageView
-    private lateinit var controller: CustomerController
-    private var urlLogin = BuildConfig.URL_LOGIN
+    private lateinit var customerController: CustomerController
+    private lateinit var viewController: NavigationController
     private var urlUserGuide = BuildConfig.URL_USERGUIDE
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +33,18 @@ class LoginView : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.login_page)
 
-        controller = CustomerController( this )
+
+        val sessionManager = SessionManager(this)
+        if (sessionManager.hasSession()) {
+            Log.d("LoginView", "User already logged in, redirecting...")
+            startActivity(Intent(this, CustomerCatalogView::class.java))
+            finish()
+            return
+        }
+
+        customerController = CustomerController( this )
+        viewController = NavigationController( this )
+
 
         initializeViewComponents()
         setUpListeners()
@@ -51,30 +62,26 @@ class LoginView : AppCompatActivity() {
 
     private fun setUpListeners() {
         signUpText.setOnClickListener {
-            controller.createRegisterView()
+            viewController.navigateToFragment(
+                RegisterView(),
+                R.id.register_fragment
+            )
         }
         loginButton.setOnClickListener {
-            controller.startLogin(
+            customerController.handleLogin(
                 loginButton,
                 emailField,
                 passwordField,
-                urlLogin
             )
         }
         userGuideButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, urlUserGuide.toUri())
-            intent.setPackage("com.android.chrome")
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            try {
-                startActivity(intent)
-            } catch (error: ActivityNotFoundException) {
-                Log.e("Chrome Error", "$error")
-                intent.setPackage(null)
-                startActivity(intent)
-            }
+            viewController.navigateToUserGuide(urlUserGuide)
         }
         customerSupportButton.setOnClickListener {
-            controller.createCustomerSupportView()
+            viewController.navigateToFragment(
+                CustomerSupportView(),
+                R.id.customer_support_fragment
+            )
         }
     }
 }

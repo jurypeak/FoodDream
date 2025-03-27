@@ -8,7 +8,7 @@
     android:id="@+id/login"
     app:cardElevation="0dp"
     app:cardBackgroundColor="@android:color/transparent"
-    tools:context=".utils.SplashScreen">
+    tools:context=".views.SplashScreen">
 
     <RelativeLayout
         android:layout_width="364dp"
