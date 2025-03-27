@@ -8,8 +8,8 @@ open class Product (
     private var productStock: Int,
     private var productDescription: String,
     private var productCategory: String,
-    private var imageURL: Int,
-    private var ingredients: MutableList<Ingredient> = mutableListOf()
+    private var imageUrl: String,
+    internal var ingredients: MutableList<Ingredient> = mutableListOf()
 ) {
     // Getters
     fun getProductName(): String = productName
@@ -19,7 +19,7 @@ open class Product (
     fun getProductStock(): Int = productStock
     fun getProductDescription(): String = productDescription
     fun getProductCategory(): String = productCategory
-    fun getImageURL(): Int = imageURL
+    fun getImageUrl(): String = imageUrl
     fun getIngredients(): List<Ingredient> = ingredients
 
     //Setters
@@ -44,8 +44,8 @@ open class Product (
     fun setProductCategory(newProductCategory: String) {
         productCategory = newProductCategory
     }
-    fun setImageURL(newImageURL: Int) {
-        imageURL = newImageURL
+    fun setImageUrl(newImageURL: String) {
+        imageUrl = newImageURL
     }
     fun addIngredients(newIngredient: Ingredient) {
         ingredients.add(newIngredient)

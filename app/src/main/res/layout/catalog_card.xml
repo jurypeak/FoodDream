@@ -20,11 +20,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/logo"/>
+            android:src="@drawable/logo" />
 
         <TextView
             android:id="@+id/productNameTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
@@ -34,13 +34,23 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/productImageView"
-            android:text="Food"/>
+            android:text="Food"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"/>
 
         <TextView
             android:id="@+id/productPriceTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="35dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,27 +59,27 @@
             app:layout_constraintTop_toBottomOf="@+id/productImageView"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:text="Price"/>
+            android:text="Price" />
 
         <TextView
             android:id="@+id/productStockTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="25dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/productImageView"
-            android:text="Stock"/>
+            android:text="Stock" />
 
         <TextView
             android:id="@+id/addProductTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="65dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -77,7 +87,7 @@
             app:layout_constraintTop_toBottomOf="@+id/productImageView"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:text="Add"/>
+            android:text="Add" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

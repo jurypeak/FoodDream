@@ -29,6 +29,7 @@ android {
         var registerURL = localProperties.getProperty("URL_REGISTER", "defaultRegisterURL")
         var userGuideURL = localProperties.getProperty("URL_USERGUIDE", "defaultUserGuideURL")
         var verifyEmailURL = localProperties.getProperty("URL_VERIFY_EMAIL", "defaultVerifyEmailURL")
+        var productsURL = localProperties.getProperty("URL_PRODUCTS", "defaultProductURL")
 
         // Inject these values into BuildConfig
         buildConfigField("String", "URL_LOGIN", "\"$loginURL\"")
@@ -36,6 +37,7 @@ android {
         buildConfigField("String", "URL_REGISTER", "\"$registerURL\"")
         buildConfigField("String", "URL_VERIFY_EMAIL", "\"$verifyEmailURL\"")
         buildConfigField("String", "URL_USERGUIDE", "\"$userGuideURL\"")
+        buildConfigField("String", "URL_PRODUCTS", "\"$productsURL\"")
 
         applicationId = "com.example.fooddream"
         minSdk = 24
@@ -72,6 +74,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.jbcrypt)
     implementation(libs.volley)
+    implementation (libs.picasso)
     implementation(libs.json)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)

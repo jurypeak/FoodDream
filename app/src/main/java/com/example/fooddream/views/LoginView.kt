@@ -9,10 +9,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.toolbox.Volley
 import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
 import com.example.fooddream.controllers.CustomerController
 import com.example.fooddream.controllers.NavigationController
+import com.example.fooddream.controllers.ProductController
+import com.example.fooddream.models.Ingredient
+import com.example.fooddream.models.Product
 import com.example.fooddream.utils.SessionManager
 
 class LoginView : AppCompatActivity() {
@@ -44,7 +48,6 @@ class LoginView : AppCompatActivity() {
 
         customerController = CustomerController( this )
         viewController = NavigationController( this )
-
 
         initializeViewComponents()
         setUpListeners()
