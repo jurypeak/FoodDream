@@ -44,12 +44,6 @@ class RegisterView : Fragment() {
         initializeViewComponents(view)
         setUpListeners()
 
-        customerController.handleRegistration(
-            registerButton,
-            emailField,
-            nameField,
-            passwordField,
-        )
     }
 
     private fun initializeViewComponents(view: View) {
@@ -74,6 +68,13 @@ class RegisterView : Fragment() {
             navigationController.navigateToFragment(
                 CustomerSupportView(),
                 R.id.customer_support_fragment
+            )
+        }
+        registerButton.setOnClickListener {
+            customerController.handleRegistration(
+                emailField,
+                nameField,
+                passwordField,
             )
         }
     }

@@ -5,7 +5,6 @@ import android.widget.EditText
 
 interface ICustomerController {
     fun handleRegistration(
-        registerButton: Button,
         emailField: EditText,
         nameField: EditText,
         passwordField: EditText,
@@ -15,6 +14,14 @@ interface ICustomerController {
         loginButton: Button,
         emailField: EditText,
         passwordField: EditText,
+    )
+
+    fun handleResetPasswordEmailVerification(
+        emailField: EditText
+    )
+
+    fun handleResetPassword(
+        passwordField: EditText
     )
 
     fun startSession()

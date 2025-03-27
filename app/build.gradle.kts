@@ -30,6 +30,7 @@ android {
         var userGuideURL = localProperties.getProperty("URL_USERGUIDE", "defaultUserGuideURL")
         var verifyEmailURL = localProperties.getProperty("URL_VERIFY_EMAIL", "defaultVerifyEmailURL")
         var productsURL = localProperties.getProperty("URL_PRODUCTS", "defaultProductURL")
+        var resetPasswordURL = localProperties.getProperty("URL_RESETPASSWORD", "defaultResetPassword")
 
         // Inject these values into BuildConfig
         buildConfigField("String", "URL_LOGIN", "\"$loginURL\"")
@@ -38,6 +39,7 @@ android {
         buildConfigField("String", "URL_VERIFY_EMAIL", "\"$verifyEmailURL\"")
         buildConfigField("String", "URL_USERGUIDE", "\"$userGuideURL\"")
         buildConfigField("String", "URL_PRODUCTS", "\"$productsURL\"")
+        buildConfigField("String", "URL_RESETPASSWORD", "\"$resetPasswordURL\"")
 
         applicationId = "com.example.fooddream"
         minSdk = 24
@@ -78,6 +80,7 @@ dependencies {
     implementation(libs.json)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.gson)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

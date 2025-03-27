@@ -37,7 +37,6 @@ class LoginView : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.login_page)
 
-
         val sessionManager = SessionManager(this)
         if (sessionManager.hasSession()) {
             Log.d("LoginView", "User already logged in, redirecting...")
@@ -51,6 +50,7 @@ class LoginView : AppCompatActivity() {
 
         initializeViewComponents()
         setUpListeners()
+
     }
 
     private fun initializeViewComponents() {
@@ -84,6 +84,12 @@ class LoginView : AppCompatActivity() {
             viewController.navigateToFragment(
                 CustomerSupportView(),
                 R.id.customer_support_fragment
+            )
+        }
+        forgotPasswordButton.setOnClickListener {
+            viewController.navigateToFragment(
+                ResetPasswordEmailView(),
+                R.id.reset_password_email_fragment
             )
         }
     }

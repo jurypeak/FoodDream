@@ -13,13 +13,11 @@ class CustomerController(view: AppCompatActivity): ICustomerController {
     private var navigationController = NavigationController(view)
 
     override fun handleRegistration(
-        registerButton: Button,
         emailField: EditText,
         nameField: EditText,
         passwordField: EditText,
     ) {
         accountController.startRegistration(
-            registerButton,
             emailField,
             nameField,
             passwordField,
@@ -35,6 +33,22 @@ class CustomerController(view: AppCompatActivity): ICustomerController {
             loginButton,
             emailField,
             passwordField,
+        )
+    }
+
+    override fun handleResetPasswordEmailVerification(
+        emailField: EditText,
+    ) {
+        accountController.startResetPasswordEmailVerification(
+            emailField
+        )
+    }
+
+    override fun handleResetPassword(
+        passwordField: EditText
+    ) {
+        accountController.startResetPassword(
+            passwordField
         )
     }
 

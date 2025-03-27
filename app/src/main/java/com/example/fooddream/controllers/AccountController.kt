@@ -1,5 +1,7 @@
 package com.example.fooddream.controllers
 
+import CustomerRepository
+import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -7,11 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.Volley
 import com.example.fooddream.BuildConfig
+import com.example.fooddream.R
 import com.example.fooddream.interfaces.IAccountController
 import com.example.fooddream.messengers.Errors
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Customer
 import com.example.fooddream.utils.AuthenticationManager
+import com.example.fooddream.views.VerifyEmailView
 
 class AccountController(
     private var view: AppCompatActivity): IAccountController {
@@ -23,6 +27,7 @@ class AccountController(
         accessLevel = -1,
         password = ""
     )
+    private var customerRepository = CustomerRepository(view)
     private var notification = Notification()
     private var navigationController = NavigationController(view)
     private var sessionController = SessionController(view)
@@ -36,12 +41,14 @@ class AccountController(
     override fun sendTwoFactorAuth(
         email: String,
         requestQueue: RequestQueue,
-        url: String
+        url: String,
+        typeView: String
     ) {
         authenticationManager.sendVerificationEmailCode(
             email,
             requestQueue,
-            url
+            url,
+            typeView
         )
     }
 
@@ -74,38 +81,34 @@ class AccountController(
     }
 
     override fun startRegistration(
-        registerButton: Button,
         emailField: EditText,
         nameField: EditText,
         passwordField: EditText,
     ) {
         try {
-            registerButton.setOnClickListener {
-                val email = emailField.text.toString()
-                val name = nameField.text.toString()
-                val password = passwordField.text.toString()
+            val email = emailField.text.toString()
+            val name = nameField.text.toString()
+            val password = passwordField.text.toString()
 
-                if (email.isNotBlank() && name.isNotBlank() && password.isNotBlank()) {
-                    val nameParts = name.split(" ")
-                    val fName = nameParts.getOrNull(0) ?: ""
-                    val lName = nameParts.getOrNull(1) ?: ""
+            if (email.isNotBlank() && name.isNotBlank() && password.isNotBlank()) {
+                val nameParts = name.split(" ")
+                val fName = nameParts.getOrNull(0) ?: ""
+                val lName = nameParts.getOrNull(1) ?: ""
 
-                    customer.setFName(fName)
-                    customer.setFName(lName)
-                    customer.setEmail(email)
-                    customer.setPassword(password)
-                    customer.setAccessLevel(1)
+                customer.setFName(fName)
+                customer.setFName(lName)
+                customer.setEmail(email)
+                customer.setPassword(password)
+                customer.setAccessLevel(1)
 
-                    authenticationManager.register(
-                        email,
-                        fName,
-                        lName,
-                        password,
-                        Volley.newRequestQueue(view),
-                        BuildConfig.URL_REGISTER
-                    )
-
-                }
+                authenticationManager.register(
+                    email,
+                    fName,
+                    lName,
+                    password,
+                    Volley.newRequestQueue(view),
+                    BuildConfig.URL_REGISTER
+                )
             }
         } catch (error: Exception) {
             notification.sendNotification("Error occured while registering", view)
@@ -113,14 +116,46 @@ class AccountController(
         }
     }
 
-    override fun resetPassword(newPassword: String, emailCode: Int): Boolean {
-        //TODO add a helper function to verify email codes.
-        return try {
-            authenticationManager.setEncryptedPassword(newPassword)
-            true
-        } catch (error: Errors.HashingException) {
-            Log.d("Hashing Error", "$error")
-            false
+    override fun startResetPasswordEmailVerification(
+        emailField: EditText,
+    ) {
+        try {
+            val email = emailField.text.toString()
+            customer.setEmail(email)
+            customerRepository.saveCustomer(customer)
+
+            if (email.isNotBlank()) {
+                val bundle = Bundle().apply {
+                    putString("email", email)
+                    putString("typeView", "Reset Password")
+                }
+                val verifyEmailFragment = VerifyEmailView()
+                verifyEmailFragment.arguments = bundle
+                navigationController.replaceActivityWithFragment(
+                    verifyEmailFragment,
+                    R.id.verify_email_fragment
+                )
+            }
+        } catch (error: Exception) {
+            notification.sendNotification("Error occured while registering", view)
+            Log.d("Register Handling Error", "$error")
+        }
+    }
+
+    override fun startResetPassword(
+        passwordField: EditText,
+    ) {
+        val password = passwordField.text.toString()
+        try {
+            authenticationManager.resetPassword(
+                customerRepository.getCustomer()?.getEmail().toString(),
+                password,
+                Volley.newRequestQueue(view),
+                BuildConfig.URL_RESETPASSWORD
+            )
+        } catch (error: Exception) {
+            notification.sendNotification("Error occured while registering", view)
+            Log.d("Register Handling Error", "$error")
         }
     }
 

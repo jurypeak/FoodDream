@@ -16,6 +16,8 @@ import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Customer
 import com.example.fooddream.views.CustomerCatalogView
 import com.example.fooddream.views.LoginView
+import com.example.fooddream.views.ResetPasswordEmailView
+import com.example.fooddream.views.ResetPasswordView
 import com.example.fooddream.views.VerifyEmailView
 import org.json.JSONObject
 import org.mindrot.jbcrypt.BCrypt
@@ -107,9 +109,11 @@ class AuthenticationManager(
                             )
                             val bundle = Bundle().apply {
                                 putString("email", email)
+                                putString("typeView", "Login")
                             }
                             val verifyEmailFragment = VerifyEmailView()
                             verifyEmailFragment.arguments = bundle
+                            view.supportFragmentManager.popBackStack()
                             navigationController.replaceActivityWithFragment(
                                 verifyEmailFragment,
                                 R.id.verify_email_fragment
@@ -130,10 +134,47 @@ class AuthenticationManager(
         }
     }
 
+    fun resetPassword(
+        email: String,
+        password: String,
+        requestQueue: RequestQueue,
+        url: String
+    ) {
+        try {
+            val jsonObject = JSONObject().apply {
+                var password = encryptPassword(password)
+                put("email", email)
+                put("password", password)
+            }
+            val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.POST, url, jsonObject,
+                { response ->
+                    if (response.optString("status","") != "Success") {
+                        notification.sendNotification("${response.optString("message", "")}", view)
+                        Log.d("Response", "$response")
+                        //FRAGMENT WONT FUCKING GO BACK TO LOGIN!!!!
+                        view.supportFragmentManager.popBackStack()
+                    }
+                    else {
+                        notification.sendNotification("${response.optString("message", "")}", view)
+                        Log.d("Response", "$response")
+                    }
+                },
+                { error ->
+                    notification.sendNotification("$error.toString", view)
+                    Log.d("Login Error", "$error")
+                })
+            requestQueue.add(jsonObjectRequest)
+        } catch (error: Errors.LoginException) {
+            Log.d("Login Error", "$error")
+        }
+    }
+
     fun verifyUserEmailCode(
         submitButton: Button,
         codeField: EditText,
-        verificationCode: String
+        verificationCode: String,
+        typeView: String
     ) {
         try {
             submitButton.setOnClickListener {
@@ -148,9 +189,15 @@ class AuthenticationManager(
                     inputtedCode == verificationCode -> {
                         notification.sendNotification("Code is correct, account verified.", view)
                         view.supportFragmentManager.popBackStack()
-                        if (view is LoginView) {
+                        if (typeView == "Login") {
                             sessionController.startUserSession()
                             navigationController.navigateToActivity(CustomerCatalogView::class.java)
+                        }
+                        if (typeView == "Reset Password") {
+                            navigationController.navigateToFragment(
+                                ResetPasswordView(),
+                                R.id.reset_password_fragment
+                            )
                         }
                     }
                     else -> {
@@ -167,7 +214,8 @@ class AuthenticationManager(
     fun sendVerificationEmailCode(
         email: String,
         requestQueue: RequestQueue,
-        url: String
+        url: String,
+        typeView: String
     ) {
         try {
             val jsonObject = JSONObject().apply {
@@ -188,7 +236,8 @@ class AuthenticationManager(
                             verifyUserEmailCode(
                                 submitButton,
                                 codeField,
-                                verificationCode
+                                verificationCode,
+                                typeView
                             )
                         } else -> {
                         notification.sendNotification("Verification Failed To Send.", view)

@@ -9,9 +9,7 @@ import com.example.fooddream.messengers.Errors
 import com.example.fooddream.models.Manager
 import org.mindrot.jbcrypt.BCrypt
 
-class AdminControllerManager(
-    private var manager: Manager
-): IAdminController {
+class AdminControllerManager(): IAdminController {
     override fun handleLogin(
         loginButton: Button,
         emailField: EditText,

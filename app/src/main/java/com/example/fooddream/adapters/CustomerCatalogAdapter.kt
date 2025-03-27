@@ -1,7 +1,6 @@
 package com.example.fooddream.adapters
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +31,7 @@ class CustomerCatalogAdapter(private val productList: ArrayList<Product>):
         position: Int
     ) {
         val product = productList[position]
-        var currencyFormat = NumberFormat.getCurrencyInstance(Locale.UK);
+        var currencyFormat = NumberFormat.getCurrencyInstance(Locale.UK)
         Picasso.get()
             .load(product.getImageUrl())
             .into(holder.imageView)
