@@ -7,6 +7,7 @@ import com.example.fooddream.models.Product
 class CustomerCatalogController(
     private var catalog: Catalog
 ): ICatalogController {
+
     override fun displayProducts() {
         TODO("Not yet implemented")
     }

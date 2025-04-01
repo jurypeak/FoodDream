@@ -10,10 +10,12 @@ import androidx.fragment.app.Fragment
 class NavigationController(private val view: AppCompatActivity) {
 
     fun replaceActivityWithFragment(fragment: Fragment, containerId: Int) {
+        Log.d("Navigation", "Attempting to navigate to ${fragment::class.java.simpleName}")
         val transaction = view.supportFragmentManager.beginTransaction()
         transaction.replace(containerId, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
+        Log.d("Navigation", "Fragment transaction committed for ${fragment::class.java.simpleName}")
     }
 
     fun navigateToFragment(view: Fragment, fragmentId: Int) {

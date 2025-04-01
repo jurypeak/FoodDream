@@ -7,6 +7,7 @@ import com.example.fooddream.models.Product
 class AdminCatalogController (
     private var catalog: Catalog,
 ): ICatalogController {
+
     fun addProduct(newProduct: Product) {
 
     }

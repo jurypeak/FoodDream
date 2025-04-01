@@ -18,7 +18,7 @@ class CustomerRepository(private var view: AppCompatActivity) {
     fun saveCustomer(customer: Customer) {
         val customerJson = gson.toJson(customer)
         sharedPreferences.edit() {
-            putString("customer_key", customerJson)
+            putString("customer_${customer.getAccountId()}", customerJson)
         }
     }
 

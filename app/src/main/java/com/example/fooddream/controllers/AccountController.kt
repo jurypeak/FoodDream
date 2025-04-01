@@ -19,6 +19,7 @@ import com.example.fooddream.views.VerifyEmailView
 
 class AccountController(
     private var view: AppCompatActivity): IAccountController {
+
     private val customer = Customer(
         fName = "",
         lName = "",

@@ -1,16 +1,20 @@
 package com.example.fooddream.controllers
 
+import ProductRepository
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
 import com.example.fooddream.messengers.Errors
 import com.example.fooddream.models.Ingredient
 import com.example.fooddream.models.Product
+import com.example.fooddream.repositories.IngredientRepository
 import org.json.JSONException
 import java.lang.Exception
 
-class ProductController () {
+class ProductController (private val view: AppCompatActivity) {
+
     fun getProductsInDB(
         requestQueue: RequestQueue,
         url: String,
@@ -21,6 +25,8 @@ class ProductController () {
                 Request.Method.GET, url, null,
                 { response ->
                     try {
+                        var productRepository = ProductRepository(view)
+                        var ingredientRepository = IngredientRepository(view)
                         val productsList = ArrayList<Product>()
 
                         for (i in 0 until response.length()) {
@@ -64,10 +70,12 @@ class ProductController () {
                                 productDescription,
                                 productCategory,
                                 productImage,
-                                ingredients
                             )
 
                             productsList.add(product)
+
+                            productRepository.saveProduct(product)
+                            ingredientRepository.saveIngredients(productId, ingredients)
                         }
 
                         callback(productsList)
@@ -93,9 +101,10 @@ class ProductController () {
     fun updateProduct() {
 
     }
+
     fun addIngredient(product: Product, ingredient: Ingredient) {
         try {
-            product.addIngredients(ingredient)
+
         } catch (error: Errors.IngredientAdditionException) {
 
         }

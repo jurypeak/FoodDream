@@ -21,7 +21,7 @@ import java.util.Locale
 
 // https://youtu.be/-hWVtzMTABQ
 
-class CustomerCatalogAdapter(
+class CustomerSearchCatalogAdapter(
     private val view: AppCompatActivity,
     private val productList: ArrayList<Product>,
     private val onProductClick: (Product) -> Unit,
@@ -29,7 +29,7 @@ class CustomerCatalogAdapter(
     private val onRemoveFromBasketClick: (Product) -> Unit,
     private val onIncrementItemQuantityClick: (Product) -> Unit
 ):
-    RecyclerView.Adapter<CustomerCatalogAdapter.ProductViewHolder>() {
+    RecyclerView.Adapter<CustomerSearchCatalogAdapter.ProductViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -115,7 +115,7 @@ class CustomerCatalogAdapter(
                 if (it1 > 1) {
                     basketItemRepository.decrementQuantity(product.getProductId())
                     holder.addTextView.text = basketItemRepository.getBasketItem(
-                         product.getProductId())?.getQuantity().toString()
+                        product.getProductId())?.getQuantity().toString()
                     holder.addTextView.setTextColor(Color.BLACK)
                 }
                 if (it1 <= 1) {

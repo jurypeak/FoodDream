@@ -7,6 +7,7 @@ class CheckoutController (
     private var checkout: Checkout,
     private var basket: Basket
 ) {
+
     fun isBasketEmpty(): Boolean {
         return true
     }

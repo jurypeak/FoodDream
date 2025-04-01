@@ -10,6 +10,7 @@ import com.example.fooddream.models.Manager
 import org.mindrot.jbcrypt.BCrypt
 
 class AdminControllerManager(): IAdminController {
+
     override fun handleLogin(
         loginButton: Button,
         emailField: EditText,

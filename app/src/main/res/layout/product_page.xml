@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true">
+
+    <FrameLayout
+        android:background="@color/white"
+        android:id="@+id/product_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guidelineTop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintGuide_begin="180dp" />
+
+                <ImageView
+                    android:id="@+id/productImageView"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="24dp"
+                    android:src="@drawable/logo"
+                    android:scaleType="centerCrop" />
+
+                <TextView
+                    android:id="@+id/productNameTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/productImageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textStyle="bold"
+                    android:text="Food"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:padding="16dp"
+                    android:textAlignment="center"
+                    android:textSize="28sp"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/productDescriptionTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/productNameTextView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="Description"
+                    android:padding="12dp"
+                    android:textSize="20sp"
+                    android:textColor="#3f3f3f" />
+
+                <TextView
+                    android:id="@+id/productPriceTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/productDescriptionTextView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="Price"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:padding="12dp"
+                    android:textSize="22sp"
+                    android:textColor="#FF5555"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/productStockTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/productPriceTextView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="Stock"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:padding="12dp"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/productIngredientsTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/productStockTextView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="Ingredients"
+                    android:padding="12dp"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/productCOTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/productIngredientsTextView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="CO"
+                    android:padding="12dp"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/black" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </FrameLayout>
+
+</RelativeLayout>
+

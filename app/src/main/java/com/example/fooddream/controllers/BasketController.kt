@@ -6,6 +6,7 @@ import com.example.fooddream.messengers.Errors
 import com.example.fooddream.models.Product
 
 class BasketController: IBasketController {
+
     override fun addToBasket(product: Product) {
         try {
 
