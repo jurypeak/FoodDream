@@ -80,7 +80,8 @@ class CustomerCatalogView : AppCompatActivity() {
     private fun addDataToList() {
         productController.getProductsInDB(
             Volley.newRequestQueue(this),
-            BuildConfig.URL_PRODUCTS
+            BuildConfig.URL_PRODUCTS,
+            null
         ) { products ->
             if (products != null) {
                 productList.clear()
@@ -100,9 +101,13 @@ class CustomerCatalogView : AppCompatActivity() {
     @SuppressLint("NotifyDataSetChanged")
     private fun setListeners() {
         homeButton.setOnClickListener {
+            homeButton.setImageResource(R.drawable.house_red)
+            searchButton.setImageResource(R.drawable.search)
             navigationController.navigateToActivity(CustomerCatalogView::class.java)
         }
         searchButton.setOnClickListener {
+            searchButton.setImageResource(R.drawable.search_red)
+            homeButton.setImageResource(R.drawable.house)
             productList.clear()
             productAdapter.notifyDataSetChanged()
             navigationController.navigateToFragment(CustomerSearchCatalogView(), R.id.fragment_container)

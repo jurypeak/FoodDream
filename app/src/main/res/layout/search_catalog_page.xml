@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -11,13 +12,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.SearchView
+        <EditText
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="16dp"
+            android:inputType="text"
             android:queryHint="Search Products"
-            android:iconifiedByDefault="false"/>
+            android:autofillHints="query"
+            android:iconifiedByDefault="false"
+            tools:ignore="LabelFor" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:focusable="false"
+            android:id="@+id/customer_search_catalog_view"
+            android:layout_marginTop="124dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
 
     </FrameLayout>
 

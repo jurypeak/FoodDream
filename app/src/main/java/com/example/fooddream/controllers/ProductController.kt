@@ -18,6 +18,7 @@ class ProductController (private val view: AppCompatActivity) {
     fun getProductsInDB(
         requestQueue: RequestQueue,
         url: String,
+        searchQuery: String?,
         callback: (List<Product>?) -> Unit
     ) {
         try {
@@ -25,8 +26,8 @@ class ProductController (private val view: AppCompatActivity) {
                 Request.Method.GET, url, null,
                 { response ->
                     try {
-                        var productRepository = ProductRepository(view)
-                        var ingredientRepository = IngredientRepository(view)
+                        val productRepository = ProductRepository(view)
+                        val ingredientRepository = IngredientRepository(view)
                         val productsList = ArrayList<Product>()
 
                         for (i in 0 until response.length()) {
@@ -52,13 +53,15 @@ class ProductController (private val view: AppCompatActivity) {
                                 val ingredientWeight = ingredientJson.getDouble("weight")
                                 val ingredientAllergens = ingredientJson.getString("allergens")
 
-                                ingredients.add(Ingredient(
-                                    ingredientName,
-                                    ingredientId,
-                                    ingredientWeight,
-                                    ingredientAllergens,
-                                    productId
-                                ))
+                                ingredients.add(
+                                    Ingredient(
+                                        ingredientName,
+                                        ingredientId,
+                                        ingredientWeight,
+                                        ingredientAllergens,
+                                        productId
+                                    )
+                                )
                             }
 
                             val product = Product(
@@ -72,10 +75,11 @@ class ProductController (private val view: AppCompatActivity) {
                                 productImage,
                             )
 
-                            productsList.add(product)
-
-                            productRepository.saveProduct(product)
-                            ingredientRepository.saveIngredients(productId, ingredients)
+                            if (searchQuery == null || productName.contains(searchQuery, ignoreCase = true) || productCategory.contains(searchQuery, ignoreCase = true)) {
+                                productsList.add(product)
+                                productRepository.saveProduct(product)
+                                ingredientRepository.saveIngredients(productId, ingredients)
+                            }
                         }
 
                         callback(productsList)
@@ -91,12 +95,12 @@ class ProductController (private val view: AppCompatActivity) {
             )
 
             requestQueue.add(jsonArrayRequest)
-
         } catch (error: Exception) {
             Log.e("Product Fetch Error", "$error")
             callback(null)
         }
     }
+
 
     fun updateProduct() {
 
