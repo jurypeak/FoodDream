@@ -27,6 +27,7 @@ class CustomerCatalogView : AppCompatActivity() {
     private lateinit var navigationController: NavigationController
     private lateinit var homeButton: ImageView
     private lateinit var searchButton: ImageView
+    private lateinit var basketButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,17 +109,20 @@ class CustomerCatalogView : AppCompatActivity() {
     private fun initializeViewComponents() {
         homeButton = findViewById(R.id.home_button)
         searchButton = findViewById(R.id.search_button)
+        basketButton = findViewById(R.id.basket_button)
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setListeners() {
         homeButton.setOnClickListener {
             homeButton.setImageResource(R.drawable.house_red)
+            basketButton.setImageResource(R.drawable.basket)
             searchButton.setImageResource(R.drawable.search)
             navigationController.navigateToActivity(CustomerCatalogView::class.java)
         }
         searchButton.setOnClickListener {
             searchButton.setImageResource(R.drawable.search_red)
+            basketButton.setImageResource(R.drawable.basket)
             homeButton.setImageResource(R.drawable.house)
             productList.clear()
             productAdapter.notifyDataSetChanged()
@@ -127,17 +131,28 @@ class CustomerCatalogView : AppCompatActivity() {
                 R.id.fragment_container
             )
         }
+        basketButton.setOnClickListener {
+            basketButton.setImageResource(R.drawable.basket_red)
+            searchButton.setImageResource(R.drawable.search)
+            homeButton.setImageResource(R.drawable.house)
+            productList.clear()
+            productAdapter.notifyDataSetChanged()
+            navigationController.navigateToFragment(
+                BasketView(),
+                R.id.fragment_container
+            )
+        }
     }
 
-    override fun onPause() {
-        super.onPause()
-        sessionController.clearUserSession()
-        Log.d("LoginView", "Session cleared on pause.")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        sessionController.clearUserSession()
-        Log.d("LoginView", "Session cleared on stop.")
-    }
+//    override fun onPause() {
+//        super.onPause()
+//        sessionController.clearUserSession()
+//        Log.d("LoginView", "Session cleared on pause.")
+//    }
+//
+//    override fun onStop() {
+//        super.onStop()
+//        sessionController.clearUserSession()
+//        Log.d("LoginView", "Session cleared on stop.")
+//    }
 }

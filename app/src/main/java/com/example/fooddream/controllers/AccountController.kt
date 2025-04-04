@@ -138,7 +138,7 @@ class AccountController(
                 )
             }
         } catch (error: Exception) {
-            notification.sendNotification("Error occured while registering", view)
+            notification.sendNotification("Error occurred while registering", view)
             Log.d("Register Handling Error", "$error")
         }
     }

@@ -25,4 +25,8 @@
     <string name="enter_email_placeholder">Enter email</string>
     <string name="new_password_placeholder">Enter new password</string>
     <string name="search">Search...</string>
+    <string name="price">Price</string>
+    <string name="checkout">Checkout</string>
+    <string name="item_quantity">Item Quantity</string>
+    <string name="item_count">Item Count</string>
 </resources>
