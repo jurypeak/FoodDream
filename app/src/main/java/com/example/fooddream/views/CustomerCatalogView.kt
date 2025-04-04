@@ -50,23 +50,35 @@ class CustomerCatalogView : AppCompatActivity() {
             this,
             productList,
             { product ->
-                Log.d("RecyclerViewClick", "Clicked product: ${product.getProductName()} with ID: ${product.getProductId()}")
+                Log.d(
+                    "RecyclerViewClick",
+                    "Clicked product: ${product.getProductName()} with ID: ${product.getProductId()}"
+                )
                 val bundle = Bundle().apply {
                     putInt("ProductId", product.getProductId())
                 }
                 val productViewFragment = ProductView().apply {
                     arguments = bundle
                 }
-                navigationController.navigateToFragment(productViewFragment, R.id.fragment_container)
+                navigationController.navigateToFragment(
+                    productViewFragment,
+                    R.id.fragment_container
+                )
             },
             { product ->
                 Log.d("AddToBasket", "Added product: ${product.getProductName()} to the basket")
             },
             { product ->
-                Log.d("RemoveFromBasket", "Removed product: ${product.getProductName()} from the basket")
+                Log.d(
+                    "RemoveFromBasket",
+                    "Removed product: ${product.getProductName()} from the basket"
+                )
             },
             { product ->
-                Log.d("IncrementQuantity", "Incremented product quantity: ${product.getProductName()} in the basket")
+                Log.d(
+                    "IncrementQuantity",
+                    "Incremented product quantity: ${product.getProductName()} in the basket"
+                )
             }
         )
         recyclerView.adapter = productAdapter
@@ -110,19 +122,22 @@ class CustomerCatalogView : AppCompatActivity() {
             homeButton.setImageResource(R.drawable.house)
             productList.clear()
             productAdapter.notifyDataSetChanged()
-            navigationController.navigateToFragment(CustomerSearchCatalogView(), R.id.fragment_container)
+            navigationController.navigateToFragment(
+                CustomerSearchCatalogView(),
+                R.id.fragment_container
+            )
         }
     }
 
-//    override fun onPause() {
-//        super.onPause()
-//        sessionController.clearUserSession()
-//        Log.d("LoginView", "Session cleared on pause.")
-//    }
+    override fun onPause() {
+        super.onPause()
+        sessionController.clearUserSession()
+        Log.d("LoginView", "Session cleared on pause.")
+    }
 
-//    override fun onStop() {
-//        super.onStop()
-//        sessionController.clearUserSession()
-//        Log.d("LoginView", "Session cleared on stop.")
-//    }
+    override fun onStop() {
+        super.onStop()
+        sessionController.clearUserSession()
+        Log.d("LoginView", "Session cleared on stop.")
+    }
 }

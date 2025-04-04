@@ -16,17 +16,23 @@
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:paddingHorizontal="12dp"
+            android:layout_marginHorizontal="12dp"
             android:layout_marginTop="16dp"
             android:inputType="text"
+            android:drawableStart="@drawable/search_mini_icon"
+            android:drawablePadding="8dp"
+            android:hint="@string/search"
+            android:background="@drawable/card_border"
             android:queryHint="Search Products"
-            android:autofillHints="query"
+            android:autofillHints="Search..."
             android:iconifiedByDefault="false"
             tools:ignore="LabelFor" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:focusable="false"
             android:id="@+id/customer_search_catalog_view"
-            android:layout_marginTop="124dp"
+            android:layout_marginTop="72dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

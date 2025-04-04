@@ -24,4 +24,5 @@
     <string name="support_message_placeholder">Enter a message to send to our support team.</string>
     <string name="enter_email_placeholder">Enter email</string>
     <string name="new_password_placeholder">Enter new password</string>
+    <string name="search">Search...</string>
 </resources>

@@ -76,7 +76,7 @@ class AccountController(
                 Log.e("MainActivity", "Email or password cannot be empty.")
             }
         } catch (error: Exception) {
-            notification.sendNotification("Error occured while logging in", view)
+            notification.sendNotification("Error occurred while logging in", view)
             Log.d("Login Handling Error", "$error")
         }
     }
@@ -112,7 +112,7 @@ class AccountController(
                 )
             }
         } catch (error: Exception) {
-            notification.sendNotification("Error occured while registering", view)
+            notification.sendNotification("Error occurred while registering", view)
             Log.d("Register Handling Error", "$error")
         }
     }
@@ -155,7 +155,7 @@ class AccountController(
                 BuildConfig.URL_RESETPASSWORD
             )
         } catch (error: Exception) {
-            notification.sendNotification("Error occured while registering", view)
+            notification.sendNotification("Error occurred while registering", view)
             Log.d("Register Handling Error", "$error")
         }
     }
