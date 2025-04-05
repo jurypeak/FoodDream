@@ -8,6 +8,9 @@ import androidx.core.content.edit
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.BasketItem
 import com.google.gson.Gson
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.math.round
 
 class BasketItemRepository(private var view: AppCompatActivity) {
 
@@ -29,6 +32,19 @@ class BasketItemRepository(private var view: AppCompatActivity) {
         } else {
             null
         }
+    }
+
+    fun getBasketTotalPrice(): Double {
+        var basketTotalPrice = 0.00
+        for (basketItem in getAllBasketItems()) {
+            basketTotalPrice += basketItem.getPrice() * basketItem.getQuantity()
+        }
+        var roundedTotal = BigDecimal(basketTotalPrice).setScale(2, RoundingMode.HALF_UP).toDouble()
+        return roundedTotal
+    }
+
+    fun getBasketSize(): Int {
+        return getAllBasketItems().size
     }
 
     fun getAllBasketItems(): ArrayList<BasketItem> {

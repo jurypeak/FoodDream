@@ -18,7 +18,7 @@
             android:background="#000000">
 
             <TextView
-                android:id="@+id/textLogo"
+                android:id="@+id/priceText"
                 android:layout_width="124dp"
                 android:layout_height="wrap_content"
                 android:paddingStart="18dp"
@@ -37,7 +37,7 @@
                 android:text="@string/checkout"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="148dp"
-                android:layout_toEndOf="@+id/textLogo"
+                android:layout_toEndOf="@+id/priceText"
                 android:backgroundTint="#ff5555" />
 
         </RelativeLayout>
@@ -45,10 +45,11 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:layout_marginTop="78dp">
 
             <TextView
-                android:id="@+id/textQuantity"
+                android:id="@+id/itemQuantityHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="18dp"
@@ -65,6 +66,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:focusable="false"
             android:id="@+id/basket_view"
+            android:background="@color/white"
             android:layout_marginTop="124dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
