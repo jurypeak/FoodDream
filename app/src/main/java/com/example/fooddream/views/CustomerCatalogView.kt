@@ -28,6 +28,7 @@ class CustomerCatalogView : AppCompatActivity() {
     private lateinit var homeButton: ImageView
     private lateinit var searchButton: ImageView
     private lateinit var basketButton: ImageView
+    private lateinit var accountButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,6 +111,7 @@ class CustomerCatalogView : AppCompatActivity() {
         homeButton = findViewById(R.id.home_button)
         searchButton = findViewById(R.id.search_button)
         basketButton = findViewById(R.id.basket_button)
+        accountButton = findViewById(R.id.account_button)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -117,12 +119,14 @@ class CustomerCatalogView : AppCompatActivity() {
         homeButton.setOnClickListener {
             homeButton.setImageResource(R.drawable.house_red)
             basketButton.setImageResource(R.drawable.basket)
+            accountButton.setImageResource(R.drawable.user)
             searchButton.setImageResource(R.drawable.search)
             navigationController.navigateToActivity(CustomerCatalogView::class.java)
         }
         searchButton.setOnClickListener {
             searchButton.setImageResource(R.drawable.search_red)
             basketButton.setImageResource(R.drawable.basket)
+            accountButton.setImageResource(R.drawable.user)
             homeButton.setImageResource(R.drawable.house)
             productList.clear()
             productAdapter.notifyDataSetChanged()
@@ -134,11 +138,24 @@ class CustomerCatalogView : AppCompatActivity() {
         basketButton.setOnClickListener {
             basketButton.setImageResource(R.drawable.basket_red)
             searchButton.setImageResource(R.drawable.search)
+            accountButton.setImageResource(R.drawable.user)
             homeButton.setImageResource(R.drawable.house)
             productList.clear()
             productAdapter.notifyDataSetChanged()
             navigationController.navigateToFragment(
                 BasketView(),
+                R.id.fragment_container
+            )
+        }
+        accountButton.setOnClickListener {
+            accountButton.setImageResource(R.drawable.user_red)
+            searchButton.setImageResource(R.drawable.search)
+            basketButton.setImageResource(R.drawable.basket)
+            homeButton.setImageResource(R.drawable.house)
+            productList.clear()
+            productAdapter.notifyDataSetChanged()
+            navigationController.navigateToFragment(
+                AccountView(),
                 R.id.fragment_container
             )
         }

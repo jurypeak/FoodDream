@@ -8,7 +8,6 @@ import com.example.fooddream.interfaces.ICustomerController
 class CustomerController(view: AppCompatActivity): ICustomerController {
 
     private var accountController = AccountController(view)
-    private var basketController = BasketController()
     private var sessionController = SessionController(view)
     private var navigationController = NavigationController(view)
 

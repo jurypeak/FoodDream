@@ -1,5 +1,6 @@
 package com.example.fooddream.utils
 
+import CustomerRepository
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -30,6 +31,7 @@ class AuthenticationManager(
 ) {
 
     private var notification = Notification()
+    private var customerRepository = CustomerRepository(view)
 
     fun register(
         email: String,
@@ -57,6 +59,7 @@ class AuthenticationManager(
                             "Welcome $fName", view
                         )
                         customer.setAccountId(response.optString("accountId", "").toInt())
+                        customerRepository.saveCustomer(customer)
                         view.supportFragmentManager.popBackStack()
                         Log.d("Response", "$response")
                     } else {
@@ -95,7 +98,7 @@ class AuthenticationManager(
                         notification.sendNotification("${response.optString("message", "")}", view)
                         Log.d("Response", "$response")
                     }
-                    else{
+                    else {
                         val returnedPassword = response.optString("password", "")
                         if (verifyPassword(password, returnedPassword)) {
                             Log.d("Response", "$response")
@@ -111,6 +114,8 @@ class AuthenticationManager(
                                 putString("email", email)
                                 putString("typeView", "Login")
                             }
+                            customer.setAccountId(response.optInt("id"))
+                            customerRepository.saveCustomer(customer)
                             val verifyEmailFragment = VerifyEmailView()
                             verifyEmailFragment.arguments = bundle
                             view.supportFragmentManager.popBackStack()

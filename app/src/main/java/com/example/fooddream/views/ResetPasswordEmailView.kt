@@ -65,8 +65,6 @@ class ResetPasswordEmailView : Fragment() {
             )
         }
         submitButton.setOnClickListener {
-            val email = emailField.text.toString()
-
             customerController.handleResetPasswordEmailVerification(emailField)
         }
     }

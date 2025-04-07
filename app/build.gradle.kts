@@ -30,7 +30,11 @@ android {
         var userGuideURL = localProperties.getProperty("URL_USERGUIDE", "defaultUserGuideURL")
         var verifyEmailURL = localProperties.getProperty("URL_VERIFY_EMAIL", "defaultVerifyEmailURL")
         var productsURL = localProperties.getProperty("URL_PRODUCTS", "defaultProductURL")
-        var resetPasswordURL = localProperties.getProperty("URL_RESETPASSWORD", "defaultResetPassword")
+        var resetPasswordURL = localProperties.getProperty("URL_RESETPASSWORD", "defaultResetPasswordURL")
+        var orderURL = localProperties.getProperty("URL_ORDER", "defaultOrderURL")
+        var addressURL = localProperties.getProperty("URL_ADDRESS", "defaultAddressURL")
+        var paymentURL = localProperties.getProperty("URL_PAYMENT", "defaultPaymentURL")
+        var orderItemsURL = localProperties.getProperty("URL_ORDER_ITEMS", "defaultOrderItemsURL")
 
         // Inject these values into BuildConfig
         buildConfigField("String", "URL_LOGIN", "\"$loginURL\"")
@@ -40,6 +44,10 @@ android {
         buildConfigField("String", "URL_USERGUIDE", "\"$userGuideURL\"")
         buildConfigField("String", "URL_PRODUCTS", "\"$productsURL\"")
         buildConfigField("String", "URL_RESETPASSWORD", "\"$resetPasswordURL\"")
+        buildConfigField("String", "URL_ORDER", "\"$orderURL\"")
+        buildConfigField("String", "URL_ADDRESS", "\"$addressURL\"")
+        buildConfigField("String", "URL_PAYMENT", "\"$paymentURL\"")
+        buildConfigField("String", "URL_ORDER_ITEMS", "\"$orderItemsURL\"")
 
         applicationId = "com.example.fooddream"
         minSdk = 24

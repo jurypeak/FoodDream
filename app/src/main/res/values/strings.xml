@@ -29,4 +29,18 @@
     <string name="checkout">Checkout</string>
     <string name="item_quantity">Item Quantity</string>
     <string name="item_count">Item Count</string>
+    <string name="address">Address</string>
+    <string name="postcode">Postcode</string>
+    <string name="town">Town</string>
+    <string name="payment">Payment</string>
+    <string name="select_payment">Select Payment</string>
+    <string name="pay">Pay</string>
+    <string name="enter_email">Enter email</string>
+    <string name="enter_name">Enter name</string>
+    <string name="enter_address">Enter address</string>
+    <string name="enter_postcode">Enter postcode</string>
+    <string name="enter_town">Enter town</string>
+    <string name="account">Account</string>
+    <string name="enter_password">Enter password</string>
+    <string name="update">Update</string>
 </resources>

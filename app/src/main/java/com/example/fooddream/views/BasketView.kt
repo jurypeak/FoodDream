@@ -8,19 +8,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.toolbox.Volley
-import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
 import com.example.fooddream.adapters.BasketAdapter
 import com.example.fooddream.controllers.NavigationController
-import com.example.fooddream.controllers.ProductController
 import com.example.fooddream.controllers.SessionController
 import com.example.fooddream.models.BasketItem
-import com.example.fooddream.repositories.BasketItemRepository
+import com.example.fooddream.repositories.BasketRepository
 import java.util.Locale
 
 class BasketView : Fragment() {
@@ -30,9 +28,10 @@ class BasketView : Fragment() {
     private lateinit var basketAdapter: BasketAdapter
     private lateinit var navigationController: NavigationController
     private lateinit var sessionController: SessionController
-    private lateinit var basketItemRepository: BasketItemRepository
+    private lateinit var basketRepository: BasketRepository
     private lateinit var itemCountTextView: TextView
     private lateinit var totalPriceTextView: TextView
+    private lateinit var checkoutButton: Button
 
     private val currencyFormat = NumberFormat.getCurrencyInstance(Locale.UK)
 
@@ -48,7 +47,7 @@ class BasketView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navigationController = NavigationController(requireActivity() as AppCompatActivity)
-        basketItemRepository = BasketItemRepository(requireActivity() as AppCompatActivity)
+        basketRepository = BasketRepository(requireActivity() as AppCompatActivity)
 
         init(view)
 
@@ -97,23 +96,27 @@ class BasketView : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun addDataToList() {
-        basketList.addAll(basketItemRepository.getAllBasketItems())
+        basketList.addAll(basketRepository.getAllBasketItems())
         basketAdapter.notifyDataSetChanged()
     }
 
     @SuppressLint("SetTextI18n")
     fun updateHeaderInfo() {
-        itemCountTextView.text = "${basketItemRepository.getBasketSize()} Items"
-        totalPriceTextView.text = currencyFormat.format(basketItemRepository.getBasketTotalPrice())
+        itemCountTextView.text = "${basketRepository.getBasketSize()} Items"
+        totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice())
     }
 
     private fun initializeViewComponents(view: View) {
         itemCountTextView = view.findViewById(R.id.itemQuantityHeader)
-        itemCountTextView.text = "Basket size: ${basketItemRepository.getBasketSize()}"
+        itemCountTextView.text = "Basket size: ${basketRepository.getBasketSize()}"
         totalPriceTextView = view.findViewById(R.id.priceText)
-        totalPriceTextView.text = currencyFormat.format(basketItemRepository.getBasketTotalPrice())
+        totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice())
+        checkoutButton = view.findViewById(R.id.checkoutButton)
     }
 
     private fun setListeners() {
+        checkoutButton.setOnClickListener {
+            navigationController.navigateToFragment(CheckoutView(), R.id.fragment_container)
+        }
     }
 }

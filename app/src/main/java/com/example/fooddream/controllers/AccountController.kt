@@ -63,6 +63,9 @@ class AccountController(
             var email = emailField.text.toString()
             var password = passwordField.text.toString()
 
+            customer.setEmail(email)
+            customer.setPassword(password)
+
             if (email.isNotBlank() && password.isNotBlank()) {
                 Log.d("Login", "$email, $password")
                 authenticationManager.login(
@@ -91,7 +94,7 @@ class AccountController(
             val name = nameField.text.toString()
             val password = passwordField.text.toString()
 
-            if (email.isNotBlank() && name.isNotBlank() && password.isNotBlank()) {
+            if (email.isNotBlank() || name.isNotBlank() || password.isNotBlank()) {
                 val nameParts = name.split(" ")
                 val fName = nameParts.getOrNull(0) ?: ""
                 val lName = nameParts.getOrNull(1) ?: ""
@@ -149,7 +152,7 @@ class AccountController(
         val password = passwordField.text.toString()
         try {
             authenticationManager.resetPassword(
-                customerRepository.getCustomer()?.getEmail().toString(),
+                customer.getEmail(),
                 password,
                 Volley.newRequestQueue(view),
                 BuildConfig.URL_RESETPASSWORD

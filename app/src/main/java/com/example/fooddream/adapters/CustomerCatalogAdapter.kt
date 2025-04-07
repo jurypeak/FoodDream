@@ -2,7 +2,6 @@ package com.example.fooddream.adapters
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fooddream.R
 import com.example.fooddream.models.BasketItem
 import com.example.fooddream.models.Product
-import com.example.fooddream.repositories.BasketItemRepository
+import com.example.fooddream.repositories.BasketRepository
 import com.squareup.picasso.Picasso
 import java.text.NumberFormat
 import java.util.Locale
@@ -43,7 +42,7 @@ class CustomerCatalogAdapter(
         holder: ProductViewHolder,
         position: Int
     ) {
-        val basketItemRepository = BasketItemRepository(view)
+        val basketRepository = BasketRepository(view)
         val product = productList[position]
         var currencyFormat = NumberFormat.getCurrencyInstance(Locale.UK)
         Picasso.get()
@@ -53,7 +52,7 @@ class CustomerCatalogAdapter(
         holder.priceTextView.text = (currencyFormat.format(product.getProductPrice()))
         holder.stockTextView.text = (product.getProductStock().toString())
 
-        basketItemRepository.getBasketItem(product.getProductId())?.getQuantity()?.let {
+        basketRepository.getBasketItem(product.getProductId())?.getQuantity()?.let {
             if (it >= product.getProductStock()) {
                 holder.addTextView.isEnabled = false
                 holder.addTextView.text = "Out of Stock"
@@ -65,7 +64,7 @@ class CustomerCatalogAdapter(
             }
         }
 
-        basketItemRepository.getBasketItem(product.getProductId())?.getQuantity()?.let {
+        basketRepository.getBasketItem(product.getProductId())?.getQuantity()?.let {
             if (it == 0) {
                 holder.addTextView.text = "Add"
                 holder.addTextView.isClickable = true
@@ -76,7 +75,7 @@ class CustomerCatalogAdapter(
                 holder.addImageView.visibility = View.VISIBLE
                 holder.minusImageView.visibility = View.VISIBLE
                 holder.addTextView.isClickable = false
-                holder.addTextView.text = basketItemRepository.getBasketItem(
+                holder.addTextView.text = basketRepository.getBasketItem(
                     product.getProductId())?.getQuantity().toString()
 
                 onAddToBasketClick(product)
@@ -97,7 +96,7 @@ class CustomerCatalogAdapter(
                 product.getProductPrice(),
                 product.getProductName()
             )
-            basketItemRepository.saveBasketItem(
+            basketRepository.saveBasketItem(
                 basketItem
             )
 
@@ -110,11 +109,11 @@ class CustomerCatalogAdapter(
         }
 
         holder.minusImageView.setOnClickListener {
-            basketItemRepository.getBasketItem(
+            basketRepository.getBasketItem(
                 product.getProductId())?.getQuantity()?.let { it1 ->
                 if (it1 > 1) {
-                    basketItemRepository.decrementQuantity(product.getProductId())
-                    holder.addTextView.text = basketItemRepository.getBasketItem(
+                    basketRepository.decrementQuantity(product.getProductId())
+                    holder.addTextView.text = basketRepository.getBasketItem(
                          product.getProductId())?.getQuantity().toString()
                     holder.addTextView.setTextColor(Color.BLACK)
                 }
@@ -123,7 +122,7 @@ class CustomerCatalogAdapter(
                     holder.addTextView.isClickable = true
                     holder.minusImageView.visibility = View.GONE
                     holder.addImageView.visibility = View.GONE
-                    basketItemRepository.removeBasketItem(product.getProductId())
+                    basketRepository.removeBasketItem(product.getProductId())
                     holder.addTextView.setTextColor(Color.BLACK)
                 }
             }
@@ -132,7 +131,7 @@ class CustomerCatalogAdapter(
         }
 
         holder.addImageView.setOnClickListener {
-            val basketItem = basketItemRepository.getBasketItem(product.getProductId())
+            val basketItem = basketRepository.getBasketItem(product.getProductId())
 
             basketItem?.let { item ->
                 val currentQuantity = item.getQuantity()
@@ -143,8 +142,8 @@ class CustomerCatalogAdapter(
                     holder.addTextView.text = currentQuantity.toString()
                     holder.addTextView.setTextColor(Color.RED)
                 } else if (currentQuantity > 0 && currentQuantity < productStock) {
-                    basketItemRepository.incrementQuantity(product.getProductId())
-                    holder.addTextView.text = basketItemRepository.getBasketItem(
+                    basketRepository.incrementQuantity(product.getProductId())
+                    holder.addTextView.text = basketRepository.getBasketItem(
                         product.getProductId())?.getQuantity().toString()
                     holder.addTextView.setTextColor(Color.BLACK)
                 }

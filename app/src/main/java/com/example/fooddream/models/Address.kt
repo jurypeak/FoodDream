@@ -22,15 +22,12 @@ class Address(
     fun setOrderId(newId: Int) {
         orderId = newId
     }
-
     fun setStreet(newStreet: String) {
         street = newStreet
     }
-
     fun setPostcode(newPostcode: String) {
         postcode = newPostcode
     }
-
     fun setTown(newTown: String) {
         town = newTown
     }
