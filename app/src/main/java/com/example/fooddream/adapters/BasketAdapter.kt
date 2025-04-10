@@ -1,5 +1,6 @@
 package com.example.fooddream.adapters
 
+import CustomerRepository
 import ProductRepository
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -43,6 +44,7 @@ class BasketAdapter(
         position: Int
     ) {
         val basketRepository = BasketRepository(view)
+        val customerRepository = CustomerRepository(view)
         val basketItem = basketList[position]
         var currencyFormat = NumberFormat.getCurrencyInstance(Locale.UK)
         Picasso.get()
@@ -53,7 +55,7 @@ class BasketAdapter(
         holder.priceTextView.text = (currencyFormat.format(basketItem.getPrice()))
         holder.stockTextView.text = (ProductRepository(view).getProduct(basketItem.getProductId())!!.getProductStock().toString())
 
-        basketRepository.getBasketItem(basketItem.getProductId())?.getQuantity()?.let {
+        basketRepository.getBasketItem(basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity()?.let {
             if (it >= ProductRepository(view).getProduct(basketItem.getProductId())!!.getProductStock()) {
                 holder.quantityTextView.isEnabled = false
                 holder.quantityTextView.setTextColor(Color.RED)
@@ -63,9 +65,9 @@ class BasketAdapter(
             }
         }
 
-        basketRepository.getBasketItem(basketItem.getProductId())?.getQuantity()?.let {
+        basketRepository.getBasketItem(basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity()?.let {
             if (it == 0) {
-                basketRepository.removeBasketItem(basketItem.getProductId())
+                basketRepository.removeBasketItem(basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())
                 val removedItemPosition = holder.adapterPosition
                 basketList.removeAt(removedItemPosition)
                 notifyItemRemoved(removedItemPosition)
@@ -75,7 +77,7 @@ class BasketAdapter(
                 holder.minusImageView.visibility = View.VISIBLE
                 holder.quantityTextView.isClickable = false
                 holder.quantityTextView.text = basketRepository.getBasketItem(
-                    basketItem.getProductId())?.getQuantity().toString()
+                    basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity().toString()
 
                 onAddToBasketClick(basketItem)
             }
@@ -89,15 +91,15 @@ class BasketAdapter(
 
         holder.minusImageView.setOnClickListener {
             basketRepository.getBasketItem(
-                basketItem.getProductId())?.getQuantity()?.let { it1 ->
+                basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity()?.let { it1 ->
                 if (it1 > 1) {
-                    basketRepository.decrementQuantity(basketItem.getProductId())
+                    basketRepository.decrementQuantity(basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())
                     holder.quantityTextView.text = basketRepository.getBasketItem(
-                        basketItem.getProductId())?.getQuantity().toString()
+                        basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity().toString()
                     holder.quantityTextView.setTextColor(Color.BLACK)
                 }
                 if (it1 <= 1) {
-                    basketRepository.removeBasketItem(basketItem.getProductId())
+                    basketRepository.removeBasketItem(basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())
                     val removedItemPosition = holder.adapterPosition
                     basketList.removeAt(removedItemPosition)
                     notifyItemRemoved(removedItemPosition)
@@ -108,7 +110,7 @@ class BasketAdapter(
         }
 
         holder.addImageView.setOnClickListener {
-            val basketItem = basketRepository.getBasketItem(basketItem.getProductId())
+            val basketItem = basketRepository.getBasketItem(basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())
 
             basketItem?.let { item ->
                 val currentQuantity = item.getQuantity()
@@ -120,9 +122,9 @@ class BasketAdapter(
                     holder.quantityTextView.text = currentQuantity.toString()
                     holder.quantityTextView.setTextColor(Color.RED)
                 } else if (currentQuantity > 0 && currentQuantity < productStock) {
-                    basketRepository.incrementQuantity(basketItem.getProductId())
+                    basketRepository.incrementQuantity(basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())
                     holder.quantityTextView.text = basketRepository.getBasketItem(
-                        basketItem.getProductId())?.getQuantity().toString()
+                        basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity().toString()
                     holder.quantityTextView.setTextColor(Color.BLACK)
                 }
             }

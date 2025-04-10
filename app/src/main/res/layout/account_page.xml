@@ -58,7 +58,7 @@
             android:autofillHints="name" />
 
         <Button
-            android:id="@+id/payButton"
+            android:id="@+id/updateButton"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="@string/update"
@@ -66,6 +66,148 @@
             android:textColor="@color/white"
             android:backgroundTint="#FF5555"
             android:layout_marginTop="32dp" />
+
+        <RelativeLayout
+            android:id="@+id/order_history_layout"
+            android:layout_width="match_parent"
+            android:layout_marginTop="32dp"
+            android:paddingBottom="28dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/order_history_background">
+
+            <TextView
+                android:id="@+id/termsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/order_history"
+                android:textStyle="bold"
+                android:letterSpacing="0.03"
+                android:paddingVertical="12dp"
+                android:layout_marginStart="32dp"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginTop="2dp"
+                android:textSize="32sp"
+                android:layout_marginHorizontal="32dp"
+                android:layout_alignEnd="@+id/termsText"
+                android:textColor="#FFFFFF"
+                android:text="@string/arrow"/>
+
+            <RelativeLayout
+                android:id="@+id/recent_order_layout"
+                android:layout_width="match_parent"
+                android:layout_marginTop="48dp"
+                android:layout_marginHorizontal="28dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/grey_background">
+
+                <TextView
+                    android:id="@+id/recent_order"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:paddingVertical="12dp"
+                    android:textSize="14sp"
+                    android:layout_marginHorizontal="24dp"
+                    android:textColor="#FFFFFF"
+                    android:text="@string/your_most_recent_order"/>
+
+                <TextView
+                    android:id="@+id/order_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:paddingBottom="12dp"
+                    android:textSize="14sp"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_below="@id/recent_order"
+                    android:textColor="#FFFFFF"
+                    android:text="@string/order_number"/>
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:paddingBottom="12dp"
+                    android:textSize="14sp"
+                    android:layout_below="@+id/order_number"
+                    android:layout_marginHorizontal="24dp"
+                    android:textColor="#FFFFFF"
+                    android:text="@string/date"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_marginTop="52dp"
+                    android:textSize="32sp"
+                    android:layout_alignEnd="@+id/date"
+                    android:textColor="#FFFFFF"
+                    android:text="@string/arrow"/>
+
+                <TextView
+                    android:id="@+id/total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:paddingBottom="12dp"
+                    android:layout_below="@+id/date"
+                    android:textSize="14sp"
+                    android:layout_marginHorizontal="24dp"
+                    android:textColor="#FFFFFF"
+                    android:text="@string/total"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/logoutPlaceholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/log_out"
+            android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="12dp"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/log_out"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:backgroundTint="#FF5555"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/deletePlaceholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_account"
+            android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="12dp"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/delete_account"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:backgroundTint="#FF5555"
+            android:layout_marginTop="16dp" />
 
     </LinearLayout>
 

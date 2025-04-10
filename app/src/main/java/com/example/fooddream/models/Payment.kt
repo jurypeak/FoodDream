@@ -1,11 +1,10 @@
 package com.example.fooddream.models
 
-import java.util.Date
-
 class Payment(
     private var paymentId: Int,
     private var orderId: Int,
     private var paymentMethod: String,
+    private var paymentDate: String,
     private var amount: Double
 ) {
     // Getters
@@ -13,6 +12,7 @@ class Payment(
     fun getOrderId(): Int = orderId
     fun getPaymentMethod(): String = paymentMethod
     fun getAmount(): Double = amount
+    fun getPaymentDate(): String = paymentDate
 
     // Setters
     fun setPaymentId(newId: Int) {
@@ -27,5 +27,8 @@ class Payment(
     }
     fun setAmount(newAmount: Double) {
         amount = newAmount
+    }
+    fun setPaymentDate(newDate: String) {
+        paymentDate = newDate
     }
 }

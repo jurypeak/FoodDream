@@ -20,9 +20,8 @@ class OrderController(view: AppCompatActivity) {
         lName = "",
         email = "",
         accountId = 0,
-        guestId = 0,
         orderId = 0,
-        products = mutableListOf()
+        orderDate = "",
     )
     private val addressModel = Address(
         addressId = 0,
@@ -35,10 +34,12 @@ class OrderController(view: AppCompatActivity) {
         paymentId = 0,
         orderId = 0,
         paymentMethod = "",
+        paymentDate = "",
         amount = 0.00
     )
 
     private val basketRepository = BasketRepository(view)
+    private val customerRepository = CustomerRepository(view)
     private val orderManager = OrderManager(view, CustomerRepository(view))
     private val notification = Notification()
 
@@ -81,7 +82,7 @@ class OrderController(view: AppCompatActivity) {
                 addressModel.setPostcode(postcode)
 
                 paymentModel.setPaymentMethod(payment)
-                paymentModel.setAmount(basketRepository.getBasketTotalPrice())
+                paymentModel.setAmount(basketRepository.getBasketTotalPrice(customerRepository.getCustomer()?.getAccountId()))
 
                 orderManager.handleOrder(
                     email,

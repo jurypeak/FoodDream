@@ -5,12 +5,24 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.messengers.Errors
+import com.example.fooddream.messengers.Notification
+import com.example.fooddream.models.Address
+import com.example.fooddream.models.Order
+import com.example.fooddream.models.OrderItem
+import com.example.fooddream.models.Payment
+import com.example.fooddream.repositories.AddressRepository
 import com.example.fooddream.repositories.BasketRepository
+import com.example.fooddream.repositories.OrderItemRepository
+import com.example.fooddream.repositories.OrderRepository
+import com.example.fooddream.repositories.PaymentRepository
 import com.example.fooddream.views.CustomerCatalogView
+import org.json.JSONException
 import org.json.JSONObject
+import java.lang.Exception
 
 class OrderManager(
     private val view: AppCompatActivity,
@@ -18,7 +30,7 @@ class OrderManager(
 ) {
     private val basketRepository = BasketRepository(view)
     private val navigationController = NavigationController(view)
-    private var notification = com.example.fooddream.messengers.Notification()
+    private var notification = Notification()
     private var orderId = 0
 
     fun handleOrder(
@@ -87,7 +99,7 @@ class OrderManager(
         requestQueue: RequestQueue,
         url: String,
     ) {
-        for (basketItem in basketRepository.getAllBasketItems()) {
+        for (basketItem in basketRepository.getAllBasketItems(customerRepository.getCustomer()?.getAccountId())) {
             try {
                 val jsonObject = JSONObject().apply {
                     put("orderId", orderId)
@@ -161,7 +173,7 @@ class OrderManager(
         try {
             val jsonObject = JSONObject().apply {
                 put("paymentMethod", paymentMethod)
-                put("amount", basketRepository.getBasketTotalPrice())
+                put("amount", basketRepository.getBasketTotalPrice(customerRepository.getCustomer()?.getAccountId()))
                 put("orderId", orderId)
             }
             val jsonObjectRequest = JsonObjectRequest(
@@ -184,4 +196,124 @@ class OrderManager(
             Log.d("Order Error", "$error")
         }
     }
+
+    fun getOrders(
+        requestQueue: RequestQueue,
+        url: String,
+        accountId: Int?,
+    ) {
+        try {
+            val jsonArrayRequest = JsonArrayRequest(
+                Request.Method.GET, url, null,
+                { response ->
+                    try {
+                        val orderRepository = OrderRepository(view)
+                        val orderItemRepository = OrderItemRepository(view)
+                        val addressRepository = AddressRepository(view)
+                        val paymentRepository = PaymentRepository(view)
+
+                        for (i in 0 until response.length()) {
+                            val orderJson = response.getJSONObject(i)
+
+                            val orderId = orderJson.getInt("id")
+                            val orderAccountId = orderJson.getInt("accountId")
+                            val orderFName = orderJson.getString("fName")
+                            val orderLName = orderJson.getString("lName")
+                            val orderEmail = orderJson.getString("email")
+                            val orderDate = orderJson.getString("date")
+
+                            val order = Order(
+                                orderFName,
+                                orderLName,
+                                orderEmail,
+                                orderAccountId,
+                                orderId,
+                                orderDate
+                            )
+
+                            val orderItemsArray = orderJson.getJSONArray("orderItems")
+                            val orderItems = ArrayList<OrderItem>()
+
+                            for (j in 0 until orderItemsArray.length()) {
+                                val orderItemJson = orderItemsArray.getJSONObject(j)
+
+                                val orderItemsId = orderItemJson.getInt("id")
+                                val productId = orderItemJson.getInt("productId")
+                                val orderItemQuantity = orderItemJson.getInt("quantity")
+                                val orderItemPrice = orderItemJson.getDouble("price")
+                                val orderItemName = orderItemJson.getString("itemName")
+
+                                orderItems.add(
+                                    OrderItem(
+                                        orderItemsId,
+                                        productId,
+                                        orderId,
+                                        orderItemQuantity,
+                                        orderItemPrice,
+                                        orderItemName
+                                    )
+                                )
+                            }
+
+                            val payments = ArrayList<Payment>()
+                            if (!orderJson.isNull("payment")) {
+                                val paymentJson = orderJson.getJSONObject("payment")
+
+                                val paymentId = paymentJson.getInt("id")
+                                val paymentMethod = paymentJson.getString("paymentMethod")
+                                val paymentDate = paymentJson.getString("paymentDate")
+                                val paymentAmount = paymentJson.getDouble("amount")
+
+                                payments.add(
+                                    Payment(
+                                        paymentId,
+                                        orderId,
+                                        paymentMethod,
+                                        paymentDate,
+                                        paymentAmount
+                                    )
+                                )
+                            }
+
+                            val addresses = mutableListOf<Address>()
+                            if (!orderJson.isNull("address")) {
+                                val addressJson = orderJson.getJSONObject("address")
+
+                                val addressId = addressJson.getInt("id")
+                                val addressStreet = addressJson.getString("street")
+                                val addressTown = addressJson.getString("town")
+                                val addressPostcode = addressJson.getString("postcode")
+
+                                addresses.add(
+                                    Address(
+                                        addressId,
+                                        orderId,
+                                        addressStreet,
+                                        addressPostcode,
+                                        addressTown
+                                    )
+                                )
+                            }
+
+                            if (orderAccountId == accountId) {
+                                orderRepository.saveOrder(accountId, order)
+                                orderItemRepository.saveOrderItem(orderId, orderItems)
+                                addressRepository.saveAddresses(orderId, addresses)
+                                paymentRepository.savePayments(orderId, payments)
+                            }
+                        }
+                    } catch (e: JSONException) {
+                        Log.e("Volley Error", "JSON parsing error: $e")
+                    }
+                },
+                { error ->
+                    Log.e("Volley Error", "Error: ${error.message}")
+                }
+            )
+            requestQueue.add(jsonArrayRequest)
+        } catch (error: Exception) {
+            Log.e("Product Fetch Error", "$error")
+        }
+    }
+
 }

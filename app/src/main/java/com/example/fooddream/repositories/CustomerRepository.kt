@@ -8,7 +8,6 @@ import com.example.fooddream.messengers.Notification
 
 class CustomerRepository(private var view: AppCompatActivity) {
 
-    private var notification = Notification()
     private val sharedPreferences: SharedPreferences =
         view.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
@@ -28,6 +27,28 @@ class CustomerRepository(private var view: AppCompatActivity) {
             gson.fromJson(customerJson, Customer::class.java)
         } else {
             null
+        }
+    }
+
+    fun deleteCustomer() {
+        sharedPreferences.edit() {
+            remove("customer_key")
+        }
+    }
+
+    fun updateCustomer(fName: String, lName: String, email: String, password: String) {
+        val customer = getCustomer()
+        if (customer != null) {
+            customer.setFName(fName)
+            customer.setLName(lName)
+            customer.setEmail(email)
+            customer.setPassword(password)
+
+            val updatedJson = gson.toJson(customer)
+            sharedPreferences.edit {
+                putString("customer_key", updatedJson)
+            }
+        } else {
         }
     }
 }

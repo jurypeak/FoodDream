@@ -35,6 +35,9 @@ android {
         var addressURL = localProperties.getProperty("URL_ADDRESS", "defaultAddressURL")
         var paymentURL = localProperties.getProperty("URL_PAYMENT", "defaultPaymentURL")
         var orderItemsURL = localProperties.getProperty("URL_ORDER_ITEMS", "defaultOrderItemsURL")
+        var updateAccountURL = localProperties.getProperty("URL_UPDATE_ACCOUNT", "defaultUpdateAccountURL")
+        var deleteAccountURL = localProperties.getProperty("URL_DELETE_ACCOUNT", "defaultDeleteAccountURL")
+        var getOrdersURL = localProperties.getProperty("URL_GET_ORDERS", "defaultGetOrdersURL")
 
         // Inject these values into BuildConfig
         buildConfigField("String", "URL_LOGIN", "\"$loginURL\"")
@@ -48,6 +51,9 @@ android {
         buildConfigField("String", "URL_ADDRESS", "\"$addressURL\"")
         buildConfigField("String", "URL_PAYMENT", "\"$paymentURL\"")
         buildConfigField("String", "URL_ORDER_ITEMS", "\"$orderItemsURL\"")
+        buildConfigField("String", "URL_UPDATE_ACCOUNT", "\"$updateAccountURL\"")
+        buildConfigField("String", "URL_DELETE_ACCOUNT", "\"$deleteAccountURL\"")
+        buildConfigField("String", "URL_GET_ORDERS", "\"$getOrdersURL\"")
 
         applicationId = "com.example.fooddream"
         minSdk = 24

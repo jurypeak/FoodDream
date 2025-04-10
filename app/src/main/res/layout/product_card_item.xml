@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginTop="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="30dp"
+    android:focusable="false"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="#1f1f1f"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/order_item_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="14dp"
+            android:paddingVertical="12dp"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:layout_marginHorizontal="24dp" />
+
+        <TextView
+            android:id="@+id/order_item_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:paddingVertical="12dp"
+            android:textSize="14sp"
+            android:layout_marginStart="128dp"
+            android:layout_marginEnd="64dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="#FFFFFF"
+            android:text="@string/order_item_name"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginTop="34dp"
+            android:textSize="32sp"
+            android:layout_alignEnd="@+id/order_item_quantity"
+            android:textColor="#FFFFFF"
+            android:layout_marginHorizontal="24dp"
+            android:text="@string/arrow"/>
+
+        <TextView
+            android:id="@+id/order_item_quantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:paddingBottom="12dp"
+            android:textSize="14sp"
+            android:layout_below="@+id/order_item_name"
+            android:layout_marginStart="128dp"
+            android:textColor="#FFFFFF"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="@string/quantity"/>
+
+        <TextView
+            android:id="@+id/order_item_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:paddingBottom="12dp"
+            android:layout_below="@+id/order_item_quantity"
+            android:textSize="14sp"
+            android:layout_marginStart="128dp"
+            android:layout_marginEnd="64dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="#FFFFFF"
+            android:text="@string/price"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

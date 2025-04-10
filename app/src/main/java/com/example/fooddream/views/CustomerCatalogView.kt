@@ -1,5 +1,6 @@
 package com.example.fooddream.views
 
+import CustomerRepository
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,12 @@ import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.controllers.ProductController
 import com.example.fooddream.controllers.SessionController
 import com.example.fooddream.models.Product
+import com.example.fooddream.repositories.AddressRepository
+import com.example.fooddream.repositories.PaymentRepository
+import com.example.fooddream.utils.OrderManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CustomerCatalogView : AppCompatActivity() {
 
@@ -25,6 +32,8 @@ class CustomerCatalogView : AppCompatActivity() {
     private lateinit var sessionController: SessionController
     private lateinit var productController: ProductController
     private lateinit var navigationController: NavigationController
+    private lateinit var orderManager: OrderManager
+    private lateinit var customerRepository: CustomerRepository
     private lateinit var homeButton: ImageView
     private lateinit var searchButton: ImageView
     private lateinit var basketButton: ImageView
@@ -35,7 +44,25 @@ class CustomerCatalogView : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.customer_catalog)
 
-        init()
+        // https://medium.com/@rushabhprajapati20/mastering-kotlin-coroutines-in-android-8457a6e5dd12
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val accountId = customerRepository.getCustomer()?.getAccountId()
+                if (accountId != null) {
+                    orderManager.getOrders(
+                        Volley.newRequestQueue(this@CustomerCatalogView),
+                        BuildConfig.URL_GET_ORDERS,
+                        accountId
+                    )
+                } else {
+                    Log.e("CustomerCatalogView", "Account ID is missing.")
+                }
+                init()
+            } catch (e: Exception) {
+                Log.e("CustomerCatalogView", "Error fetching orders: $e")
+                init()
+            }
+        }
     }
 
     private fun init() {
@@ -161,15 +188,15 @@ class CustomerCatalogView : AppCompatActivity() {
         }
     }
 
-//    override fun onPause() {
-//        super.onPause()
-//        sessionController.clearUserSession()
-//        Log.d("LoginView", "Session cleared on pause.")
-//    }
-//
-//    override fun onStop() {
-//        super.onStop()
-//        sessionController.clearUserSession()
-//        Log.d("LoginView", "Session cleared on stop.")
-//    }
+    override fun onPause() {
+        super.onPause()
+        sessionController.clearUserSession()
+        Log.d("LoginView", "Session cleared on pause.")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        sessionController.clearUserSession()
+        Log.d("LoginView", "Session cleared on stop.")
+    }
 }

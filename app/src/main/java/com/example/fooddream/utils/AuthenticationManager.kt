@@ -115,6 +115,9 @@ class AuthenticationManager(
                                 putString("typeView", "Login")
                             }
                             customer.setAccountId(response.optInt("id"))
+                            customer.setEmail(response.optString("email", ""))
+                            customer.setFName(response.optString("CustomerFName", ""))
+                            customer.setLName(response.optString("CustomerLName", ""))
                             customerRepository.saveCustomer(customer)
                             val verifyEmailFragment = VerifyEmailView()
                             verifyEmailFragment.arguments = bundle

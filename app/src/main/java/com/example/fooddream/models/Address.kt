@@ -18,7 +18,6 @@ class Address(
     fun setAddressId(newId: Int) {
         addressId = newId
     }
-
     fun setOrderId(newId: Int) {
         orderId = newId
     }

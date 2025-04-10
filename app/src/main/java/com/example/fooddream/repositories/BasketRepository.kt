@@ -17,15 +17,15 @@ class BasketRepository(private var view: AppCompatActivity) {
     private val sharedPreferences: SharedPreferences = view.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
-    fun saveBasketItem(basketItem: BasketItem) {
+    fun saveBasketItem(basketItem: BasketItem, accountId: Int?, productId: Int) {
         val basketItemJson = gson.toJson(basketItem)
         sharedPreferences.edit() {
-            putString("basketItem_${basketItem.getProductId()}", basketItemJson)
+            putString("basketItem_${accountId}-${productId}", basketItemJson)
         }
     }
 
-    fun getBasketItem(productId: Int): BasketItem? {
-        val basketItemJson = sharedPreferences.getString("basketItem_${productId}", null)
+    fun getBasketItem(productId: Int, accountId: Int?): BasketItem? {
+        val basketItemJson = sharedPreferences.getString("basketItem_${accountId}-${productId}", null)
         return if (basketItemJson != null) {
             gson.fromJson(basketItemJson, BasketItem::class.java)
         } else {
@@ -33,24 +33,24 @@ class BasketRepository(private var view: AppCompatActivity) {
         }
     }
 
-    fun getBasketTotalPrice(): Double {
+    fun getBasketTotalPrice(accountId: Int?): Double {
         var basketTotalPrice = 0.00
-        for (basketItem in getAllBasketItems()) {
+        for (basketItem in getAllBasketItems(accountId)) {
             basketTotalPrice += basketItem.getPrice() * basketItem.getQuantity()
         }
         var roundedTotal = BigDecimal(basketTotalPrice).setScale(2, RoundingMode.HALF_UP).toDouble()
         return roundedTotal
     }
 
-    fun getBasketSize(): Int {
-        return getAllBasketItems().size
+    fun getBasketSize(accountId: Int?): Int {
+        return getAllBasketItems(accountId).size
     }
 
-    fun getAllBasketItems(): ArrayList<BasketItem> {
+    fun getAllBasketItems(accountId: Int?): ArrayList<BasketItem> {
         val allBasketItems = ArrayList<BasketItem>()
         val keys = sharedPreferences.all.keys
         for (key in keys) {
-            if (key.startsWith("basketItem_")) {
+            if (key.startsWith("basketItem_$accountId-")) {
                 val basketItemJson = sharedPreferences.getString(key, null)
                 if (basketItemJson != null) {
                     val basketItem = gson.fromJson(basketItemJson, BasketItem::class.java)
@@ -61,39 +61,45 @@ class BasketRepository(private var view: AppCompatActivity) {
         return allBasketItems
     }
 
-    fun updateQuantity(productId: Int, newQuantity: Int) {
-        val basketItem = getBasketItem(productId)
+    fun updateQuantity(productId: Int, accountId: Int?, newQuantity: Int) {
+        val basketItem = getBasketItem(productId, accountId)
         if (basketItem != null) {
             basketItem.setQuantity(newQuantity)
-            saveBasketItem(basketItem)
+            saveBasketItem(basketItem, accountId, productId)
         } else {
             Log.e("BasketItemRepository", "Product not found in basket")
         }
     }
 
-    fun incrementQuantity(productId: Int) {
-        val basketItem = getBasketItem(productId)
+    fun clearBasket() {
+        sharedPreferences.edit() {
+            clear()
+        }
+    }
+
+    fun incrementQuantity(productId: Int, accountId: Int?) {
+        val basketItem = getBasketItem(productId, accountId)
         if (basketItem != null) {
             basketItem.setQuantity(basketItem.getQuantity() + 1)
-            saveBasketItem(basketItem)
+            saveBasketItem(basketItem, accountId, productId)
         } else {
             Log.e("BasketItemRepository", "Product not found in basket")
         }
     }
 
-    fun decrementQuantity(productId: Int) {
-        val basketItem = getBasketItem(productId)
+    fun decrementQuantity(productId: Int, accountId: Int?) {
+        val basketItem = getBasketItem(productId, accountId)
         if (basketItem != null) {
             basketItem.setQuantity(basketItem.getQuantity() - 1)
-            saveBasketItem(basketItem)
+            saveBasketItem(basketItem, accountId, productId)
         } else {
             Log.e("BasketItemRepository", "Product not found in basket")
         }
     }
 
-    fun removeBasketItem(productId: Int) {
+    fun removeBasketItem(productId: Int, accountId: Int?) {
         sharedPreferences.edit() {
-            remove("basketItem_$productId")
+            remove("basketItem_$accountId-$productId")
         }
     }
 }

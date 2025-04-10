@@ -1,5 +1,6 @@
 package com.example.fooddream.views
 
+import CustomerRepository
 import android.icu.text.NumberFormat
 import androidx.fragment.app.Fragment
 import android.os.Bundle
@@ -24,6 +25,7 @@ class CheckoutView : Fragment() {
 
     private lateinit var navigationController: NavigationController
     private lateinit var orderController: OrderController
+    private lateinit var customerRepository: CustomerRepository
     private lateinit var basketRepository: BasketRepository
     private lateinit var autoCompleteTextView: AutoCompleteTextView
     private lateinit var itemCountTextView: TextView
@@ -53,6 +55,7 @@ class CheckoutView : Fragment() {
         navigationController = NavigationController(requireActivity() as AppCompatActivity)
         orderController = OrderController(requireActivity() as AppCompatActivity)
         basketRepository = BasketRepository(requireActivity() as AppCompatActivity)
+        customerRepository = CustomerRepository(requireActivity() as AppCompatActivity)
 
         init(view)
 
@@ -70,9 +73,9 @@ class CheckoutView : Fragment() {
 
     private fun initializeViewComponents(view: View) {
         itemCountTextView = view.findViewById(R.id.itemQuantityHeader)
-        itemCountTextView.text = "${basketRepository.getBasketSize()} Items"
+        itemCountTextView.text = "${basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId())} Items"
         totalPriceTextView = view.findViewById(R.id.priceText)
-        totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice())
+        totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice(customerRepository.getCustomer()?.getAccountId()))
         paymentItem = ""
         emailView = view.findViewById(R.id.email_checkout)
         nameView = view.findViewById(R.id.name_checkout)

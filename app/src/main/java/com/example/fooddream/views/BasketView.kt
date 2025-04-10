@@ -1,5 +1,6 @@
 package com.example.fooddream.views
 
+import CustomerRepository
 import android.annotation.SuppressLint
 import android.icu.text.NumberFormat
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import com.example.fooddream.R
 import com.example.fooddream.adapters.BasketAdapter
 import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.controllers.SessionController
+import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.BasketItem
 import com.example.fooddream.repositories.BasketRepository
 import java.util.Locale
@@ -29,6 +31,8 @@ class BasketView : Fragment() {
     private lateinit var navigationController: NavigationController
     private lateinit var sessionController: SessionController
     private lateinit var basketRepository: BasketRepository
+    private lateinit var customerRepository: CustomerRepository
+    private lateinit var notification: Notification
     private lateinit var itemCountTextView: TextView
     private lateinit var totalPriceTextView: TextView
     private lateinit var checkoutButton: Button
@@ -47,7 +51,9 @@ class BasketView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navigationController = NavigationController(requireActivity() as AppCompatActivity)
+        customerRepository = CustomerRepository(requireActivity() as AppCompatActivity)
         basketRepository = BasketRepository(requireActivity() as AppCompatActivity)
+        notification = Notification()
 
         init(view)
 
@@ -96,27 +102,34 @@ class BasketView : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun addDataToList() {
-        basketList.addAll(basketRepository.getAllBasketItems())
+        basketList.addAll(basketRepository.getAllBasketItems(customerRepository.getCustomer()?.getAccountId()))
         basketAdapter.notifyDataSetChanged()
     }
 
     @SuppressLint("SetTextI18n")
     fun updateHeaderInfo() {
-        itemCountTextView.text = "${basketRepository.getBasketSize()} Items"
-        totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice())
+        itemCountTextView.text = "${basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId())} Items"
+        totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice(customerRepository.getCustomer()?.getAccountId()))
     }
 
     private fun initializeViewComponents(view: View) {
         itemCountTextView = view.findViewById(R.id.itemQuantityHeader)
-        itemCountTextView.text = "Basket size: ${basketRepository.getBasketSize()}"
+        itemCountTextView.text = "Basket size: ${basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId())}"
         totalPriceTextView = view.findViewById(R.id.priceText)
-        totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice())
+        totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice(customerRepository.getCustomer()?.getAccountId()))
         checkoutButton = view.findViewById(R.id.checkoutButton)
     }
 
     private fun setListeners() {
         checkoutButton.setOnClickListener {
-            navigationController.navigateToFragment(CheckoutView(), R.id.fragment_container)
+            if (basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId()) == 0) {
+                notification.sendNotification("Basket is empty.", requireActivity() as AppCompatActivity)
+                notification.sendNotification("Please add items to your basket before proceeding to checkout.", requireActivity() as AppCompatActivity)
+                return@setOnClickListener
+            }
+            else {
+                navigationController.navigateToFragment(CheckoutView(), R.id.fragment_container)
+            }
         }
     }
 }
