@@ -19,8 +19,8 @@ class OrderRepository(private var view: AppCompatActivity) {
         }
     }
 
-    fun getOrder(orderId: Int): Order? {
-        val orderJson = sharedPreferences.getString("order_$orderId", null)
+    fun getOrder(orderId: Int, accountId: Int): Order? {
+        val orderJson = sharedPreferences.getString("order_${accountId}_${orderId}", null)
         return if (orderJson != null) {
             gson.fromJson(orderJson, Order::class.java)
         } else {
@@ -37,23 +37,6 @@ class OrderRepository(private var view: AppCompatActivity) {
                 if (orderJson != null) {
                     val order = gson.fromJson(orderJson, Order::class.java)
                     allOrders.add(order)
-                }
-            }
-        }
-        return allOrders
-    }
-
-    fun getOrdersByAccountId(accountId: Int): List<Order> {
-        val allOrders = ArrayList<Order>()
-        val keys = sharedPreferences.all.keys
-        for (key in keys) {
-            if (key.startsWith("order_")) {
-                val orderJson = sharedPreferences.getString(key, null)
-                if (orderJson != null) {
-                    val order = gson.fromJson(orderJson, Order::class.java)
-                    if (order.getAccountId() == accountId) {
-                        allOrders.add(order)
-                    }
                 }
             }
         }

@@ -38,6 +38,7 @@ class CustomerCatalogView : AppCompatActivity() {
     private lateinit var searchButton: ImageView
     private lateinit var basketButton: ImageView
     private lateinit var accountButton: ImageView
+    private lateinit var threeDotsButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,6 +140,7 @@ class CustomerCatalogView : AppCompatActivity() {
         searchButton = findViewById(R.id.search_button)
         basketButton = findViewById(R.id.basket_button)
         accountButton = findViewById(R.id.account_button)
+        threeDotsButton = findViewById(R.id.dots_button)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -148,6 +150,7 @@ class CustomerCatalogView : AppCompatActivity() {
             basketButton.setImageResource(R.drawable.basket)
             accountButton.setImageResource(R.drawable.user)
             searchButton.setImageResource(R.drawable.search)
+            threeDotsButton.setImageResource(R.drawable.dots)
             navigationController.navigateToActivity(CustomerCatalogView::class.java)
         }
         searchButton.setOnClickListener {
@@ -155,6 +158,7 @@ class CustomerCatalogView : AppCompatActivity() {
             basketButton.setImageResource(R.drawable.basket)
             accountButton.setImageResource(R.drawable.user)
             homeButton.setImageResource(R.drawable.house)
+            threeDotsButton.setImageResource(R.drawable.dots)
             productList.clear()
             productAdapter.notifyDataSetChanged()
             navigationController.navigateToFragment(
@@ -167,6 +171,7 @@ class CustomerCatalogView : AppCompatActivity() {
             searchButton.setImageResource(R.drawable.search)
             accountButton.setImageResource(R.drawable.user)
             homeButton.setImageResource(R.drawable.house)
+            threeDotsButton.setImageResource(R.drawable.dots)
             productList.clear()
             productAdapter.notifyDataSetChanged()
             navigationController.navigateToFragment(
@@ -179,10 +184,23 @@ class CustomerCatalogView : AppCompatActivity() {
             searchButton.setImageResource(R.drawable.search)
             basketButton.setImageResource(R.drawable.basket)
             homeButton.setImageResource(R.drawable.house)
+            threeDotsButton.setImageResource(R.drawable.dots)
             productList.clear()
             productAdapter.notifyDataSetChanged()
             navigationController.navigateToFragment(
                 AccountView(),
+                R.id.fragment_container
+            )
+        }
+        threeDotsButton.setOnClickListener {
+            threeDotsButton.setImageResource(R.drawable.dots_red)
+            searchButton.setImageResource(R.drawable.search)
+            basketButton.setImageResource(R.drawable.basket)
+            accountButton.setImageResource(R.drawable.user)
+            homeButton.setImageResource(R.drawable.house)
+            productList.clear()
+            navigationController.navigateToFragment(
+                ThreeDotsView(),
                 R.id.fragment_container
             )
         }

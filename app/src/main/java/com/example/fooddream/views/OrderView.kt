@@ -118,12 +118,14 @@ class OrderView : Fragment() {
         dateTextView = view.findViewById(R.id.date_order)
         totalTextView = view.findViewById(R.id.total_order)
 
-        val order = orderRepository.getOrder(orderId)
+        val order = orderRepository.getOrder(orderId, customerRepository.getCustomer()?.getAccountId() ?: 0)
         val address = addressRepository.getAddress(orderId)
         val payment = paymentRepository.getPayment(orderId)
 
+        Log.d("OrderView", "${order?.getEmail()}")
+
         emailTextView.text = order?.getEmail() ?: ""
-        //nameTextView.text = "${order?.getFName() ?: ""} ${order?.getLName() ?: ""}"
+        nameTextView.text = "${order?.getFName() ?: ""} ${order?.getLName() ?: ""}"
         addressTextView.text = address?.getStreet() ?: ""
         postcodeTextView.text = address?.getPostcode() ?: ""
         townTextView.text = address?.getTown() ?: ""
