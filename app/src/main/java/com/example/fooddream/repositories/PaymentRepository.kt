@@ -2,6 +2,7 @@ package com.example.fooddream.repositories
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import com.example.fooddream.models.Payment
@@ -14,37 +15,53 @@ class PaymentRepository (private var view: AppCompatActivity){
     private val gson = Gson()
 
     fun savePayments(orderId: Int, payments: ArrayList<Payment>) {
-        val paymentJson = gson.toJson(payments)
-        sharedPreferences.edit() {
-            putString("payments_$orderId", paymentJson)
+        try {
+            val paymentJson = gson.toJson(payments)
+            sharedPreferences.edit() {
+                putString("payments_$orderId", paymentJson)
+            }
+        } catch (e: Exception) {
+            Log.e("PaymentRepository", "Error saving payments: ${e.message}")
+            e.printStackTrace()
         }
     }
 
     fun getPayment(orderId: Int): Payment? {
-        val paymentJson = sharedPreferences.getString("payments_$orderId", null)
-        return if (!paymentJson.isNullOrEmpty()) {
-            val type = object : TypeToken<List<Payment>>() {}.type
-            val paymentList: List<Payment> = gson.fromJson(paymentJson, type)
-            paymentList.firstOrNull()
-        } else {
-            null
+        try {
+            val paymentJson = sharedPreferences.getString("payments_$orderId", null)
+            return if (paymentJson != null) {
+                val type = object : TypeToken<List<Payment>>() {}.type
+                val paymentList: List<Payment> = gson.fromJson(paymentJson, type)
+                paymentList.firstOrNull()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("PaymentRepository", "Error retrieving payment: ${e.message}")
+            e.printStackTrace()
+            return null
         }
     }
 
     fun getPayments(): ArrayList<Payment> {
-        val allPayments = ArrayList<Payment>()
-        val keys = sharedPreferences.all.keys
-        for (key in keys) {
-            if (key.startsWith("payments_")) {
-                val paymentJson = sharedPreferences.getString(key, null)
-                if (paymentJson != null) {
-                    val type = object : TypeToken<ArrayList<Payment>>() {}.type
-                    val payments: ArrayList<Payment> = gson.fromJson(paymentJson, type)
-                    allPayments.addAll(payments)
+        try {
+            val allPayments = ArrayList<Payment>()
+            val keys = sharedPreferences.all.keys
+            for (key in keys) {
+                if (key.startsWith("payments_")) {
+                    val paymentJson = sharedPreferences.getString(key, null)
+                    if (paymentJson != null) {
+                        val type = object : TypeToken<ArrayList<Payment>>() {}.type
+                        val payments: ArrayList<Payment> = gson.fromJson(paymentJson, type)
+                        allPayments.addAll(payments)
+                    }
                 }
             }
+            return allPayments
+        } catch (e: Exception) {
+            Log.e("PaymentRepository", "Error retrieving all payments: ${e.message}")
+            e.printStackTrace()
+            return ArrayList()
         }
-        return allPayments
     }
-
 }

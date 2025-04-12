@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
-import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.BasketItem
 import com.google.gson.Gson
 import java.math.BigDecimal
@@ -13,93 +12,146 @@ import java.math.RoundingMode
 
 class BasketRepository(private var view: AppCompatActivity) {
 
-    private var notification = Notification()
     private val sharedPreferences: SharedPreferences = view.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
     fun saveBasketItem(basketItem: BasketItem, accountId: Int?, productId: Int) {
-        val basketItemJson = gson.toJson(basketItem)
-        sharedPreferences.edit() {
-            putString("basketItem_${accountId}-${productId}", basketItemJson)
+        try {
+            val basketItemJson = gson.toJson(basketItem)
+            sharedPreferences.edit() {
+                putString("basketItem_${accountId}-${productId}", basketItemJson)
+            }
+        } catch (e: Exception) {
+            Log.e("BasketRepository", "Error saving basket item: ${e.message}")
+            e.printStackTrace()
         }
     }
 
     fun getBasketItem(productId: Int, accountId: Int?): BasketItem? {
-        val basketItemJson = sharedPreferences.getString("basketItem_${accountId}-${productId}", null)
-        return if (basketItemJson != null) {
-            gson.fromJson(basketItemJson, BasketItem::class.java)
-        } else {
-            null
+        try {
+            val basketItemJson = sharedPreferences.getString("basketItem_${accountId}-${productId}", null)
+            return if (basketItemJson != null) {
+                gson.fromJson(basketItemJson, BasketItem::class.java)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("BasketRepository", "Error retrieving basket item: ${e.message}")
+            e.printStackTrace()
+            return null
         }
     }
 
     fun getBasketTotalPrice(accountId: Int?): Double {
-        var basketTotalPrice = 0.00
-        for (basketItem in getAllBasketItems(accountId)) {
-            basketTotalPrice += basketItem.getPrice() * basketItem.getQuantity()
+        try {
+            var basketTotalPrice = 0.00
+            for (basketItem in getAllBasketItems(accountId)) {
+                basketTotalPrice += basketItem.getPrice() * basketItem.getQuantity()
+            }
+            var roundedTotal = BigDecimal(basketTotalPrice).setScale(2, RoundingMode.HALF_UP).toDouble()
+            return roundedTotal
+        } catch (e: Exception) {
+            Log.e("BasketRepository", "Error calculating basket total price: ${e.message}")
+            e.printStackTrace()
+            return 0.00
         }
-        var roundedTotal = BigDecimal(basketTotalPrice).setScale(2, RoundingMode.HALF_UP).toDouble()
-        return roundedTotal
     }
 
     fun getBasketSize(accountId: Int?): Int {
-        return getAllBasketItems(accountId).size
+        try {
+            return getAllBasketItems(accountId).size
+        } catch (e: Exception) {
+            Log.e("BasketRepository", "Error getting basket size: ${e.message}")
+            e.printStackTrace()
+            return 0
+        }
     }
 
     fun getAllBasketItems(accountId: Int?): ArrayList<BasketItem> {
-        val allBasketItems = ArrayList<BasketItem>()
-        val keys = sharedPreferences.all.keys
-        for (key in keys) {
-            if (key.startsWith("basketItem_$accountId-")) {
-                val basketItemJson = sharedPreferences.getString(key, null)
-                if (basketItemJson != null) {
-                    val basketItem = gson.fromJson(basketItemJson, BasketItem::class.java)
-                    allBasketItems.add(basketItem)
+        try {
+            val allBasketItems = ArrayList<BasketItem>()
+            val keys = sharedPreferences.all.keys
+            for (key in keys) {
+                if (key.startsWith("basketItem_$accountId-")) {
+                    val basketItemJson = sharedPreferences.getString(key, null)
+                    if (basketItemJson != null) {
+                        val basketItem = gson.fromJson(basketItemJson, BasketItem::class.java)
+                        allBasketItems.add(basketItem)
+                    }
                 }
             }
+            return allBasketItems
+        } catch (e: Exception) {
+            Log.e("BasketRepository", "Error retrieving all basket items: ${e.message}")
+            e.printStackTrace()
+            return ArrayList()
         }
-        return allBasketItems
     }
 
     fun updateQuantity(productId: Int, accountId: Int?, newQuantity: Int) {
-        val basketItem = getBasketItem(productId, accountId)
-        if (basketItem != null) {
-            basketItem.setQuantity(newQuantity)
-            saveBasketItem(basketItem, accountId, productId)
-        } else {
-            Log.e("BasketItemRepository", "Product not found in basket")
+        try {
+            val basketItem = getBasketItem(productId, accountId)
+            if (basketItem != null) {
+                basketItem.setQuantity(newQuantity)
+                saveBasketItem(basketItem, accountId, productId)
+            } else {
+                Log.e("BasketItemRepository", "Product not found in basket")
+            }
+        } catch (e: Exception) {
+            Log.e("BasketRepository", "Error updating quantity: ${e.message}")
+            e.printStackTrace()
         }
     }
 
     fun clearBasket() {
-        sharedPreferences.edit() {
-            clear()
+        try {
+            sharedPreferences.edit() {
+                clear()
+            }
+        } catch (e: Exception) {
+            Log.e("BasketRepository", "Error clearing basket: ${e.message}")
+            e.printStackTrace()
         }
     }
 
     fun incrementQuantity(productId: Int, accountId: Int?) {
-        val basketItem = getBasketItem(productId, accountId)
-        if (basketItem != null) {
-            basketItem.setQuantity(basketItem.getQuantity() + 1)
-            saveBasketItem(basketItem, accountId, productId)
-        } else {
-            Log.e("BasketItemRepository", "Product not found in basket")
+        try {
+            val basketItem = getBasketItem(productId, accountId)
+            if (basketItem != null) {
+                basketItem.setQuantity(basketItem.getQuantity() + 1)
+                saveBasketItem(basketItem, accountId, productId)
+            } else {
+                Log.e("BasketItemRepository", "Product not found in basket")
+            }
+        } catch (e: Exception) {
+            Log.e("BasketRepository", "Error incrementing quantity: ${e.message}")
+            e.printStackTrace()
         }
     }
 
     fun decrementQuantity(productId: Int, accountId: Int?) {
-        val basketItem = getBasketItem(productId, accountId)
-        if (basketItem != null) {
-            basketItem.setQuantity(basketItem.getQuantity() - 1)
-            saveBasketItem(basketItem, accountId, productId)
-        } else {
-            Log.e("BasketItemRepository", "Product not found in basket")
+        try {
+            val basketItem = getBasketItem(productId, accountId)
+            if (basketItem != null) {
+                basketItem.setQuantity(basketItem.getQuantity() - 1)
+                saveBasketItem(basketItem, accountId, productId)
+            } else {
+                Log.e("BasketItemRepository", "Product not found in basket or quantity is already 1")
+            }
+        } catch (e: Exception) {
+            Log.e("BasketRepository", "Error decrementing quantity: ${e.message}")
+            e.printStackTrace()
         }
     }
 
     fun removeBasketItem(productId: Int, accountId: Int?) {
-        sharedPreferences.edit() {
-            remove("basketItem_$accountId-$productId")
+        try {
+            sharedPreferences.edit() {
+                remove("basketItem_${accountId}-${productId}")
+            }
+        } catch (e: Exception) {
+            Log.e("BasketRepository", "Error removing basket item: ${e.message}")
+            e.printStackTrace()
         }
     }
 }

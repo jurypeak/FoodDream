@@ -1,6 +1,7 @@
 package com.example.fooddream.views
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.example.fooddream.R
 import com.example.fooddream.BuildConfig
 import com.example.fooddream.controllers.CustomerController
 import com.example.fooddream.controllers.NavigationController
+import com.example.fooddream.messengers.Notification
 
 class ResetPasswordEmailView : Fragment() {
     private lateinit var exitButton: TextView
@@ -23,6 +25,7 @@ class ResetPasswordEmailView : Fragment() {
     private lateinit var customerSupportButton: ImageView
     private lateinit var customerController: CustomerController
     private lateinit var navigationController: NavigationController
+    private lateinit var notification: Notification
     private var urlUserGuide = BuildConfig.URL_USERGUIDE
 
     override fun onCreateView(
@@ -37,35 +40,50 @@ class ResetPasswordEmailView : Fragment() {
 
         customerController = CustomerController(requireActivity() as AppCompatActivity)
         navigationController = NavigationController(requireActivity() as AppCompatActivity)
+        notification = Notification()
 
+        init(view)
+    }
+
+    private fun init(view: View) {
         initializeViewComponents(view)
         setUpListeners()
-
     }
 
     private fun initializeViewComponents(view: View) {
-        exitButton = view.findViewById(R.id.exitPlaceholder)
-        userGuideButton = view.findViewById(R.id.helpIcon)
-        submitButton = view.findViewById(R.id.submit_button)
-        emailField = view.findViewById(R.id.enter_email)
-        customerSupportButton = view.findViewById(R.id.customerSupportIcon)
+        try {
+            exitButton = view.findViewById(R.id.exitPlaceholder)
+            userGuideButton = view.findViewById(R.id.helpIcon)
+            submitButton = view.findViewById(R.id.submit_button)
+            customerSupportButton = view.findViewById(R.id.customerSupportIcon)
+
+            emailField = view.findViewById(R.id.enter_email)
+        } catch (e: Exception) {
+            Log.e("ResetPasswordEmailView", "Error initializing components: ${e.message}")
+            notification.sendNotification("Error while loading reset password page.", requireActivity() as AppCompatActivity)
+        }
     }
 
     private fun setUpListeners() {
-        exitButton.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-        userGuideButton.setOnClickListener {
-            navigationController.navigateToUserGuide(urlUserGuide)
-        }
-        customerSupportButton.setOnClickListener {
-            navigationController.navigateToFragment(
-                CustomerSupportView(),
-                R.id.customer_support_fragment
-            )
-        }
-        submitButton.setOnClickListener {
-            customerController.handleResetPasswordEmailVerification(emailField)
+        try {
+            exitButton.setOnClickListener {
+                requireActivity().supportFragmentManager.popBackStack()
+            }
+            userGuideButton.setOnClickListener {
+                navigationController.navigateToUserGuide(urlUserGuide)
+            }
+            customerSupportButton.setOnClickListener {
+                navigationController.navigateToFragment(
+                    CustomerSupportView(),
+                    R.id.fragment_container
+                )
+            }
+            submitButton.setOnClickListener {
+                customerController.handleResetPasswordEmailVerification(emailField)
+            }
+        } catch (e: Exception) {
+            Log.e("ResetPasswordEmailView", "Error setting up listeners: ${e.message}")
+            notification.sendNotification("Error while loading reset password page.", requireActivity() as AppCompatActivity)
         }
     }
 }

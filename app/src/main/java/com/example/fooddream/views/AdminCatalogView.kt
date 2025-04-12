@@ -1,6 +1,5 @@
 package com.example.fooddream.views
 
-import CustomerRepository
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
@@ -12,62 +11,33 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.Volley
 import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
-import com.example.fooddream.adapters.CustomerCatalogAdapter
+import com.example.fooddream.adapters.AdminCatalogAdapter
 import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.controllers.ProductController
 import com.example.fooddream.controllers.SessionController
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Product
-import com.example.fooddream.utils.OrderManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class CustomerCatalogView : AppCompatActivity() {
+class AdminCatalogView : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var productList: ArrayList<Product>
-    private lateinit var productAdapter: CustomerCatalogAdapter
+    private lateinit var productAdapter: AdminCatalogAdapter
     private lateinit var sessionController: SessionController
     private lateinit var productController: ProductController
-    private lateinit var notification: Notification
     private lateinit var navigationController: NavigationController
-    private lateinit var orderManager: OrderManager
-    private lateinit var customerRepository: CustomerRepository
+    private lateinit var notification: Notification
     private lateinit var homeButton: ImageView
     private lateinit var searchButton: ImageView
-    private lateinit var basketButton: ImageView
-    private lateinit var accountButton: ImageView
+    private lateinit var plusButton: ImageView
     private lateinit var threeDotsButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.customer_catalog_page)
+        setContentView(R.layout.admin_catalog_page)
 
-        notification = Notification()
-
-        // https://medium.com/@rushabhprajapati20/mastering-kotlin-coroutines-in-android-8457a6e5dd12
-        // Not working
-        CoroutineScope(Dispatchers.Main).launch {
-            try {
-                val accountId = customerRepository.getCustomer()?.getAccountId()
-                if (accountId != null) {
-                    orderManager.getOrders(
-                        Volley.newRequestQueue(this@CustomerCatalogView),
-                        BuildConfig.URL_GET_ORDERS,
-                        accountId
-                    )
-                } else {
-                    Log.e("CustomerCatalogView", "Account ID is missing.")
-                }
-                init()
-            } catch (e: Exception) {
-                notification.sendNotification("Error failed to fetch orders.", this@CustomerCatalogView)
-                Log.e("CustomerCatalogView", "Error fetching orders: $e")
-                init()
-            }
-        }
+        init()
     }
 
     private fun init() {
@@ -75,13 +45,14 @@ class CustomerCatalogView : AppCompatActivity() {
             sessionController = SessionController(this)
             productController = ProductController(this)
             navigationController = NavigationController(this)
+            notification = Notification()
 
-            recyclerView = findViewById(R.id.customer_catalog_view)
+            recyclerView = findViewById(R.id.admin_catalog_view)
             recyclerView.setHasFixedSize(true)
             recyclerView.layoutManager = GridLayoutManager(this, 2)
 
             productList = ArrayList()
-            productAdapter = CustomerCatalogAdapter(
+            productAdapter = AdminCatalogAdapter(
                 this,
                 productList,
                 { product ->
@@ -101,25 +72,38 @@ class CustomerCatalogView : AppCompatActivity() {
                     )
                 },
                 { product ->
-                    Log.d("AddToBasket", "Added product: ${product.getProductName()} to the basket")
+                    notification.sendDeletePrompt(this) { confirmed ->
+                        if (confirmed) {
+                            Log.d("DeleteProduct", "Deleting product: ${product.getProductName()}")
+                            productController.removeProduct(
+                                product.getProductId(),
+                                BuildConfig.URL_DELETE_PRODUCT,
+                                Volley.newRequestQueue(this),
+                                notification,
+                                navigationController
+                            )
+                        } else {
+                            Log.d("DeleteProduct", "Deletion cancelled for product: ${product.getProductName()}")
+                        }
+                    }
                 },
                 { product ->
-                    Log.d(
-                        "RemoveFromBasket",
-                        "Removed product: ${product.getProductName()} from the basket"
-                    )
-                },
-                { product ->
-                    Log.d(
-                        "IncrementQuantity",
-                        "Incremented product quantity: ${product.getProductName()} in the basket"
+                    val bundle = Bundle().apply {
+                        putInt("ProductId", product.getProductId())
+                    }
+                    val editProductViewFragment = EditProductView().apply {
+                        arguments = bundle
+                    }
+                    navigationController.navigateToFragment(
+                        editProductViewFragment,
+                        R.id.fragment_container
                     )
                 }
             )
             recyclerView.adapter = productAdapter
-        } catch (e: Exception) {
-            notification.sendNotification("Error while loading customer catalog page.", this)
-            Log.e("CustomerCatalogView", "Error initializing RecyclerView: $e")
+        } catch (error: Exception) {
+            notification.sendNotification("Error occurred while loading the catalog.", this)
+            Log.d("Catalog Initialization Error", "$error")
         }
 
         addDataToList()
@@ -143,9 +127,9 @@ class CustomerCatalogView : AppCompatActivity() {
                     Log.e("Product Display Error", "Failed to display products.")
                 }
             }
-        } catch (e: Exception) {
-            notification.sendNotification("Error occurred while loading the catalog page.", this)
-            Log.d("Catalog Initialization Error", "$e")
+        } catch (error: Exception) {
+            notification.sendNotification("Error occurred while loading the catalog.", this)
+            Log.d("Catalog Initialization Error", "$error")
         }
     }
 
@@ -153,12 +137,11 @@ class CustomerCatalogView : AppCompatActivity() {
         try {
             homeButton = findViewById(R.id.home_button)
             searchButton = findViewById(R.id.search_button)
-            basketButton = findViewById(R.id.basket_button)
-            accountButton = findViewById(R.id.account_button)
+            plusButton = findViewById(R.id.plus_button)
             threeDotsButton = findViewById(R.id.dots_button)
-        } catch (e: Exception) {
-            notification.sendNotification("Error while loading customer catalog page.", this)
-            Log.e("CustomerCatalogView", "Error initializing view components", e)
+        } catch (error: Exception) {
+            notification.sendNotification("Error occurred while loading the catalog.", this)
+            Log.d("Catalog Initialization Error", "$error")
         }
     }
 
@@ -167,56 +150,39 @@ class CustomerCatalogView : AppCompatActivity() {
         try {
             homeButton.setOnClickListener {
                 homeButton.setImageResource(R.drawable.house_red)
-                basketButton.setImageResource(R.drawable.basket)
-                accountButton.setImageResource(R.drawable.user)
                 searchButton.setImageResource(R.drawable.search)
+                plusButton.setImageResource(R.drawable.plus)
                 threeDotsButton.setImageResource(R.drawable.dots)
-                navigationController.navigateToActivity(CustomerCatalogView::class.java)
+                navigationController.navigateToActivity(AdminCatalogView::class.java)
             }
             searchButton.setOnClickListener {
                 searchButton.setImageResource(R.drawable.search_red)
-                basketButton.setImageResource(R.drawable.basket)
-                accountButton.setImageResource(R.drawable.user)
+                plusButton.setImageResource(R.drawable.plus)
                 homeButton.setImageResource(R.drawable.house)
                 threeDotsButton.setImageResource(R.drawable.dots)
                 productList.clear()
                 productAdapter.notifyDataSetChanged()
                 navigationController.navigateToFragment(
-                    CustomerSearchCatalogView(),
+                    AdminSearchCatalogView(),
                     R.id.fragment_container
                 )
             }
-            basketButton.setOnClickListener {
-                basketButton.setImageResource(R.drawable.basket_red)
+            plusButton.setOnClickListener {
+                plusButton.setImageResource(R.drawable.plus_red)
                 searchButton.setImageResource(R.drawable.search)
-                accountButton.setImageResource(R.drawable.user)
                 homeButton.setImageResource(R.drawable.house)
                 threeDotsButton.setImageResource(R.drawable.dots)
                 productList.clear()
                 productAdapter.notifyDataSetChanged()
                 navigationController.navigateToFragment(
-                    BasketView(),
-                    R.id.fragment_container
-                )
-            }
-            accountButton.setOnClickListener {
-                accountButton.setImageResource(R.drawable.user_red)
-                searchButton.setImageResource(R.drawable.search)
-                basketButton.setImageResource(R.drawable.basket)
-                homeButton.setImageResource(R.drawable.house)
-                threeDotsButton.setImageResource(R.drawable.dots)
-                productList.clear()
-                productAdapter.notifyDataSetChanged()
-                navigationController.navigateToFragment(
-                    AccountView(),
+                    AddProductView(),
                     R.id.fragment_container
                 )
             }
             threeDotsButton.setOnClickListener {
                 threeDotsButton.setImageResource(R.drawable.dots_red)
                 searchButton.setImageResource(R.drawable.search)
-                basketButton.setImageResource(R.drawable.basket)
-                accountButton.setImageResource(R.drawable.user)
+                plusButton.setImageResource(R.drawable.plus)
                 homeButton.setImageResource(R.drawable.house)
                 productList.clear()
                 navigationController.navigateToFragment(
@@ -225,7 +191,7 @@ class CustomerCatalogView : AppCompatActivity() {
                 )
             }
         } catch (e: Exception) {
-            notification.sendNotification("Error occurred while loading customer catalog page.", this)
+            notification.sendNotification("Error occurred while loading the catalog.", this)
             Log.d("Catalog Initialization Error", "$e")
         }
     }

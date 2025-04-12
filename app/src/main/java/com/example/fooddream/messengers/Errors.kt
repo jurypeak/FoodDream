@@ -1,6 +1,7 @@
 package com.example.fooddream.messengers
 
 // For custom error messages.
+// A lot of this could not be implemented within the time frame of the project.
 class Errors {
     class HashingException: Exception("Error occurred hashing the password.")
     class ComparingException: Exception("Error occurred comparing both passwords.")

@@ -15,6 +15,7 @@ import com.example.fooddream.messengers.Errors
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Customer
 import com.example.fooddream.utils.AuthenticationManager
+import com.example.fooddream.views.LoginView
 import com.example.fooddream.views.VerifyEmailView
 
 class AccountController(
@@ -137,7 +138,7 @@ class AccountController(
                 verifyEmailFragment.arguments = bundle
                 navigationController.replaceActivityWithFragment(
                     verifyEmailFragment,
-                    R.id.verify_email_fragment
+                    R.id.fragment_container
                 )
             }
         } catch (error: Exception) {
@@ -164,9 +165,11 @@ class AccountController(
     }
 
     override fun viewAccountDetails(): String {
+        // Did not have time to fix MVC model to implement this function.
         return ""
     }
 
+    // Did not have time to fix MVC model to implement this function.
     override fun deleteAccount(): Boolean {
         return try {
             true
@@ -176,6 +179,7 @@ class AccountController(
         }
     }
 
+    // Did not have time to fix MVC model to implement this function.
     override fun editEmail(newEmail: String) {
         try {
             customer.setEmail(newEmail)
@@ -184,6 +188,7 @@ class AccountController(
         }
     }
 
+    // Did not have time to fix MVC model to implement this function.
     override fun editName(newFName: String, newLName: String) {
         try {
             customer.setFName(newFName)
@@ -193,6 +198,7 @@ class AccountController(
         }
     }
 
+    // Did not have time to fix MVC model to implement this function.
     override fun editPassword(newPassword: String) {
         try {
             authenticationManager.setEncryptedPassword(newPassword)
@@ -205,7 +211,16 @@ class AccountController(
     override fun logout(
         sessionId: Int
     ): Boolean {
-        //TODO Logout needs sessions to be implemented.
+        try {
+            sessionController.clearUserSession()
+            customerRepository.deleteCustomer()
+            navigationController.navigateToActivity(LoginView::class.java)
+            notification.sendNotification("Logged out successfully", view)
+            return true
+        } catch (error: Exception) {
+            notification.sendNotification("Error occurred while logging out", view)
+            Log.d("Logout Error", "$error")
+        }
         return false
     }
 }

@@ -99,7 +99,6 @@ class OrderController(view: AppCompatActivity) {
                     BuildConfig.URL_ORDER_ITEMS
                 )
             }
-
         } catch (error: Exception) {
             notification.sendNotification("Error occurred while registering", view)
             Log.d("Register Handling Error", "$error")
@@ -109,10 +108,14 @@ class OrderController(view: AppCompatActivity) {
     //https://youtu.be/NBL0igWs2YU
 
     private fun isValidPostcode(postcode: String): Boolean {
+        try {
+            val cleanedPostcode = postcode.replace("\\s".toRegex(), "")
 
-        val cleanedPostcode = postcode.replace("\\s".toRegex(), "")
-
-        val regex = Regex("^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([AZa-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z]))))[0-9][A-Za-z]{2})\$")
-        return regex.matches(cleanedPostcode)
+            val regex = Regex("^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([AZa-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z]))))[0-9][A-Za-z]{2})\$")
+            return regex.matches(cleanedPostcode)
+        } catch (e: Exception) {
+            Log.e("OrderController", "Error validating postcode: ${e.message}")
+            return false
+        }
     }
 }

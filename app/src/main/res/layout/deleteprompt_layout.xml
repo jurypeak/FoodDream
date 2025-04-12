@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#000">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete Product?"
+            android:textSize="24sp"
+            android:textColor="#FF5555"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="10dp"
+            android:text="Are you sure you want to delete this product? This action cannot be undone."/>
+
+        <Button
+            android:id="@+id/dialogDelete_button"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/white"
+            android:text="Delete"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:backgroundTint="#FF5555"/>
+
+        <Button
+            android:id="@+id/dialogCancel_button"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:backgroundTint="#888888"/>
+
+
+    </LinearLayout>
+
+</RelativeLayout>
+

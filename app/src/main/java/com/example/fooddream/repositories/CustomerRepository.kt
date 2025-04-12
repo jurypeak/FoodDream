@@ -1,10 +1,10 @@
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fooddream.models.Customer
 import com.google.gson.Gson
 import androidx.core.content.edit
-import com.example.fooddream.messengers.Notification
 
 class CustomerRepository(private var view: AppCompatActivity) {
 
@@ -15,40 +15,62 @@ class CustomerRepository(private var view: AppCompatActivity) {
     //https://youtu.be/1gOG60SLSvg
 
     fun saveCustomer(customer: Customer) {
-        val customerJson = gson.toJson(customer)
-        sharedPreferences.edit() {
-            putString("customer_key", customerJson)
+        try {
+            val customerJson = gson.toJson(customer)
+            sharedPreferences.edit() {
+                putString("customer_key", customerJson)
+            }
+        } catch (e: Exception) {
+            Log.e("CustomerRepository", "Error saving customer: ${e.message}")
+            e.printStackTrace()
         }
     }
 
     fun getCustomer(): Customer? {
-        val customerJson = sharedPreferences.getString("customer_key", null)
-        return if (customerJson != null) {
-            gson.fromJson(customerJson, Customer::class.java)
-        } else {
-            null
+        try {
+            val customerJson = sharedPreferences.getString("customer_key", null)
+            return if (customerJson != null) {
+                gson.fromJson(customerJson, Customer::class.java)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("CustomerRepository", "Error retrieving customer: ${e.message}")
+            e.printStackTrace()
+            return null
         }
     }
 
     fun deleteCustomer() {
-        sharedPreferences.edit() {
-            remove("customer_key")
+        try {
+            sharedPreferences.edit() {
+                remove("customer_key")
+            }
+        } catch (e: Exception) {
+            Log.e("CustomerRepository", "Error deleting customer: ${e.message}")
+            e.printStackTrace()
         }
     }
 
     fun updateCustomer(fName: String, lName: String, email: String, password: String) {
-        val customer = getCustomer()
-        if (customer != null) {
-            customer.setFName(fName)
-            customer.setLName(lName)
-            customer.setEmail(email)
-            customer.setPassword(password)
+        try {
+            val customer = getCustomer()
+            if (customer != null) {
+                customer.setFName(fName)
+                customer.setLName(lName)
+                customer.setEmail(email)
+                customer.setPassword(password)
 
-            val updatedJson = gson.toJson(customer)
-            sharedPreferences.edit {
-                putString("customer_key", updatedJson)
+                val updatedJson = gson.toJson(customer)
+                sharedPreferences.edit {
+                    putString("customer_key", updatedJson)
+                }
+            } else {
+                Log.e("CustomerRepository", "Error updating customer: Customer not found")
             }
-        } else {
+        } catch (e: Exception) {
+            Log.e("CustomerRepository", "Error updating customer: ${e.message}")
+            e.printStackTrace()
         }
     }
 }

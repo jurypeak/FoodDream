@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="48dp">
+
+        <TextView
+            android:text="@string/image"
+            style="@style/CheckoutLabel" />
+
+        <EditText
+            android:id="@+id/imageURL_add_product"
+            style="@style/CheckoutInput"
+            android:inputType="textUri"
+            android:maxLines="1"
+            android:hint="@string/enter_image_url"
+            android:autofillHints="imageURL" />
+
+        <TextView
+            android:text="@string/product_name"
+            style="@style/CheckoutLabel" />
+
+        <EditText
+            android:id="@+id/productName_add_product"
+            style="@style/CheckoutInput"
+            android:inputType="text"
+            android:hint="@string/enter_product_name"
+            android:maxLines="1"
+            android:autofillHints="productName" />
+
+        <TextView
+            android:text="@string/description"
+            style="@style/CheckoutLabel" />
+
+        <EditText
+            android:id="@+id/productDescription_add_product"
+            style="@style/CheckoutInput"
+            android:inputType="text"
+            android:hint="@string/enter_product_description"
+            android:autofillHints="productDescription" />
+
+        <TextView
+            android:text="@string/price"
+            style="@style/CheckoutLabel" />
+
+        <EditText
+            android:id="@+id/productPrice_add_product"
+            style="@style/CheckoutInput"
+            android:inputType="text"
+            android:maxLines="1"
+            android:digits="0123456789."
+            android:hint="@string/enter_product_price"
+            android:autofillHints="productName" />
+
+        <TextView
+            android:text="@string/stock"
+            style="@style/CheckoutLabel" />
+
+        <EditText
+            android:id="@+id/productStock_add_product"
+            style="@style/CheckoutInput"
+            android:autofillHints="stock"
+            android:maxLines="1"
+            android:hint="@string/enter_product_stock"
+            android:inputType="number" />
+
+        <TextView
+            android:text="@string/category"
+            style="@style/CheckoutLabel" />
+
+        <EditText
+            android:id="@+id/productCategory_add_product"
+            style="@style/CheckoutInput"
+            android:inputType="text"
+            android:maxLines="1"
+            android:hint="@string/enter_product_category"
+            android:autofillHints="productCategory" />
+
+        <TextView
+            android:text="@string/country_of_origin"
+            style="@style/CheckoutLabel" />
+
+        <EditText
+            android:id="@+id/productCO_add_product"
+            style="@style/CheckoutInput"
+            android:inputType="text"
+            android:hint="@string/enter_product_country_of_origin"
+            android:autofillHints="productCO" />
+
+        <TextView
+            android:text="@string/ingredients"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TableLayout
+            android:id="@+id/ingredient_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="0,1,2">
+
+            <TableRow tools:ignore="UselessParent">
+                <TextView android:text="@string/name"/>
+                <TextView android:text="@string/weight"/>
+                <TextView android:text="@string/allergens"/>
+            </TableRow>
+        </TableLayout>
+
+        <Button
+            android:id="@+id/add_ingredient_button"
+            android:text="@string/add_ingredient"
+            android:backgroundTint="#FF5555"
+            android:layout_width="wrap_content"
+            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            android:id="@+id/addButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="@string/add_product"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:backgroundTint="#FF5555"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+
+</ScrollView>
+

@@ -38,6 +38,11 @@ android {
         var updateAccountURL = localProperties.getProperty("URL_UPDATE_ACCOUNT", "defaultUpdateAccountURL")
         var deleteAccountURL = localProperties.getProperty("URL_DELETE_ACCOUNT", "defaultDeleteAccountURL")
         var getOrdersURL = localProperties.getProperty("URL_GET_ORDERS", "defaultGetOrdersURL")
+        var addProductURL = localProperties.getProperty("URL_ADD_PRODUCT", "defaultAddProductURL")
+        var addIngredientURL = localProperties.getProperty("URL_ADD_INGREDIENT", "defaultAddIngredientURL")
+        var deleteProductURL = localProperties.getProperty("URL_DELETE_PRODUCT", "defaultDeleteProductURL")
+        var updateProductURL = localProperties.getProperty("URL_UPDATE_PRODUCT", "defaultUpdateProductURL")
+        var updateIngredientURL = localProperties.getProperty("URL_UPDATE_INGREDIENT", "defaultUpdateIngredientURL")
 
         // Inject these values into BuildConfig
         buildConfigField("String", "URL_LOGIN", "\"$loginURL\"")
@@ -54,6 +59,11 @@ android {
         buildConfigField("String", "URL_UPDATE_ACCOUNT", "\"$updateAccountURL\"")
         buildConfigField("String", "URL_DELETE_ACCOUNT", "\"$deleteAccountURL\"")
         buildConfigField("String", "URL_GET_ORDERS", "\"$getOrdersURL\"")
+        buildConfigField("String", "URL_ADD_PRODUCT", "\"$addProductURL\"")
+        buildConfigField("String", "URL_ADD_INGREDIENT", "\"$addIngredientURL\"")
+        buildConfigField("String", "URL_DELETE_PRODUCT", "\"$deleteProductURL\"")
+        buildConfigField("String", "URL_UPDATE_PRODUCT", "\"$updateProductURL\"")
+        buildConfigField("String", "URL_UPDATE_INGREDIENT", "\"$updateIngredientURL\"")
 
         applicationId = "com.example.fooddream"
         minSdk = 24

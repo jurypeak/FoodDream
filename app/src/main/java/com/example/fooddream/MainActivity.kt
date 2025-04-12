@@ -10,7 +10,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splashscreen_page)
-        startActivity(Intent(this, SplashScreen::class.java))
-        finish()
+        try {
+            startActivity(Intent(this, SplashScreen::class.java))
+            finish()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

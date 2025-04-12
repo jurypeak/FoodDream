@@ -18,18 +18,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.Volley
 import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
-import com.example.fooddream.adapters.CustomerCatalogAdapter
+import com.example.fooddream.adapters.AdminCatalogAdapter
 import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.controllers.ProductController
 import com.example.fooddream.controllers.SessionController
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Product
 
-class CustomerSearchCatalogView : Fragment() {
+class AdminSearchCatalogView : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var productList: ArrayList<Product>
-    private lateinit var productAdapter: CustomerCatalogAdapter
+    private lateinit var productAdapter: AdminCatalogAdapter
     private lateinit var navigationController: NavigationController
     private lateinit var sessionController: SessionController
     private lateinit var productController: ProductController
@@ -64,7 +64,7 @@ class CustomerSearchCatalogView : Fragment() {
             recyclerView.layoutManager = GridLayoutManager(requireActivity() as AppCompatActivity, 2)
 
             productList = ArrayList()
-            productAdapter = CustomerCatalogAdapter(
+            productAdapter = AdminCatalogAdapter(
                 requireActivity() as AppCompatActivity,
                 productList,
                 { product ->
@@ -83,14 +83,11 @@ class CustomerSearchCatalogView : Fragment() {
                 { product ->
                     Log.d("RemoveFromBasket", "Removed product: ${product.getProductName()} from the basket")
                 },
-                { product ->
-                    Log.d("IncrementQuantity", "Incremented product quantity: ${product.getProductName()} in the basket")
-                }
             )
             recyclerView.adapter = productAdapter
         } catch (e: Exception) {
             notification.sendNotification("Error while loading search catalog page.", requireActivity() as AppCompatActivity)
-            Log.d("CustomerSearchCatalogView", "Error initializing RecyclerView: $e")
+            Log.e("AdminSearchCatalogView", "Error initializing view components", e)
         }
 
         initializeViewComponents(view)
@@ -115,8 +112,8 @@ class CustomerSearchCatalogView : Fragment() {
                 }
             }
         } catch (e: Exception) {
-            notification.sendNotification("Error while loading search catalog page.", requireActivity() as AppCompatActivity)
-            Log.d("CustomerSearchCatalogView", "Error initializing RecyclerView: $e")
+            notification.sendNotification("Error occurred while loading the catalog.", requireActivity() as AppCompatActivity)
+            Log.d("Catalog Initialization Error", "$e")
         }
     }
 
@@ -125,7 +122,7 @@ class CustomerSearchCatalogView : Fragment() {
             searchBar = view.findViewById(R.id.search_bar)
         } catch (e: Exception) {
             notification.sendNotification("Error while loading search catalog page.", requireActivity() as AppCompatActivity)
-            Log.e("CustomerSearchCatalogView", "Error initializing view components", e)
+            Log.e("AdminSearchCatalogView", "Error initializing view components", e)
         }
     }
 
@@ -160,7 +157,7 @@ class CustomerSearchCatalogView : Fragment() {
             })
         } catch (e: Exception) {
             notification.sendNotification("Error while loading search catalog page.", requireActivity() as AppCompatActivity)
-            Log.e("CustomerSearchCatalogView", "Error setting listeners", e)
+            Log.e("AdminSearchCatalogView", "Error setting listeners", e)
         }
     }
 }

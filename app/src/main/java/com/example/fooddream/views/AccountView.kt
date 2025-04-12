@@ -4,6 +4,7 @@ import CustomerRepository
 import android.annotation.SuppressLint
 import androidx.fragment.app.Fragment
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,14 +66,17 @@ class AccountView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         sessionController = SessionController(requireActivity() as AppCompatActivity)
-        customerRepository = CustomerRepository(requireActivity() as AppCompatActivity)
         navigationController = NavigationController(requireActivity() as AppCompatActivity)
-        orderRepository = OrderRepository(requireActivity() as AppCompatActivity)
         orderController = OrderController(requireActivity() as AppCompatActivity)
-        accountManager = AccountManager(requireActivity() as AppCompatActivity)
-        orderManager = OrderManager(requireActivity() as AppCompatActivity, customerRepository)
+
+        customerRepository = CustomerRepository(requireActivity() as AppCompatActivity)
+        orderRepository = OrderRepository(requireActivity() as AppCompatActivity)
         basketRepository = BasketRepository(requireActivity() as AppCompatActivity)
         paymentRepository = PaymentRepository(requireActivity() as AppCompatActivity)
+
+        accountManager = AccountManager(requireActivity() as AppCompatActivity)
+        orderManager = OrderManager(requireActivity() as AppCompatActivity, customerRepository)
+
         notification = Notification()
 
         CoroutineScope(Dispatchers.Main).launch {
@@ -84,11 +88,11 @@ class AccountView : Fragment() {
                         BuildConfig.URL_GET_ORDERS,
                         accountId
                     )
-                } else {
-
                 }
                 init(view)
             } catch (e: Exception) {
+                notification.sendNotification("Error occurred while loading orders on account page.", requireActivity() as AppCompatActivity)
+                Log.d("AccountView", "Error: $e")
                 init(view)
             }
         }
@@ -101,74 +105,94 @@ class AccountView : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun initializeViewComponents(view: View) {
-        orderHistoryLayout = view.findViewById(R.id.order_history_layout)
-        emailField = view.findViewById(R.id.email_account)
-        emailField.setText(customerRepository.getCustomer()?.getEmail())
-        nameField = view.findViewById(R.id.name_account)
-        nameField.setText(customerRepository.getCustomer()?.getFName() + " " + customerRepository.getCustomer()?.getLName())
-        orderNumberField = view.findViewById(R.id.order_number)
-        orderDateField = view.findViewById(R.id.date)
-        orderTotalField = view.findViewById(R.id.total)
-        val orders = orderRepository.getAllOrders()
-        val payments = paymentRepository.getPayments()
-        if (orders.isNotEmpty()) {
-            orderNumberField.text = "Order #${orders.last().getOrderId()}"
-            orderDateField.text = orders.last().getOrderDate()
-            orderTotalField.text = currencyFormat.format(payments.last().getAmount())
-        } else {
-            orderNumberField.text = ""
-            orderDateField.text = "No Orders"
-            orderTotalField.text = ""
+        try {
+            orderHistoryLayout = view.findViewById(R.id.order_history_layout)
+            emailField = view.findViewById(R.id.email_account)
+            emailField.setText(customerRepository.getCustomer()?.getEmail())
+
+            nameField = view.findViewById(R.id.name_account)
+            nameField.setText(customerRepository.getCustomer()?.getFName() + " " + customerRepository.getCustomer()?.getLName())
+
+            orderNumberField = view.findViewById(R.id.order_number)
+
+            orderDateField = view.findViewById(R.id.date)
+
+            orderTotalField = view.findViewById(R.id.total)
+
+            val orders = orderRepository.getAllOrders()
+            val payments = paymentRepository.getPayments()
+
+            if (orders.isNotEmpty()) {
+                orderNumberField.text = "Order #${orders.last().getOrderId()}"
+                orderDateField.text = orders.last().getOrderDate()
+                orderTotalField.text = currencyFormat.format(payments.last().getAmount())
+            } else {
+                orderNumberField.text = ""
+                orderDateField.text = "No Orders"
+                orderTotalField.text = ""
+            }
+
+            passwordField = view.findViewById(R.id.password_account)
+            passwordField.setText(customerRepository.getCustomer()?.getPassword())
+
+            updateButton = view.findViewById(R.id.updateButton)
+
+            deleteAccountButton = view.findViewById(R.id.deleteButton)
+
+            logOutButton = view.findViewById(R.id.logoutButton)
+        } catch (e: Exception) {
+            notification.sendNotification("Error occurred while loading account page.", requireActivity() as AppCompatActivity)
+            Log.d("AccountView", "Error: $e")
         }
-        passwordField = view.findViewById(R.id.password_account)
-        passwordField.setText(customerRepository.getCustomer()?.getPassword())
-        updateButton = view.findViewById(R.id.updateButton)
-        deleteAccountButton = view.findViewById(R.id.deleteButton)
-        logOutButton = view.findViewById(R.id.logoutButton)
     }
 
     private fun setListeners() {
-        updateButton.setOnClickListener {
-            val fullName = nameField.text.toString().trim()
-            val nameParts = fullName.split(" ")
-            val fName = nameParts.getOrNull(0) ?: ""
-            val lName = nameParts.getOrNull(1) ?: ""
-            customerRepository.updateCustomer(
-                fName,
-                lName,
-                emailField.text.toString(),
-                passwordField.text.toString()
-            )
-            accountManager.updateAccount(
-                emailField.text.toString(),
-                fName,
-                lName,
-                passwordField.text.toString(),
-                requireActivity() as AppCompatActivity,
-                Volley.newRequestQueue(requireContext()),
-                BuildConfig.URL_UPDATE_ACCOUNT
-            )
-        }
-        deleteAccountButton.setOnClickListener {
-            accountManager.deleteAccount(
-                requireActivity() as AppCompatActivity,
-                Volley.newRequestQueue(requireContext()),
-                BuildConfig.URL_DELETE_ACCOUNT
-            )
-        }
-        logOutButton.setOnClickListener {
-            sessionController.clearUserSession()
-            basketRepository.clearBasket()
-            navigationController.navigateToActivity(LoginView::class.java)
-        }
-        orderHistoryLayout.setOnClickListener {
-            if (orderRepository.getAllOrders().isEmpty()) {
-                notification.sendNotification("No orders found", requireActivity() as AppCompatActivity)
-                return@setOnClickListener
+        try {
+            updateButton.setOnClickListener {
+                val fullName = nameField.text.toString().trim()
+                val nameParts = fullName.split(" ")
+                val fName = nameParts.getOrNull(0) ?: ""
+                val lName = nameParts.getOrNull(1) ?: ""
+                customerRepository.updateCustomer(
+                    fName,
+                    lName,
+                    emailField.text.toString(),
+                    passwordField.text.toString()
+                )
+                accountManager.updateAccount(
+                    emailField.text.toString(),
+                    fName,
+                    lName,
+                    passwordField.text.toString(),
+                    requireActivity() as AppCompatActivity,
+                    Volley.newRequestQueue(requireContext()),
+                    BuildConfig.URL_UPDATE_ACCOUNT
+                )
             }
-            else {
-                navigationController.navigateToFragment(OrderHistoryView(), R.id.fragment_container)
+            deleteAccountButton.setOnClickListener {
+                accountManager.deleteAccount(
+                    requireActivity() as AppCompatActivity,
+                    Volley.newRequestQueue(requireContext()),
+                    BuildConfig.URL_DELETE_ACCOUNT
+                )
             }
+            logOutButton.setOnClickListener {
+                sessionController.clearUserSession()
+                basketRepository.clearBasket()
+                navigationController.navigateToActivity(LoginView::class.java)
+            }
+            orderHistoryLayout.setOnClickListener {
+                if (orderRepository.getAllOrders().isEmpty()) {
+                    notification.sendNotification("No orders found", requireActivity() as AppCompatActivity)
+                    return@setOnClickListener
+                }
+                else {
+                    navigationController.navigateToFragment(OrderHistoryView(), R.id.fragment_container)
+                }
+            }
+        } catch (e: Exception) {
+            notification.sendNotification("Error occurred while loading account page.", requireActivity() as AppCompatActivity)
+            Log.d("AccountView", "Error: $e")
         }
     }
 }

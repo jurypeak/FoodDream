@@ -2,12 +2,11 @@ package com.example.fooddream.views
 
 import CustomerRepository
 import android.annotation.SuppressLint
-import android.location.Address
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -16,9 +15,9 @@ import com.example.fooddream.R
 import com.example.fooddream.adapters.OrderHistoryAdapter
 import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.controllers.SessionController
+import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Order
 import com.example.fooddream.models.Payment
-import com.example.fooddream.repositories.AddressRepository
 import com.example.fooddream.repositories.OrderRepository
 import com.example.fooddream.repositories.PaymentRepository
 
@@ -33,6 +32,7 @@ class OrderHistoryView : Fragment() {
     private lateinit var customerRepository: CustomerRepository
     private lateinit var orderRepository: OrderRepository
     private lateinit var paymentRepository: PaymentRepository
+    private lateinit var notification: Notification
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,52 +46,62 @@ class OrderHistoryView : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navigationController = NavigationController(requireActivity() as AppCompatActivity)
+        notification = Notification()
 
         init(view)
-
     }
 
     private fun init(view: View) {
-        sessionController = SessionController(requireActivity() as AppCompatActivity)
-        customerRepository = CustomerRepository(requireActivity() as AppCompatActivity)
-        orderRepository = OrderRepository(requireActivity() as AppCompatActivity)
-        paymentRepository = PaymentRepository(requireActivity() as AppCompatActivity)
+        try {
+            sessionController = SessionController(requireActivity() as AppCompatActivity)
+            customerRepository = CustomerRepository(requireActivity() as AppCompatActivity)
+            orderRepository = OrderRepository(requireActivity() as AppCompatActivity)
+            paymentRepository = PaymentRepository(requireActivity() as AppCompatActivity)
 
-        recyclerView = view.findViewById(R.id.order_history_view)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = GridLayoutManager(requireActivity() as AppCompatActivity, 1)
+            recyclerView = view.findViewById(R.id.order_history_view)
+            recyclerView.setHasFixedSize(true)
+            recyclerView.layoutManager = GridLayoutManager(requireActivity() as AppCompatActivity, 1)
 
-        orderHistoryList = ArrayList()
-        paymentList = ArrayList()
-        orderHistoryAdapter = OrderHistoryAdapter(
-            requireActivity() as AppCompatActivity,
-            orderHistoryList,
-        ) { order ->
-            val bundle = Bundle().apply {
-                putInt("orderId", order.getOrderId())
+            orderHistoryList = ArrayList()
+            paymentList = ArrayList()
+            orderHistoryAdapter = OrderHistoryAdapter(
+                requireActivity() as AppCompatActivity,
+                orderHistoryList,
+            ) { order ->
+                val bundle = Bundle().apply {
+                    putInt("orderId", order.getOrderId())
+                }
+                val orderViewFragment = OrderView().apply {
+                    arguments = bundle
+                }
+                navigationController.navigateToFragment(orderViewFragment, R.id.fragment_container)
             }
-            val orderViewFragment = OrderView().apply {
-                arguments = bundle
-            }
-            navigationController.navigateToFragment(orderViewFragment, R.id.fragment_container)
+            recyclerView.adapter = orderHistoryAdapter
+        } catch (e: Exception) {
+            notification.sendNotification("Error occurred while loading orders on order history page.", requireActivity() as AppCompatActivity)
+            Log.d("OrderHistoryView", "Error: $e")
         }
-        recyclerView.adapter = orderHistoryAdapter
 
-        initializeViewComponents(view)
+        initializeViewComponents()
         addDataToList()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun addDataToList() {
-        orderHistoryList.clear()
-        orderHistoryList.addAll(orderRepository.getAllOrders())
+        try {
+            orderHistoryList.clear()
+            orderHistoryList.addAll(orderRepository.getAllOrders())
 
-        paymentList.clear()
-        paymentList.addAll(paymentRepository.getPayments())
+            paymentList.clear()
+            paymentList.addAll(paymentRepository.getPayments())
 
-        orderHistoryAdapter.notifyDataSetChanged()
+            orderHistoryAdapter.notifyDataSetChanged()
+        } catch (e: Exception) {
+            notification.sendNotification("Error occurred while loading orders on order history page.", requireActivity() as AppCompatActivity)
+            Log.d("OrderHistoryView", "Error: $e")
+        }
     }
 
-    private fun initializeViewComponents(view: View) {
+    private fun initializeViewComponents() {
     }
 }

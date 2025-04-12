@@ -2,6 +2,7 @@ package com.example.fooddream.views
 
 import androidx.fragment.app.Fragment
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
 import com.example.fooddream.controllers.AccountController
 import com.example.fooddream.controllers.NavigationController
+import com.example.fooddream.messengers.Notification
 
 class VerifyEmailView : Fragment() {
 
@@ -25,6 +27,7 @@ class VerifyEmailView : Fragment() {
     private lateinit var customerSupportButton: ImageView
     private lateinit var accountController: AccountController
     private lateinit var navigationController: NavigationController
+    private lateinit var notification: Notification
     private var urlUserGuide = BuildConfig.URL_USERGUIDE
     private var urlEmailVerify = BuildConfig.URL_VERIFY_EMAIL
 
@@ -40,37 +43,57 @@ class VerifyEmailView : Fragment() {
 
         navigationController = NavigationController(requireActivity() as AppCompatActivity)
         accountController = AccountController(requireActivity() as AppCompatActivity)
+        notification = Notification()
 
-        var email = arguments?.getString("email") ?: ""
-        var typeView = arguments?.getString("typeView") ?: ""
+        init(view)
+    }
 
+    private fun init(view: View) {
         initializeViewComponents(view)
         setListeners()
 
-        accountController.sendTwoFactorAuth(
-            email,
-            Volley.newRequestQueue(requireActivity() as AppCompatActivity),
-            urlEmailVerify,
-            typeView
-        )
+        try {
+            var email = arguments?.getString("email") ?: ""
+            var typeView = arguments?.getString("typeView") ?: ""
+
+            accountController.sendTwoFactorAuth(
+                email,
+                Volley.newRequestQueue(requireActivity() as AppCompatActivity),
+                urlEmailVerify,
+                typeView
+            )
+        } catch (e: Exception) {
+            notification.sendNotification("Error occured while loading verify email page.", requireActivity() as AppCompatActivity)
+            Log.e("VerifyEmailView", "Error initializing view components", e)
+        }
     }
 
     private fun initializeViewComponents(view: View) {
-        submitButton = view.findViewById(R.id.submit_button)
-        exitButton = view.findViewById(R.id.exitPlaceholder)
-        emailCodeField = view.findViewById(R.id.code_verify)
-        userGuideButton = view.findViewById(R.id.helpIcon)
-        customerSupportButton = view.findViewById(R.id.customerSupportIcon)
+        try {
+            submitButton = view.findViewById(R.id.submit_button)
+            exitButton = view.findViewById(R.id.exitPlaceholder)
+            userGuideButton = view.findViewById(R.id.helpIcon)
+            customerSupportButton = view.findViewById(R.id.customerSupportIcon)
+            emailCodeField = view.findViewById(R.id.code_verify)
+        } catch (e: Exception) {
+            notification.sendNotification("Error occured while loading verify email page.", requireActivity() as AppCompatActivity)
+            Log.e("VerifyEmailView", "Error initializing view components", e)
+        }
     }
     private fun setListeners() {
-        exitButton.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+        try {
+            exitButton.setOnClickListener {
+                requireActivity().supportFragmentManager.popBackStack()
+            }
+            userGuideButton.setOnClickListener {
+            }
+            customerSupportButton.setOnClickListener {
+                navigationController.navigateToUserGuide(urlUserGuide)
+            }
+        } catch (e: Exception) {
+            notification.sendNotification("Error occured while loading verify email page.", requireActivity() as AppCompatActivity)
+            Log.e("VerifyEmailView", "Error setting up listeners", e)
         }
-        userGuideButton.setOnClickListener {
-        }
-       customerSupportButton.setOnClickListener {
-            navigationController.navigateToUserGuide(urlUserGuide)
-       }
     }
 }
 

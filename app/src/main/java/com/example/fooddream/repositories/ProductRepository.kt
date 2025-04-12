@@ -9,44 +9,61 @@ import com.example.fooddream.messengers.Notification
 
 class ProductRepository(private var view: AppCompatActivity) {
 
-    private var notification = Notification()
     private val sharedPreferences: SharedPreferences = view.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
     fun saveProduct(product: Product) {
-        val productJson = gson.toJson(product)
-        sharedPreferences.edit() {
-            putString("product_${product.getProductId()}", productJson)
+        try {
+            val productJson = gson.toJson(product)
+            sharedPreferences.edit() {
+                putString("product_${product.getProductId()}", productJson)
+            }
+        } catch (e: Exception) {
+            Log.e("ProductRepository", "Error saving product: ${e.message}")
         }
     }
 
     fun getProduct(productId: Int): Product? {
-        val productJson = sharedPreferences.getString("product_$productId", null)
-        return if (productJson != null) {
-            gson.fromJson(productJson, Product::class.java)
-        } else {
-            null
+        try {
+            val productJson = sharedPreferences.getString("product_$productId", null)
+            return if (productJson != null) {
+                gson.fromJson(productJson, Product::class.java)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("ProductRepository", "Error retrieving product: ${e.message}")
+            return null
         }
     }
 
     fun getAllProducts(): ArrayList<Product> {
-        val allProducts = ArrayList<Product>()
-        val keys = sharedPreferences.all.keys
-        for (key in keys) {
-            if (key.startsWith("product_")) {
-                val productJson = sharedPreferences.getString(key, null)
-                if (productJson != null) {
-                    val product = gson.fromJson(productJson, Product::class.java)
-                    allProducts.add(product)
+        try {
+            val allProducts = ArrayList<Product>()
+            val keys = sharedPreferences.all.keys
+            for (key in keys) {
+                if (key.startsWith("product_")) {
+                    val productJson = sharedPreferences.getString(key, null)
+                    if (productJson != null) {
+                        val product = gson.fromJson(productJson, Product::class.java)
+                        allProducts.add(product)
+                    }
                 }
             }
+            return allProducts
+        } catch (e: Exception) {
+            Log.e("ProductRepository", "Error retrieving all products: ${e.message}")
+            return ArrayList()
         }
-        return allProducts
     }
 
     fun removeProduct(productId: Int) {
-        sharedPreferences.edit() {
-            remove("product_$productId")
+        try {
+            sharedPreferences.edit() {
+                remove("product_$productId")
+            }
+        } catch (e: Exception) {
+            Log.e("ProductRepository", "Error removing product: ${e.message}")
         }
     }
 }

@@ -15,9 +15,9 @@ import com.example.fooddream.controllers.SessionController
 import com.example.fooddream.messengers.Errors
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Customer
+import com.example.fooddream.views.AdminCatalogView
 import com.example.fooddream.views.CustomerCatalogView
 import com.example.fooddream.views.LoginView
-import com.example.fooddream.views.ResetPasswordEmailView
 import com.example.fooddream.views.ResetPasswordView
 import com.example.fooddream.views.VerifyEmailView
 import org.json.JSONObject
@@ -114,18 +114,22 @@ class AuthenticationManager(
                                 putString("email", email)
                                 putString("typeView", "Login")
                             }
-                            customer.setAccountId(response.optInt("id"))
-                            customer.setEmail(response.optString("email", ""))
-                            customer.setFName(response.optString("CustomerFName", ""))
-                            customer.setLName(response.optString("CustomerLName", ""))
-                            customerRepository.saveCustomer(customer)
-                            val verifyEmailFragment = VerifyEmailView()
-                            verifyEmailFragment.arguments = bundle
-                            view.supportFragmentManager.popBackStack()
-                            navigationController.replaceActivityWithFragment(
-                                verifyEmailFragment,
-                                R.id.verify_email_fragment
-                            )
+                            if (response.optInt("accessLevel", -1) == 0) {
+                                navigationController.navigateToActivity(AdminCatalogView::class.java)
+                            } else {
+                                customer.setAccountId(response.optInt("id"))
+                                customer.setEmail(response.optString("email", ""))
+                                customer.setFName(response.optString("CustomerFName", ""))
+                                customer.setLName(response.optString("CustomerLName", ""))
+                                customerRepository.saveCustomer(customer)
+                                val verifyEmailFragment = VerifyEmailView()
+                                verifyEmailFragment.arguments = bundle
+                                view.supportFragmentManager.popBackStack()
+                                navigationController.replaceActivityWithFragment(
+                                    verifyEmailFragment,
+                                    R.id.fragment_container
+                                )
+                            }
                         } else {
                             notification.sendNotification("Password do not match", view)
                             Log.d("Response", "$response")
@@ -137,6 +141,7 @@ class AuthenticationManager(
                     Log.d("Login Error", "$error")
                 })
             requestQueue.add(jsonObjectRequest)
+
         } catch (error: Errors.LoginException) {
             Log.d("Login Error", "$error")
         }
@@ -160,8 +165,7 @@ class AuthenticationManager(
                     if (response.optString("status","") != "Success") {
                         notification.sendNotification("${response.optString("message", "")}", view)
                         Log.d("Response", "$response")
-                        //FRAGMENT WONT FUCKING GO BACK TO LOGIN!!!!
-                        view.supportFragmentManager.popBackStack()
+                        navigationController.navigateToActivity(LoginView::class.java)
                     }
                     else {
                         notification.sendNotification("${response.optString("message", "")}", view)
@@ -204,7 +208,7 @@ class AuthenticationManager(
                         if (typeView == "Reset Password") {
                             navigationController.navigateToFragment(
                                 ResetPasswordView(),
-                                R.id.reset_password_fragment
+                                R.id.fragment_container
                             )
                         }
                     }

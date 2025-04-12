@@ -60,40 +60,45 @@ class BasketView : Fragment() {
     }
 
     private fun init(view: View) {
-        sessionController = SessionController(requireActivity() as AppCompatActivity)
+        try {
+            sessionController = SessionController(requireActivity() as AppCompatActivity)
 
-        recyclerView = view.findViewById(R.id.basket_view)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = GridLayoutManager(requireActivity() as AppCompatActivity, 1)
+            recyclerView = view.findViewById(R.id.basket_view)
+            recyclerView.setHasFixedSize(true)
+            recyclerView.layoutManager = GridLayoutManager(requireActivity() as AppCompatActivity, 1)
 
-        basketList = ArrayList()
-        basketAdapter = BasketAdapter(
-            requireActivity() as AppCompatActivity,
-            basketList,
-            { basketItem ->
-                Log.d("RecyclerViewClick", "Clicked basketItem: ${basketItem.getItemName()} with ID: ${basketItem.getProductId()}")
-                val bundle = Bundle().apply {
-                    putInt("ProductId", basketItem.getProductId())
+            basketList = ArrayList()
+            basketAdapter = BasketAdapter(
+                requireActivity() as AppCompatActivity,
+                basketList,
+                { basketItem ->
+                    Log.d("RecyclerViewClick", "Clicked basketItem: ${basketItem.getItemName()} with ID: ${basketItem.getProductId()}")
+                    val bundle = Bundle().apply {
+                        putInt("ProductId", basketItem.getProductId())
+                    }
+                    val productViewFragment = ProductView().apply {
+                        arguments = bundle
+                    }
+                    navigationController.navigateToFragment(productViewFragment, R.id.fragment_container)
+                },
+                { product ->
+                    Log.d("AddToBasket", "Added product: ${product.getItemName()} to the basket")
+                    updateHeaderInfo()
+                },
+                { product ->
+                    Log.d("RemoveFromBasket", "Removed product: ${product.getItemName()} from the basket")
+                    updateHeaderInfo()
+                },
+                { product ->
+                    Log.d("IncrementQuantity", "Incremented product quantity: ${product.getItemName()} in the basket")
+                    updateHeaderInfo()
                 }
-                val productViewFragment = ProductView().apply {
-                    arguments = bundle
-                }
-                navigationController.navigateToFragment(productViewFragment, R.id.fragment_container)
-            },
-            { product ->
-                Log.d("AddToBasket", "Added product: ${product.getItemName()} to the basket")
-                updateHeaderInfo()
-            },
-            { product ->
-                Log.d("RemoveFromBasket", "Removed product: ${product.getItemName()} from the basket")
-                updateHeaderInfo()
-            },
-            { product ->
-                Log.d("IncrementQuantity", "Incremented product quantity: ${product.getItemName()} in the basket")
-                updateHeaderInfo()
-            }
-        )
-        recyclerView.adapter = basketAdapter
+            )
+            recyclerView.adapter = basketAdapter
+        } catch (e: Exception) {
+            notification.sendNotification("Error while gathering basket items in basket.", requireActivity() as AppCompatActivity)
+            Log.d("BasketView", "Error initializing RecyclerView: $e")
+        }
 
         initializeViewComponents(view)
         addDataToList()
@@ -102,34 +107,55 @@ class BasketView : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun addDataToList() {
-        basketList.addAll(basketRepository.getAllBasketItems(customerRepository.getCustomer()?.getAccountId()))
-        basketAdapter.notifyDataSetChanged()
+        try {
+            basketList.addAll(basketRepository.getAllBasketItems(customerRepository.getCustomer()?.getAccountId()))
+            basketAdapter.notifyDataSetChanged()
+        } catch (e: Exception) {
+            notification.sendNotification("Error while loading basket items.", requireActivity() as AppCompatActivity)
+            Log.d("BasketView", "Error adding data to list: $e")
+        }
     }
 
     @SuppressLint("SetTextI18n")
     fun updateHeaderInfo() {
-        itemCountTextView.text = "${basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId())} Items"
-        totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice(customerRepository.getCustomer()?.getAccountId()))
+        try {
+            itemCountTextView.text = "${basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId())} Items"
+            totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice(customerRepository.getCustomer()?.getAccountId()))
+        } catch (e: Exception) {
+            notification.sendNotification("Error while getting number of items & total price of items in basket.", requireActivity() as AppCompatActivity)
+            Log.d("BasketView", "Error updating header info: $e")
+        }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initializeViewComponents(view: View) {
-        itemCountTextView = view.findViewById(R.id.itemQuantityHeader)
-        itemCountTextView.text = "Basket size: ${basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId())}"
-        totalPriceTextView = view.findViewById(R.id.priceText)
-        totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice(customerRepository.getCustomer()?.getAccountId()))
-        checkoutButton = view.findViewById(R.id.checkoutButton)
+        try {
+            itemCountTextView = view.findViewById(R.id.itemQuantityHeader)
+            itemCountTextView.text = "Basket size: ${basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId())}"
+            totalPriceTextView = view.findViewById(R.id.priceText)
+            totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice(customerRepository.getCustomer()?.getAccountId()))
+            checkoutButton = view.findViewById(R.id.checkoutButton)
+        } catch (e: Exception) {
+            notification.sendNotification("Error while loading basket page.", requireActivity() as AppCompatActivity)
+            Log.d("BasketView", "Error initializing view components: $e")
+        }
     }
 
     private fun setListeners() {
-        checkoutButton.setOnClickListener {
-            if (basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId()) == 0) {
-                notification.sendNotification("Basket is empty.", requireActivity() as AppCompatActivity)
-                notification.sendNotification("Please add items to your basket before proceeding to checkout.", requireActivity() as AppCompatActivity)
-                return@setOnClickListener
+        try {
+            checkoutButton.setOnClickListener {
+                if (basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId()) == 0) {
+                    notification.sendNotification("Basket is empty.", requireActivity() as AppCompatActivity)
+                    notification.sendNotification("Please add items to your basket before proceeding to checkout.", requireActivity() as AppCompatActivity)
+                    return@setOnClickListener
+                }
+                else {
+                    navigationController.navigateToFragment(CheckoutView(), R.id.fragment_container)
+                }
             }
-            else {
-                navigationController.navigateToFragment(CheckoutView(), R.id.fragment_container)
-            }
+        } catch (e: Exception) {
+            notification.sendNotification("Error while loading in basket page.", requireActivity() as AppCompatActivity)
+            Log.d("BasketView", "Error setting listeners: $e")
         }
     }
 }
