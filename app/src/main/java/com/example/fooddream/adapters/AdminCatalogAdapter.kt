@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fooddream.R
 import com.example.fooddream.models.Product
@@ -19,12 +20,14 @@ import java.util.Locale
  * AdminCatalogAdapter is a RecyclerView adapter for displaying product items in the admin catalog.
  * It binds the product data to the views in the RecyclerView and handles click events.
  *
+ * @param view The activity context used for inflating views.
  * @param productList The list of products to be displayed in the RecyclerView.
  * @param onProductClick A lambda function to handle click events on each product item.
  * @param onDeleteProductClick A lambda function to handle click events for deleting products.
  * @param onEditProductClick A lambda function to handle click events for editing products.
  */
 class AdminCatalogAdapter(
+    private val view: AppCompatActivity,
     private val productList: ArrayList<Product>,
     private val onProductClick: (Product) -> Unit,
     private val onDeleteProductClick: (Product) -> Unit,
