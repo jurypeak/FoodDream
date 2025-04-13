@@ -11,8 +11,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
+import com.example.fooddream.controllers.CustomerSupportViewController
 import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.messengers.CustomerSupport
 import com.example.fooddream.messengers.Notification
@@ -20,14 +20,15 @@ import com.example.fooddream.messengers.Notification
 class CustomerSupportView : Fragment() {
 
     private lateinit var submitButton: Button
-    private lateinit var exitButton: TextView
+    private lateinit var exitTextView: TextView
     private lateinit var emailField: EditText
     private lateinit var messageField: EditText
     private lateinit var supportButton: ImageView
+
     private lateinit var navigationController: NavigationController
     private lateinit var customerSupport: CustomerSupport
     private lateinit var notification: Notification
-    private var urlUserGuide = BuildConfig.URL_USERGUIDE
+    private lateinit var customerSupportViewController: CustomerSupportViewController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,48 +40,90 @@ class CustomerSupportView : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navigationController = NavigationController(requireActivity() as AppCompatActivity)
-        customerSupport = CustomerSupport()
-        notification = Notification()
-
         init(view)
     }
 
+    /**
+     * Initialize the customer support view.
+     * This method is responsible for initializing the view components and setting up the UI actions.
+     * It also initializes the controllers and handles any exceptions that may occur during the process.
+     *
+     * @throws Exception if an error occurs while initializing the view components or setting up the UI actions.
+     *
+     * @param view The root view of the fragment.
+     */
     private fun init(view: View) {
         initializeViewComponents(view)
-        setListeners()
+        initializeControllers()
+        setupUIActions()
     }
 
+    /**
+     * Initialize the view components for the customer support screen.
+     * This method is responsible for finding and assigning the views to their respective variables.
+     * It also handles any exceptions that may occur during the initialization process.
+     *
+     * @throws Exception if an error occurs while initializing the view components.
+     */
+    private fun initializeControllers() {
+        try {
+            navigationController = NavigationController(requireActivity() as AppCompatActivity)
+            customerSupport = CustomerSupport()
+            notification = Notification()
+
+            customerSupportViewController = CustomerSupportViewController(
+                navigationController,
+                notification,
+                customerSupport,
+            )
+        } catch (e: Exception) {
+            notification.sendNotification("Error occured loading customer support.", requireActivity() as AppCompatActivity)
+            Log.d("Customer Support Error", "Error loading customer support: ${e.message}")
+        }
+    }
+
+    /**
+     * Set up the UI actions for the customer support screen.
+     * This method is responsible for setting up click listeners for various UI components.
+     * It also handles any exceptions that may occur during the setup process.
+     *
+     * @throws Exception if an error occurs while setting up the UI actions.
+     */
+    private fun setupUIActions() {
+        try {
+            customerSupportViewController.setupClickListeners(
+                requireActivity() as AppCompatActivity,
+                emailField,
+                exitTextView,
+                submitButton,
+                supportButton,
+                messageField,
+            )
+        } catch (e: Exception) {
+            notification.sendNotification("Error occured loading customer support.", requireActivity() as AppCompatActivity)
+            Log.d("Customer Support Error", "Error loading customer support: ${e.message}")
+        }
+    }
+
+    /**
+     * Initialize the view components for the customer support screen.
+     * This method is responsible for finding and assigning the views to their respective variables.
+     * It also handles any exceptions that may occur during the initialization process.
+     *
+     * @throws Exception if an error occurs while initializing the view components.
+     *
+     * @param view The root view of the fragment.
+     */
     private fun initializeViewComponents(view: View) {
         try {
             submitButton = view.findViewById(R.id.submit_button)
-            exitButton = view.findViewById(R.id.exitPlaceholder)
+            exitTextView = view.findViewById(R.id.exitPlaceholder)
             emailField = view.findViewById(R.id.email_support)
             messageField = view.findViewById(R.id.support_message)
             supportButton = view.findViewById(R.id.helpIcon)
         } catch (e: Exception) {
             notification.sendNotification("Error occured loading customer support.", requireActivity() as AppCompatActivity)
             Log.d("Customer Support Error", "Error loading customer support: ${e.message}")
-        }
-    }
-    private fun setListeners() {
-        try {
-            exitButton.setOnClickListener {
-                requireActivity().supportFragmentManager.popBackStack()
-            }
-            supportButton.setOnClickListener {
-                navigationController.navigateToUserGuide(urlUserGuide)
-            }
-            submitButton.setOnClickListener {
-                customerSupport.submitTicket(
-                    emailField.text.toString(),
-                    messageField.text.toString(),
-                    requireActivity() as AppCompatActivity
-                )
-            }
-        } catch (e: Exception) {
-            notification.sendNotification("Error occured loading customer support.", requireActivity() as AppCompatActivity)
-            Log.d("Customer Support Error", "Error setting up listeners: ${e.message}")
         }
     }
 }

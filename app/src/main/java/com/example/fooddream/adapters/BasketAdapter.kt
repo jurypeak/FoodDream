@@ -1,7 +1,7 @@
 package com.example.fooddream.adapters
 
 import CustomerRepository
-import ProductRepository
+import com.example.fooddream.repositories.ProductRepository
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -21,6 +21,17 @@ import java.util.Locale
 
 // https://youtu.be/-hWVtzMTABQ
 
+/**
+ * BasketAdapter is a RecyclerView adapter for displaying basket items.
+ * It binds the basket data to the views in the RecyclerView and handles click events.
+ *
+ * @param view The activity context used for inflating views.
+ * @param basketList The list of basket items to be displayed in the RecyclerView.
+ * @param onProductClick A lambda function to handle click events on each product item.
+ * @param onAddToBasketClick A lambda function to handle click events for adding products to the basket.
+ * @param onRemoveFromBasketClick A lambda function to handle click events for removing products from the basket.
+ * @param onIncrementItemQuantityClick A lambda function to handle click events for incrementing item quantity in the basket.
+ */
 class BasketAdapter(
     private val view: AppCompatActivity,
     private val basketList: ArrayList<BasketItem>,
@@ -55,6 +66,11 @@ class BasketAdapter(
         holder.priceTextView.text = (currencyFormat.format(basketItem.getPrice()))
         holder.stockTextView.text = (ProductRepository(view).getProduct(basketItem.getProductId())!!.getProductStock().toString())
 
+        /**
+         * Check if the quantity of the basket item is greater than or equal to the product stock.
+         * If it is, disable the quantity TextView and set its text color to red.
+         * Otherwise, enable the quantity TextView and set its text color to black.
+         */
         basketRepository.getBasketItem(basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity()?.let {
             if (it >= ProductRepository(view).getProduct(basketItem.getProductId())!!.getProductStock()) {
                 holder.quantityTextView.isEnabled = false
@@ -65,6 +81,12 @@ class BasketAdapter(
             }
         }
 
+        /**
+         * Check if the quantity of the basket item is 0.
+         * If it is, remove the basket item from the repository and update the RecyclerView.
+         * Otherwise, set the visibility of the add and minus ImageViews to visible,
+         * disable the quantity TextView, and set its text to the current quantity.
+         */
         basketRepository.getBasketItem(basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity()?.let {
             if (it == 0) {
                 basketRepository.removeBasketItem(basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())
@@ -83,12 +105,21 @@ class BasketAdapter(
             }
         }
 
+        /**
+         * Set click listeners for the product item.
+         * The product item click will trigger the onProductClick callback.
+         */
         holder.itemView.setOnClickListener {
             if (it.id != R.id.addProductTextView) {
                 onProductClick(basketItem)
             }
         }
 
+        /**
+         * Set click listeners for the add and minus buttons.
+         * The add button will increment the quantity of the basket item,
+         * and the minus button will decrement the quantity or remove the item from the basket.
+         */
         holder.minusImageView.setOnClickListener {
             basketRepository.getBasketItem(
                 basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity()?.let { it1 ->
@@ -109,6 +140,10 @@ class BasketAdapter(
             onRemoveFromBasketClick(basketItem)
         }
 
+        /**
+         * Set click listener for the add button.
+         * The add button will increment the quantity of the basket item.
+         */
         holder.addImageView.setOnClickListener {
             val basketItem = basketRepository.getBasketItem(basketItem.getProductId(), customerRepository.getCustomer()?.getAccountId())
 
@@ -134,10 +169,20 @@ class BasketAdapter(
 
     }
 
+    /**
+     * Returns the total number of items in the basket list.
+     *
+     * @return The size of the basket list.
+     */
     override fun getItemCount(): Int {
         return basketList.size
     }
 
+    /**
+     * ViewHolder class for holding the views of each product item in the RecyclerView.
+     *
+     * @param itemView The view for each product item.
+     */
     class ProductViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.productImageView)
         val nameTextView: TextView = itemView.findViewById(R.id.productNameTextView)

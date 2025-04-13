@@ -9,11 +9,30 @@ import com.example.fooddream.models.Payment
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+/**
+ * PaymentRepository is responsible for managing payment data in the application.
+ * It provides methods to save, retrieve, and remove payments using SharedPreferences.
+ *
+ * @param view The activity context used for SharedPreferences operations.
+ */
 class PaymentRepository (private var view: AppCompatActivity){
-    private val sharedPreferences: SharedPreferences =
-        view.getSharedPreferences("payment_prefs", Context.MODE_PRIVATE)
+
+    /**
+     * SharedPreferences instance to store payment data.
+     * This instance is used to save and retrieve payments using JSON serialization.
+     */
+    private val sharedPreferences: SharedPreferences = view.getSharedPreferences("payment_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
+    /**
+     * Saves a list of payments for a specific order ID.
+     * The payments are serialized to JSON and stored in SharedPreferences.
+     *
+     * @param orderId The ID of the order associated with the payments.
+     * @param payments The list of payments to be saved.
+     *
+     * @throws Exception if an error occurs while saving the payments.
+     */
     fun savePayments(orderId: Int, payments: ArrayList<Payment>) {
         try {
             val paymentJson = gson.toJson(payments)
@@ -26,6 +45,15 @@ class PaymentRepository (private var view: AppCompatActivity){
         }
     }
 
+    /**
+     * Retrieves a single payment for a specific order ID.
+     * The payment is deserialized from JSON stored in SharedPreferences.
+     *
+     * @param orderId The ID of the order associated with the payment.
+     * @return The retrieved payment, or null if not found.
+     *
+     * @throws Exception if an error occurs while retrieving the payment.
+     */
     fun getPayment(orderId: Int): Payment? {
         try {
             val paymentJson = sharedPreferences.getString("payments_$orderId", null)
@@ -43,6 +71,14 @@ class PaymentRepository (private var view: AppCompatActivity){
         }
     }
 
+    /**
+     * Retrieves all payments.
+     * The payments are deserialized from JSON stored in SharedPreferences.
+     *
+     * @return A list of all retrieved payments, or an empty list if not found.
+     *
+     * @throws Exception if an error occurs while retrieving the payments.
+     */
     fun getPayments(): ArrayList<Payment> {
         try {
             val allPayments = ArrayList<Payment>()

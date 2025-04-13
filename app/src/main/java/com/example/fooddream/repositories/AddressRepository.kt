@@ -9,11 +9,29 @@ import com.example.fooddream.models.Address
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+/**
+ * AddressRepository is responsible for managing address data in the application.
+ * It provides methods to save and retrieve addresses using SharedPreferences.
+ *
+ * @param view The activity context used for SharedPreferences operations.
+ */
 class AddressRepository (private var view: AppCompatActivity){
-    private val sharedPreferences: SharedPreferences =
-        view.getSharedPreferences("address_prefs", Context.MODE_PRIVATE)
+    /**
+     * SharedPreferences instance to store address data.
+     * This instance is used to save and retrieve addresses using JSON serialization.
+     */
+    private val sharedPreferences: SharedPreferences = view.getSharedPreferences("address_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
+    /**
+     * Saves a list of addresses for a specific order ID.
+     * The addresses are serialized to JSON and stored in SharedPreferences.
+     *
+     * @param orderId The ID of the order associated with the addresses.
+     * @param addresses The list of addresses to be saved.
+     *
+     * @throws Exception if an error occurs while saving the addresses.
+     */
     fun saveAddresses(orderId: Int, addresses: List<Address>) {
         try {
             val addressJson = gson.toJson(addresses)
@@ -26,6 +44,15 @@ class AddressRepository (private var view: AppCompatActivity){
         }
     }
 
+    /**
+     * Retrieves a single address for a specific order ID.
+     * The address is deserialized from JSON stored in SharedPreferences.
+     *
+     * @param orderId The ID of the order associated with the address.
+     * @return The retrieved address, or null if not found.
+     *
+     * @throws Exception if an error occurs while retrieving the address.
+     */
     fun getAddress(orderId: Int): Address? {
         try {
             val addressJson = sharedPreferences.getString("address_$orderId", null)
@@ -43,6 +70,15 @@ class AddressRepository (private var view: AppCompatActivity){
         }
     }
 
+    /**
+     * Retrieves a list of addresses for a specific order ID.
+     * The addresses are deserialized from JSON stored in SharedPreferences.
+     *
+     * @param orderId The ID of the order associated with the addresses.
+     * @return The list of retrieved addresses, or an empty list if not found.
+     *
+     * @throws Exception if an error occurs while retrieving the addresses.
+     */
     fun getAddresses(orderId: Int): List<Address> {
         try {
             val addressJson = sharedPreferences.getString("address_$orderId", null)

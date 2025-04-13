@@ -13,8 +13,17 @@ import com.example.fooddream.models.Payment
 import com.example.fooddream.repositories.BasketRepository
 import com.example.fooddream.utils.OrderManager
 
+/**
+ * OrderController is responsible for handling the order process in the application.
+ * It validates user input, manages order details, and interacts with the OrderManager to process orders.
+ *
+ * @param view The AppCompatActivity context for displaying notifications and managing UI interactions.
+ */
 class OrderController(view: AppCompatActivity) {
-    
+
+    /**
+     * Order model to hold order details.
+     */
     private val orderModel = Order(
         fName = "",
         lName = "",
@@ -23,6 +32,9 @@ class OrderController(view: AppCompatActivity) {
         orderId = 0,
         orderDate = "",
     )
+    /**
+     * Address model to hold address details.
+     */
     private val addressModel = Address(
         addressId = 0,
         orderId = 0,
@@ -30,6 +42,9 @@ class OrderController(view: AppCompatActivity) {
         postcode = "",
         town = ""
     )
+    /**
+     * Payment model to hold payment details.
+     */
     private val paymentModel = Payment(
         paymentId = 0,
         orderId = 0,
@@ -38,11 +53,25 @@ class OrderController(view: AppCompatActivity) {
         amount = 0.00
     )
 
+    // Repositories and managers for handling data and operations
     private val basketRepository = BasketRepository(view)
     private val customerRepository = CustomerRepository(view)
     private val orderManager = OrderManager(view, CustomerRepository(view))
     private val notification = Notification()
 
+    /**
+     * Starts the order process by validating user input and initiating the order handling.
+     *
+     * @param emailField The EditText for entering the email address.
+     * @param nameField The EditText for entering the name.
+     * @param addressField The EditText for entering the address.
+     * @param postcodeField The EditText for entering the postcode.
+     * @param townField The EditText for entering the town.
+     * @param payment The selected payment method.
+     * @param view The AppCompatActivity context for displaying notifications and managing UI interactions.
+     *
+     * @throws Exception if an error occurs while starting the order process.
+     */
     fun startOrder(
         emailField: EditText,
         nameField: EditText,
@@ -107,6 +136,16 @@ class OrderController(view: AppCompatActivity) {
 
     //https://youtu.be/NBL0igWs2YU
 
+
+    /**
+     * Validates the postcode format.
+     * This method uses a regular expression to check if the postcode is a valid UK postcode.
+     *
+     * @param postcode The postcode to validate.
+     * @return True if the postcode is valid, false otherwise.
+     *
+     * @throws Exception if an error occurs while validating the postcode.
+     */
     private fun isValidPostcode(postcode: String): Boolean {
         try {
             val cleanedPostcode = postcode.replace("\\s".toRegex(), "")

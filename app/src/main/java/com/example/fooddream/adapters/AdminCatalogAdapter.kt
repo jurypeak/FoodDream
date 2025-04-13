@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fooddream.R
 import com.example.fooddream.models.Product
@@ -16,8 +15,16 @@ import java.util.Locale
 
 // https://youtu.be/-hWVtzMTABQ
 
+/**
+ * AdminCatalogAdapter is a RecyclerView adapter for displaying product items in the admin catalog.
+ * It binds the product data to the views in the RecyclerView and handles click events.
+ *
+ * @param productList The list of products to be displayed in the RecyclerView.
+ * @param onProductClick A lambda function to handle click events on each product item.
+ * @param onDeleteProductClick A lambda function to handle click events for deleting products.
+ * @param onEditProductClick A lambda function to handle click events for editing products.
+ */
 class AdminCatalogAdapter(
-    private val view: AppCompatActivity,
     private val productList: ArrayList<Product>,
     private val onProductClick: (Product) -> Unit,
     private val onDeleteProductClick: (Product) -> Unit,
@@ -51,17 +58,31 @@ class AdminCatalogAdapter(
                 onProductClick(product)
             }
         }
+
         holder.deleteImageView.setOnClickListener {
             onDeleteProductClick(product)
         }
+
         holder.editImageView.setOnClickListener {
             onEditProductClick(product)
         }
     }
+
+    /**
+     * Returns the total number of items in the product list.
+     *
+     * @return The size of the product list.
+     */
     override fun getItemCount(): Int {
         return productList.size
     }
 
+    /**
+     * ViewHolder class for holding the views of each product item in the RecyclerView.
+     * This class is responsible for binding the product data to the views.
+     *
+     * @param itemView The view for each product item.
+     */
     class ProductViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.productImageView)
         val deleteImageView: ImageView = itemView.findViewById(R.id.deleteProductImageView)

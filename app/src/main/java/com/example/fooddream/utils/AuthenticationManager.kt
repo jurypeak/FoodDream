@@ -100,6 +100,7 @@ class AuthenticationManager(
                     }
                     else {
                         val returnedPassword = response.optString("password", "")
+
                         if (verifyPassword(password, returnedPassword)) {
                             Log.d("Response", "$response")
                             notification.sendNotification(
@@ -110,13 +111,17 @@ class AuthenticationManager(
                                     )
                                 }", view
                             )
+
                             val bundle = Bundle().apply {
                                 putString("email", email)
                                 putString("typeView", "Login")
                             }
+
                             if (response.optInt("accessLevel", -1) == 0) {
                                 navigationController.navigateToActivity(AdminCatalogView::class.java)
-                            } else {
+                            }
+
+                            if (response.optInt("accessLevel", -1) == 1) {
                                 customer.setAccountId(response.optInt("id"))
                                 customer.setEmail(response.optString("email", ""))
                                 customer.setFName(response.optString("CustomerFName", ""))
@@ -130,6 +135,12 @@ class AuthenticationManager(
                                     R.id.fragment_container
                                 )
                             }
+
+                            else {
+                                notification.sendNotification("Account not verified", view)
+                                Log.d("Response", "$response")
+                            }
+
                         } else {
                             notification.sendNotification("Password do not match", view)
                             Log.d("Response", "$response")
@@ -174,11 +185,11 @@ class AuthenticationManager(
                 },
                 { error ->
                     notification.sendNotification("$error.toString", view)
-                    Log.d("Login Error", "$error")
+                    Log.d("Authentication Error", "$error")
                 })
             requestQueue.add(jsonObjectRequest)
         } catch (error: Errors.LoginException) {
-            Log.d("Login Error", "$error")
+            Log.d("Authentication Error", "$error")
         }
     }
 

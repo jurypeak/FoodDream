@@ -1,6 +1,6 @@
 package com.example.fooddream.views
 
-import ProductRepository
+import com.example.fooddream.repositories.ProductRepository
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.InputType

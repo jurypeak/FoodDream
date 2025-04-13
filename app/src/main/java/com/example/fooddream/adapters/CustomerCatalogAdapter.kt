@@ -21,6 +21,17 @@ import java.util.Locale
 
 // https://youtu.be/-hWVtzMTABQ
 
+/**
+ * CustomerCatalogAdapter is a RecyclerView adapter for displaying product items in the customer catalog.
+ * It binds the product data to the views in the RecyclerView and handles click events.
+ *
+ * @param view The activity context used for inflating views.
+ * @param productList The list of products to be displayed in the RecyclerView.
+ * @param onProductClick A lambda function to handle click events on each product item.
+ * @param onAddToBasketClick A lambda function to handle click events for adding products to the basket.
+ * @param onRemoveFromBasketClick A lambda function to handle click events for removing products from the basket.
+ * @param onIncrementItemQuantityClick A lambda function to handle click events for incrementing item quantity in the basket.
+ */
 class CustomerCatalogAdapter(
     private val view: AppCompatActivity,
     private val productList: ArrayList<Product>,
@@ -54,6 +65,10 @@ class CustomerCatalogAdapter(
         holder.priceTextView.text = (currencyFormat.format(product.getProductPrice()))
         holder.stockTextView.text = (product.getProductStock().toString())
 
+        /**
+         * Check if the product is out of stock and update the UI accordingly.
+         * If the product is out of stock, disable the add button and change its text color to red.
+         */
         basketRepository.getBasketItem(product.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity()?.let {
             if (it >= product.getProductStock()) {
                 holder.addTextView.isEnabled = false
@@ -66,6 +81,10 @@ class CustomerCatalogAdapter(
             }
         }
 
+        /**
+         * Check if the product is already in the basket and update the UI accordingly.
+         * If the product is in the basket, show the quantity and hide the add button.
+         */
         basketRepository.getBasketItem(product.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity()?.let {
             if (it == 0) {
                 holder.addTextView.text = "Add"
@@ -84,12 +103,21 @@ class CustomerCatalogAdapter(
             }
         }
 
+        /**
+         * Set click listeners for the product item.
+         * The product item click will trigger the onProductClick callback.
+         */
         holder.itemView.setOnClickListener {
             if (it.id != R.id.addProductTextView) {
                 onProductClick(product)
             }
         }
 
+        /**
+         * Set click listeners for the add and minus buttons.
+         * The add button will increment the quantity of the product in the basket.
+         * The minus button will decrement the quantity of the product in the basket.
+         */
         holder.addTextView.setOnClickListener {
             var basketItem = BasketItem(
                 product.getProductId(),
@@ -134,6 +162,10 @@ class CustomerCatalogAdapter(
             onRemoveFromBasketClick(product)
         }
 
+        /**
+         * Set click listener for the add image button.
+         * The add image button will increment the quantity of the product in the basket.
+         */
         holder.addImageView.setOnClickListener {
             val basketItem = basketRepository.getBasketItem(product.getProductId(), customerRepository.getCustomer()?.getAccountId())
 
@@ -158,10 +190,21 @@ class CustomerCatalogAdapter(
 
     }
 
+    /**
+     * Returns the total number of items in the product list.
+     *
+     * @return The size of the product list.
+     */
     override fun getItemCount(): Int {
         return productList.size
     }
 
+    /**
+     * ViewHolder class for holding the views of each product item in the RecyclerView.
+     * This class is responsible for binding the product data to the views.
+     *
+     * @param itemView The view for each product item.
+     */
     class ProductViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.productImageView)
         val nameTextView: TextView = itemView.findViewById(R.id.productNameTextView)

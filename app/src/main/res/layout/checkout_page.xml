@@ -27,59 +27,59 @@
 
         <TextView
             android:text="@string/email_placeholder"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/email_checkout"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:inputType="textEmailAddress"
             android:hint="@string/enter_email"
             android:autofillHints="email" />
 
         <TextView
             android:text="@string/name_placeholder"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/name_checkout"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:inputType="text"
             android:hint="@string/enter_name"
             android:autofillHints="name" />
 
         <TextView
             android:text="@string/address"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/address_checkout"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:hint="@string/enter_address"
             android:inputType="textPostalAddress" />
 
         <TextView
             android:text="@string/postcode"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/postcode_checkout"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:hint="@string/enter_postcode"
             android:inputType="textPostalAddress" />
 
         <TextView
             android:text="@string/town"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/town_checkout"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:hint="@string/enter_town"
             android:inputType="text" />
 
         <TextView
             android:text="@string/payment"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"

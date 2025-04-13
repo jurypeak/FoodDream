@@ -3,7 +3,6 @@ package com.example.fooddream.controllers
 import CustomerRepository
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.RequestQueue
@@ -18,9 +17,14 @@ import com.example.fooddream.utils.AuthenticationManager
 import com.example.fooddream.views.LoginView
 import com.example.fooddream.views.VerifyEmailView
 
-class AccountController(
-    private var view: AppCompatActivity): IAccountController {
+/**
+ * AccountController is responsible for handling user account-related actions such as login, registration and password reset.
+ *
+ * @param view The activity context in which the controller operates.
+ */
+class AccountController(private var view: AppCompatActivity): IAccountController {
 
+    // Model for the customer account.
     private val customer = Customer(
         fName = "",
         lName = "",
@@ -29,17 +33,28 @@ class AccountController(
         accessLevel = -1,
         password = ""
     )
+
+    // Repositories, controllers and managers for handling user data and actions.
     private var customerRepository = CustomerRepository(view)
     private var notification = Notification()
     private var navigationController = NavigationController(view)
     private var sessionController = SessionController(view)
+    private var validateManager = com.example.fooddream.utils.ValidateManager()
     private var authenticationManager = AuthenticationManager(
         view,
         customer,
         navigationController,
         sessionController
-        )
+    )
 
+    /**
+     * Sends a two-factor authentication code to the user's email.
+     *
+     * @param email The email address to send the verification code to.
+     * @param requestQueue The request queue for network operations.
+     * @param url The URL for sending the verification code.
+     * @param typeView The type of view (e.g., "Login", "Register").
+     */
     override fun sendTwoFactorAuth(
         email: String,
         requestQueue: RequestQueue,
@@ -54,8 +69,15 @@ class AccountController(
         )
     }
 
+    /**
+     * Starts the login process by validating the input fields and calling the authentication manager.
+     *
+     * @param emailField The EditText for entering the email address.
+     * @param passwordField The EditText for entering the password.
+     *
+     * @throws Exception if an error occurs during the process.
+     */
     override fun startLogin(
-        loginButton: Button,
         emailField: EditText,
         passwordField: EditText,
     ) {
@@ -67,7 +89,20 @@ class AccountController(
             customer.setEmail(email)
             customer.setPassword(password)
 
-            if (email.isNotBlank() && password.isNotBlank()) {
+            if (email.isBlank() && password.isBlank()) {
+                notification.sendNotification("Email or password cannot be empty.", view)
+                Log.e("AccountController", "Email or password cannot be empty.")
+            }
+            if (!validateManager.isValidEmail(emailField.text.toString())) {
+                notification.sendNotification(
+                    "Invalid email format.",
+                    emailField.context as AppCompatActivity
+                )
+            }
+            if (!validateManager.isValidPassword(passwordField.text.toString())) {
+                notification.sendNotification("Invalid password format.", passwordField.context as AppCompatActivity)
+            }
+            else {
                 Log.d("Login", "$email, $password")
                 authenticationManager.login(
                     email,
@@ -75,9 +110,6 @@ class AccountController(
                     requestQueue,
                     BuildConfig.URL_LOGIN
                 )
-            } else {
-                notification.sendNotification("Email or password cannot be empty.", view)
-                Log.e("MainActivity", "Email or password cannot be empty.")
             }
         } catch (error: Exception) {
             notification.sendNotification("Error occurred while logging in", view)
@@ -85,6 +117,15 @@ class AccountController(
         }
     }
 
+    /**
+     * Starts the registration process by validating the input fields and calling the authentication manager.
+     *
+     * @param emailField The EditText for entering the email address.
+     * @param nameField The EditText for entering the name.
+     * @param passwordField The EditText for entering the password.
+     *
+     * @throws Exception if an error occurs during the process.
+     */
     override fun startRegistration(
         emailField: EditText,
         nameField: EditText,
@@ -95,7 +136,23 @@ class AccountController(
             val name = nameField.text.toString()
             val password = passwordField.text.toString()
 
-            if (email.isNotBlank() || name.isNotBlank() || password.isNotBlank()) {
+            if (email.isBlank() || name.isBlank() || password.isBlank()) {
+                notification.sendNotification("All fields need to be entered.", view)
+                Log.e("AccountController", "Email, name or password cannot be empty.")
+            }
+            if (!validateManager.isValidEmail(emailField.text.toString())) {
+                notification.sendNotification("Invalid email format.", emailField.context as AppCompatActivity)
+                Log.e("AccountController", "Invalid email format.")
+            }
+            if (!validateManager.isValidName(nameField.text.toString())) {
+                notification.sendNotification("Invalid name format.", nameField.context as AppCompatActivity)
+                Log.e("AccountController", "Invalid name format.")
+            }
+            if (!validateManager.isValidPassword(passwordField.text.toString())) {
+                notification.sendNotification("Invalid password format.", passwordField.context as AppCompatActivity)
+                Log.e("AccountController", "Invalid password format.")
+            }
+            else {
                 val nameParts = name.split(" ")
                 val fName = nameParts.getOrNull(0) ?: ""
                 val lName = nameParts.getOrNull(1) ?: ""
@@ -121,7 +178,14 @@ class AccountController(
         }
     }
 
-    override fun startResetPasswordEmailVerification(
+    /**
+     * Starts the password reset process by validating the email inputted and calling the authentication manager.
+     *
+     * @param emailField The EditText for entering the email address.
+     *
+     * @throws Exception if an error occurs during the process.
+     */
+    override fun startResetPasswordProcess(
         emailField: EditText,
     ) {
         try {
@@ -129,7 +193,14 @@ class AccountController(
             customer.setEmail(email)
             customerRepository.saveCustomer(customer)
 
-            if (email.isNotBlank()) {
+            if (email.isBlank()) {
+                notification.sendNotification("Email cannot be empty.", emailField.context as AppCompatActivity)
+                Log.e("AccountController", "Email cannot be empty.")
+            }
+            if (!validateManager.isValidEmail(emailField.text.toString())) {
+                notification.sendNotification("Invalid email format.", emailField.context as AppCompatActivity)
+            }
+            else {
                 val bundle = Bundle().apply {
                     putString("email", email)
                     putString("typeView", "Reset Password")
@@ -147,17 +218,39 @@ class AccountController(
         }
     }
 
-    override fun startResetPassword(
+    /**
+     * Validates the new password entered by the user and calls the authentication manager to reset the password.
+     *
+     * @param passwordField The EditText for entering the new password.
+     *
+     * @throws Exception if an error occurs during the process.
+     */
+    override fun validateNewResetPassword(
         passwordField: EditText,
     ) {
-        val password = passwordField.text.toString()
         try {
-            authenticationManager.resetPassword(
-                customer.getEmail(),
-                password,
-                Volley.newRequestQueue(view),
-                BuildConfig.URL_RESETPASSWORD
-            )
+            val password = passwordField.text.toString()
+            if (password.isBlank()) {
+                notification.sendNotification("Password cannot be empty.", passwordField.context as AppCompatActivity)
+                Log.e("AccountController", "Password cannot be empty.")
+            }
+            if (!validateManager.isValidPassword(passwordField.text.toString())) {
+                notification.sendNotification("Invalid password format.", passwordField.context as AppCompatActivity)
+                Log.e("AccountController", "Invalid password format.")
+            }
+            else {
+                try {
+                    authenticationManager.resetPassword(
+                        customer.getEmail(),
+                        password,
+                        Volley.newRequestQueue(view),
+                        BuildConfig.URL_RESETPASSWORD
+                    )
+                } catch (error: Exception) {
+                    notification.sendNotification("Error occurred while registering", view)
+                    Log.d("Register Handling Error", "$error")
+                }
+            }
         } catch (error: Exception) {
             notification.sendNotification("Error occurred while registering", view)
             Log.d("Register Handling Error", "$error")
@@ -207,7 +300,15 @@ class AccountController(
         }
     }
 
-    // Function that closes users sessions and logs users out.
+    /**
+     * Logs out the user by clearing the session and deleting the local customer account data.
+     *
+     * @param sessionId The session ID of the user.
+     *
+     * @return true if logout is successful, false otherwise.
+     *
+     * @throws Exception if an error occurs during the logout process.
+     */
     override fun logout(
         sessionId: Int
     ): Boolean {

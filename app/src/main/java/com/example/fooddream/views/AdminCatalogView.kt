@@ -72,7 +72,7 @@ class AdminCatalogView : AppCompatActivity() {
                     )
                 },
                 { product ->
-                    notification.sendDeletePrompt(this) { confirmed ->
+                    notification.sendDeleteProductPrompt(this) { confirmed ->
                         if (confirmed) {
                             Log.d("DeleteProduct", "Deleting product: ${product.getProductName()}")
                             productController.removeProduct(

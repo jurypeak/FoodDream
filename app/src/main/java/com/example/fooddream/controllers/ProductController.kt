@@ -1,6 +1,6 @@
 package com.example.fooddream.controllers
 
-import ProductRepository
+import com.example.fooddream.repositories.ProductRepository
 import android.util.Log
 import android.widget.EditText
 import android.widget.TableLayout

@@ -1,3 +1,5 @@
+package com.example.fooddream.repositories
+
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
@@ -5,13 +7,30 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.fooddream.models.Product
 import com.google.gson.Gson
 import androidx.core.content.edit
-import com.example.fooddream.messengers.Notification
 
+/**
+ * ProductRepository is responsible for managing product data in the application.
+ * It provides methods to save, retrieve, and remove products using SharedPreferences.
+ *
+ * @param view The activity context used for SharedPreferences operations.
+ */
 class ProductRepository(private var view: AppCompatActivity) {
 
+    /**
+     * SharedPreferences instance to store product data.
+     * This instance is used to save and retrieve products using JSON serialization.
+     */
     private val sharedPreferences: SharedPreferences = view.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
+    /**
+     * Saves a product object to SharedPreferences.
+     * The product object is serialized to JSON and stored in SharedPreferences.
+     *
+     * @param product The product object to be saved.
+     *
+     * @throws Exception if an error occurs while saving the product.
+     */
     fun saveProduct(product: Product) {
         try {
             val productJson = gson.toJson(product)
@@ -23,6 +42,15 @@ class ProductRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Retrieves a product object from SharedPreferences.
+     * The product object is deserialized from JSON stored in SharedPreferences.
+     *
+     * @param productId The ID of the product to be retrieved.
+     * @return The retrieved product object, or null if not found.
+     *
+     * @throws Exception if an error occurs while retrieving the product.
+     */
     fun getProduct(productId: Int): Product? {
         try {
             val productJson = sharedPreferences.getString("product_$productId", null)
@@ -37,6 +65,14 @@ class ProductRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Retrieves all products stored in SharedPreferences.
+     * The products are deserialized from JSON stored in SharedPreferences.
+     *
+     * @return A list of all retrieved product objects.
+     *
+     * @throws Exception if an error occurs while retrieving the products.
+     */
     fun getAllProducts(): ArrayList<Product> {
         try {
             val allProducts = ArrayList<Product>()
@@ -57,6 +93,14 @@ class ProductRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Removes a product from SharedPreferences.
+     * The product is identified by its ID and removed from SharedPreferences.
+     *
+     * @param productId The ID of the product to be removed.
+     *
+     * @throws Exception if an error occurs while removing the product.
+     */
     fun removeProduct(productId: Int) {
         try {
             sharedPreferences.edit() {

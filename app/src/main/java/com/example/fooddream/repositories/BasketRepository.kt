@@ -10,11 +10,31 @@ import com.google.gson.Gson
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+/**
+ * BasketRepository is responsible for managing basket data in the application.
+ * It provides methods to save, retrieve, and manipulate basket items using SharedPreferences.
+ *
+ * @param view The activity context used for SharedPreferences operations.
+ */
 class BasketRepository(private var view: AppCompatActivity) {
 
+    /**
+     * SharedPreferences instance to store basket data.
+     * This instance is used to save and retrieve basket items using JSON serialization.
+     */
     private val sharedPreferences: SharedPreferences = view.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
+    /**
+     * Saves a basket item for a specific product ID and account ID.
+     * The basket item is serialized to JSON and stored in SharedPreferences.
+     *
+     * @param basketItem The basket item to be saved.
+     * @param accountId The ID of the account associated with the basket item.
+     * @param productId The ID of the product associated with the basket item.
+     *
+     * @throws Exception if an error occurs while saving the basket item.
+     */
     fun saveBasketItem(basketItem: BasketItem, accountId: Int?, productId: Int) {
         try {
             val basketItemJson = gson.toJson(basketItem)
@@ -27,6 +47,16 @@ class BasketRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Retrieves a basket item for a specific product ID and account ID.
+     * The basket item is deserialized from JSON stored in SharedPreferences.
+     *
+     * @param productId The ID of the product associated with the basket item.
+     * @param accountId The ID of the account associated with the basket item.
+     * @return The retrieved basket item, or null if not found.
+     *
+     * @throws Exception if an error occurs while retrieving the basket item.
+     */
     fun getBasketItem(productId: Int, accountId: Int?): BasketItem? {
         try {
             val basketItemJson = sharedPreferences.getString("basketItem_${accountId}-${productId}", null)
@@ -42,6 +72,15 @@ class BasketRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Retrieves the total price of all items in the basket for a specific account ID.
+     * The total price is calculated by summing the price of each basket item multiplied by its quantity.
+     *
+     * @param accountId The ID of the account associated with the basket items.
+     * @return The total price of all items in the basket, rounded to two decimal places.
+     *
+     * @throws Exception if an error occurs while calculating the total price.
+     */
     fun getBasketTotalPrice(accountId: Int?): Double {
         try {
             var basketTotalPrice = 0.00
@@ -57,6 +96,15 @@ class BasketRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Retrieves the size of the basket for a specific account ID.
+     * The size is calculated by counting the number of items in the basket.
+     *
+     * @param accountId The ID of the account associated with the basket items.
+     * @return The size of the basket (number of items).
+     *
+     * @throws Exception if an error occurs while calculating the basket size.
+     */
     fun getBasketSize(accountId: Int?): Int {
         try {
             return getAllBasketItems(accountId).size
@@ -67,6 +115,15 @@ class BasketRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Retrieves all basket items for a specific account ID.
+     * The basket items are deserialized from JSON stored in SharedPreferences.
+     *
+     * @param accountId The ID of the account associated with the basket items.
+     * @return A list of all basket items for the specified account ID.
+     *
+     * @throws Exception if an error occurs while retrieving all basket items.
+     */
     fun getAllBasketItems(accountId: Int?): ArrayList<BasketItem> {
         try {
             val allBasketItems = ArrayList<BasketItem>()
@@ -88,6 +145,16 @@ class BasketRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Updates the quantity of a specific basket item.
+     * The quantity is set to the new value provided.
+     *
+     * @param productId The ID of the product associated with the basket item.
+     * @param accountId The ID of the account associated with the basket item.
+     * @param newQuantity The new quantity to be set for the basket item.
+     *
+     * @throws Exception if an error occurs while updating the quantity.
+     */
     fun updateQuantity(productId: Int, accountId: Int?, newQuantity: Int) {
         try {
             val basketItem = getBasketItem(productId, accountId)
@@ -103,6 +170,12 @@ class BasketRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Clears all basket items from SharedPreferences.
+     * This effectively empties the entire basket.
+     *
+     * @throws Exception if an error occurs while clearing the basket.
+     */
     fun clearBasket() {
         try {
             sharedPreferences.edit() {
@@ -114,6 +187,15 @@ class BasketRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Increments the quantity of a specific basket item by 1.
+     * The updated quantity is saved back to SharedPreferences.
+     *
+     * @param productId The ID of the product associated with the basket item.
+     * @param accountId The ID of the account associated with the basket item.
+     *
+     * @throws Exception if an error occurs while incrementing the quantity.
+     */
     fun incrementQuantity(productId: Int, accountId: Int?) {
         try {
             val basketItem = getBasketItem(productId, accountId)
@@ -129,6 +211,15 @@ class BasketRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Decrements the quantity of a specific basket item by 1.
+     * The updated quantity is saved back to SharedPreferences.
+     *
+     * @param productId The ID of the product associated with the basket item.
+     * @param accountId The ID of the account associated with the basket item.
+     *
+     * @throws Exception if an error occurs while decrementing the quantity.
+     */
     fun decrementQuantity(productId: Int, accountId: Int?) {
         try {
             val basketItem = getBasketItem(productId, accountId)
@@ -144,6 +235,15 @@ class BasketRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Removes a specific basket item from SharedPreferences.
+     * The item is identified by its product ID and account ID.
+     *
+     * @param productId The ID of the product associated with the basket item.
+     * @param accountId The ID of the account associated with the basket item.
+     *
+     * @throws Exception if an error occurs while removing the basket item.
+     */
     fun removeBasketItem(productId: Int, accountId: Int?) {
         try {
             sharedPreferences.edit() {

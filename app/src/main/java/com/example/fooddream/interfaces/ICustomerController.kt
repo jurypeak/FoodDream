@@ -10,12 +10,6 @@ interface ICustomerController {
         passwordField: EditText,
     )
 
-    fun handleLogin(
-        loginButton: Button,
-        emailField: EditText,
-        passwordField: EditText,
-    )
-
     fun handleResetPasswordEmailVerification(
         emailField: EditText
     )

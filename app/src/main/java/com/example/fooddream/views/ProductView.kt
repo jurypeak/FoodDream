@@ -1,6 +1,6 @@
 package com.example.fooddream.views
 
-import ProductRepository
+import com.example.fooddream.repositories.ProductRepository
 import android.annotation.SuppressLint
 import androidx.fragment.app.Fragment
 import android.os.Bundle

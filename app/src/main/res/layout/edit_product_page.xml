@@ -16,11 +16,11 @@
 
         <TextView
             android:text="@string/image"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/imageURL_edit_product"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:inputType="textUri"
             android:maxLines="1"
             android:hint="@string/enter_image_url"
@@ -28,11 +28,11 @@
 
         <TextView
             android:text="@string/product_name"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/productName_edit_product"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:inputType="text"
             android:hint="@string/enter_product_name"
             android:maxLines="1"
@@ -40,22 +40,22 @@
 
         <TextView
             android:text="@string/description"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/productDescription_edit_product"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:inputType="text"
             android:hint="@string/enter_product_description"
             android:autofillHints="productDescription" />
 
         <TextView
             android:text="@string/price"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/productPrice_edit_product"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:inputType="text"
             android:maxLines="1"
             android:digits="0123456789."
@@ -64,11 +64,11 @@
 
         <TextView
             android:text="@string/stock"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/productStock_edit_product"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:autofillHints="stock"
             android:maxLines="1"
             android:hint="@string/enter_product_stock"
@@ -76,11 +76,11 @@
 
         <TextView
             android:text="@string/category"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/productCategory_edit_product"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:inputType="text"
             android:maxLines="1"
             android:hint="@string/enter_product_category"
@@ -88,11 +88,11 @@
 
         <TextView
             android:text="@string/country_of_origin"
-            style="@style/CheckoutLabel" />
+            style="@style/LabelStyle" />
 
         <EditText
             android:id="@+id/productCO_edit_product"
-            style="@style/CheckoutInput"
+            style="@style/InputStyle"
             android:inputType="text"
             android:hint="@string/enter_product_country_of_origin"
             android:autofillHints="productCO" />

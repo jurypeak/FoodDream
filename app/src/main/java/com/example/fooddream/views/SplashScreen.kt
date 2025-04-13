@@ -9,6 +9,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.fooddream.R
 
+/**
+ * SplashScreen class that displays a splash screen before navigating to the login view.
+ * This class is responsible for initializing the splash screen and handling the transition to the login view.
+ */
 class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

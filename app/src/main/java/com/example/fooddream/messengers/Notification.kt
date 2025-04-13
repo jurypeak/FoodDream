@@ -8,7 +8,22 @@ import android.widget.Button
 import android.widget.Toast
 import com.example.fooddream.R
 
+/**
+ * Notification class for sending notifications and prompts.
+ *
+ * This class provides methods to send notifications and delete prompts to the user.
+ * It handles exceptions that may occur during the process and logs them for debugging purposes.
+ */
 class Notification {
+
+    /**
+     * Sends a toast notification message to the user.
+     *
+     * @param message The message to be displayed in the notification.
+     * @param view The activity context used for displaying the notification.
+     *
+     * @throws Exception if an error occurs while sending the notification.
+     */
     fun sendNotification(message: String, view: Activity) {
         try {
             Toast.makeText(view, message, Toast.LENGTH_SHORT).show()
@@ -16,11 +31,20 @@ class Notification {
             Log.e("Notification", "Error sending notification: ${e.message}")
         }
     }
+
     //https://ansarali-edugaon.medium.com/create-custom-alert-dialog-with-a-custom-view-in-android-kotlin-48e7dc8ce54f
-    fun sendDeletePrompt(view: Activity, onDecision: (Boolean) -> Unit) {
+    /**
+     * Sends a delete product prompt to the admin.
+     *
+     * @param view The activity context used for displaying the prompt.
+     * @param onDecision A callback function that receives the user's decision (true for delete, false for cancel).
+     *
+     * @throws Exception if an error occurs while sending the delete prompt.
+     */
+    fun sendDeleteProductPrompt(view: Activity, onDecision: (Boolean) -> Unit) {
         try {
             val inflater = LayoutInflater.from(view)
-            val viewPrompt = inflater.inflate(R.layout.deleteprompt_layout, null)
+            val viewPrompt = inflater.inflate(R.layout.deleteproductprompt_layout, null)
 
             val deleteButton = viewPrompt.findViewById<Button>(R.id.dialogDelete_button)
             val cancelButton = viewPrompt.findViewById<Button>(R.id.dialogCancel_button)
@@ -36,6 +60,7 @@ class Notification {
             }
 
             cancelButton?.setOnClickListener {
+
                 dialog.dismiss()
                 onDecision(false)
             }

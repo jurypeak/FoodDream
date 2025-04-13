@@ -9,11 +9,30 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import androidx.core.content.edit
 
+/**
+ * IngredientRepository is responsible for managing ingredient data in the application.
+ * It provides methods to save, retrieve, and remove ingredients using SharedPreferences.
+ *
+ * @param view The activity context used for SharedPreferences operations.
+ */
 class IngredientRepository (private var view: AppCompatActivity){
-    private val sharedPreferences: SharedPreferences =
-        view.getSharedPreferences("ingredient_prefs", Context.MODE_PRIVATE)
+
+    /**
+     * SharedPreferences instance to store ingredient data.
+     * This instance is used to save and retrieve ingredients using JSON serialization.
+     */
+    private val sharedPreferences: SharedPreferences = view.getSharedPreferences("ingredient_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
+    /**
+     * Saves a list of ingredients for a specific product ID.
+     * The ingredients are serialized to JSON and stored in SharedPreferences.
+     *
+     * @param productId The ID of the product associated with the ingredients.
+     * @param ingredients The list of ingredients to be saved.
+     *
+     * @throws Exception if an error occurs while saving the ingredients.
+     */
     fun saveIngredients(productId: Int, ingredients: List<Ingredient>) {
         try {
             val ingredientsJson = gson.toJson(ingredients)
@@ -26,6 +45,15 @@ class IngredientRepository (private var view: AppCompatActivity){
         }
     }
 
+    /**
+     * Retrieves a list of ingredients for a specific product ID.
+     * The ingredients are deserialized from JSON stored in SharedPreferences.
+     *
+     * @param productId The ID of the product associated with the ingredients.
+     * @return The retrieved list of ingredients, or an empty list if not found.
+     *
+     * @throws Exception if an error occurs while retrieving the ingredients.
+     */
     fun getIngredients(productId: Int): List<Ingredient> {
         try {
             val ingredientsJson = sharedPreferences.getString("ingredients_$productId", null)
@@ -42,6 +70,13 @@ class IngredientRepository (private var view: AppCompatActivity){
         }
     }
 
+    /**
+     * Removes the ingredients for a specific product ID from SharedPreferences.
+     *
+     * @param productId The ID of the product associated with the ingredients to be removed.
+     *
+     * @throws Exception if an error occurs while removing the ingredients.
+     */
     fun removeIngredient(productId: Int) {
         try {
             sharedPreferences.edit() {

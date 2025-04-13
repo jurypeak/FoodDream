@@ -8,11 +8,30 @@ import androidx.core.content.edit
 import com.example.fooddream.models.OrderItem
 import com.google.gson.Gson
 
+/**
+ * OrderItemRepository is responsible for managing order item data in the application.
+ * It provides methods to save, retrieve, and remove order items using SharedPreferences.
+ *
+ * @param view The activity context used for SharedPreferences operations.
+ */
 class OrderItemRepository (private var view: AppCompatActivity){
-    private val sharedPreferences: SharedPreferences =
-        view.getSharedPreferences("orderItem_prefs", Context.MODE_PRIVATE)
+
+    /**
+     * SharedPreferences instance to store order item data.
+     * This instance is used to save and retrieve order items using JSON serialization.
+     */
+    private val sharedPreferences: SharedPreferences = view.getSharedPreferences("orderItem_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
+    /**
+     * Saves a list of order items for a specific order ID.
+     * The order items are serialized to JSON and stored in SharedPreferences.
+     *
+     * @param orderId The ID of the order associated with the order items.
+     * @param orderItems The list of order items to be saved.
+     *
+     * @throws Exception if an error occurs while saving the order items.
+     */
     fun saveOrderItem(orderId: Int, orderItems: ArrayList<OrderItem>) {
         try {
             val orderItemJson = gson.toJson(orderItems)
@@ -25,6 +44,15 @@ class OrderItemRepository (private var view: AppCompatActivity){
         }
     }
 
+    /**
+     * Retrieves order item for a specific order ID.
+     * The order items are deserialized from JSON stored in SharedPreferences.
+     *
+     * @param orderId The ID of the order associated with the order item.
+     * @return The retrieved list (contains multiple attributes) of order item, or an empty list if not found.
+     *
+     * @throws Exception if an error occurs while retrieving the order items.
+     */
     fun getOrderItem(orderId: Int): List<OrderItem> {
         try {
             val orderItemJson = sharedPreferences.getString("orderItem_$orderId", null)
@@ -41,6 +69,15 @@ class OrderItemRepository (private var view: AppCompatActivity){
         }
     }
 
+    /**
+     * Retrieves all order items for a specific order ID.
+     * The order items are deserialized from JSON stored in SharedPreferences.
+     *
+     * @param orderId The ID of the order associated with the order items.
+     * @return The retrieved list of all order items, or an empty list if not found.
+     *
+     * @throws Exception if an error occurs while retrieving the order items.
+     */
     fun getOrderItems(orderId: Int): ArrayList<OrderItem> {
         try {
             val allOrderItems = ArrayList<OrderItem>()

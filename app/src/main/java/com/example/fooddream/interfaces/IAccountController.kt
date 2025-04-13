@@ -1,9 +1,7 @@
 package com.example.fooddream.interfaces
 
-import android.widget.Button
 import android.widget.EditText
 import com.android.volley.RequestQueue
-import com.example.fooddream.views.ResetPasswordView
 
 interface IAccountController {
     fun sendTwoFactorAuth(
@@ -13,7 +11,6 @@ interface IAccountController {
         typeView: String
     )
     fun startLogin(
-        loginButton: Button,
         emailField: EditText,
         passwordField: EditText,
     )
@@ -22,10 +19,10 @@ interface IAccountController {
         nameField: EditText,
         passwordField: EditText,
     )
-    fun startResetPasswordEmailVerification(
+    fun startResetPasswordProcess(
         emailField: EditText,
     )
-    fun startResetPassword(
+    fun validateNewResetPassword(
         passwordField: EditText
     )
     fun deleteAccount(): Boolean

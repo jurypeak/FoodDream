@@ -8,11 +8,31 @@ import androidx.core.content.edit
 import com.example.fooddream.models.Order
 import com.google.gson.Gson
 
+/**
+ * OrderRepository is responsible for managing order data in the application.
+ * All orders are of the user logged and are stored on the the users device.
+ * It provides methods to save, retrieve, and remove orders using SharedPreferences.
+ *
+ * @param view The activity context used for SharedPreferences operations.
+ */
 class OrderRepository(private var view: AppCompatActivity) {
-    private val sharedPreferences: SharedPreferences =
-        view.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+
+    /**
+     * SharedPreferences instance to store order data.
+     * This instance is used to save and retrieve orders using JSON serialization.
+     */
+    private val sharedPreferences: SharedPreferences = view.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
+    /**
+     * Saves an order object to SharedPreferences.
+     * The order object is serialized to JSON and stored in SharedPreferences.
+     *
+     * @param accountId The ID of the account associated with the order.
+     * @param order The order object to be saved.
+     *
+     * @throws Exception if an error occurs while saving the order.
+     */
     fun saveOrder(accountId: Int, order: Order) {
         try {
             val orderJson = gson.toJson(order)
@@ -25,6 +45,16 @@ class OrderRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Retrieves an order object from SharedPreferences.
+     * The order object is deserialized from JSON stored in SharedPreferences.
+     *
+     * @param orderId The ID of the order to be retrieved.
+     * @param accountId The ID of the account associated with the order.
+     * @return The retrieved order object, or null if not found.
+     *
+     * @throws Exception if an error occurs while retrieving the order.
+     */
     fun getOrder(orderId: Int, accountId: Int): Order? {
         try {
             val orderJson = sharedPreferences.getString("order_${accountId}_${orderId}", null)
@@ -40,6 +70,14 @@ class OrderRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Retrieves all orders.
+     * The orders are deserialized from JSON stored in SharedPreferences.
+     *
+     * @return A list of all orders, or an empty list if none found.
+     *
+     * @throws Exception if an error occurs while retrieving the orders.
+     */
     fun getAllOrders(): ArrayList<Order> {
         try {
             val allOrders = ArrayList<Order>()
@@ -61,6 +99,14 @@ class OrderRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Retrieves number of all orders.
+     * The orders are deserialized from JSON stored in SharedPreferences.
+     *
+     * @return A list of all orders for the specified account, or an empty list if none found.
+     *
+     * @throws Exception if an error occurs while retrieving the orders.
+     */
     fun numberOfOrders(): Int {
         try {
             val keys = sharedPreferences.all.keys
@@ -78,6 +124,14 @@ class OrderRepository(private var view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Removes an order from SharedPreferences.
+     * This method deletes the order data stored in SharedPreferences.
+     *
+     * @param orderId The ID of the order to be removed.
+     *
+     * @throws Exception if an error occurs while removing the order.
+     */
     fun removeOrder(orderId: Int) {
         try {
             sharedPreferences.edit() {

@@ -9,13 +9,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fooddream.R
 import com.example.fooddream.models.Order
-import com.example.fooddream.models.Payment
 import com.example.fooddream.repositories.PaymentRepository
 import java.text.NumberFormat
 import java.util.Locale
 
 // https://youtu.be/-hWVtzMTABQ
 
+/**
+ * OrderHistoryAdapter is a RecyclerView adapter for displaying order history items.
+ * It binds the order data to the views in the RecyclerView.
+ *
+ * @param view The activity context used for inflating views.
+ * @param orderHistoryList The list of orders to be displayed in the RecyclerView.
+ * @param onProductClick A lambda function to handle click events on each order item.
+ */
 class OrderHistoryAdapter(
     private val view: AppCompatActivity,
     private val orderHistoryList: ArrayList<Order>,
@@ -49,10 +56,20 @@ class OrderHistoryAdapter(
         }
     }
 
+    /**
+     * Returns the total number of items in the order history list.
+     *
+     * @return The size of the order history list.
+     */
     override fun getItemCount(): Int {
         return orderHistoryList.size
     }
 
+    /**
+     * ViewHolder class for holding the views of each order item in the RecyclerView.
+     *
+     * @param itemView The view for each order item.
+     */
     class OrderHistoryViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val orderNumberView: TextView = itemView.findViewById(R.id.order_number)
         val totalTextView: TextView = itemView.findViewById(R.id.total)
