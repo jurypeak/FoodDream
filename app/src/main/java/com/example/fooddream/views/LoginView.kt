@@ -10,11 +10,29 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fooddream.R
 import com.example.fooddream.controllers.AccountController
-import com.example.fooddream.controllers.LoginViewController
+import com.example.fooddream.controllers.viewControllers.LoginViewController
 import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.controllers.SessionController
 import com.example.fooddream.messengers.Notification
 
+/**
+ * LoginView is an activity that represents the login screen of the application.
+ * It handles user interactions and manages the login process.
+ *
+ * @property loginButton The button used to initiate the login process.
+ * @property forgotPasswordButton The button used to navigate to the password recovery screen.
+ * @property signUpText The text view that navigates to the sign-up screen.
+ * @property emailField The input field for the user's email address.
+ * @property userGuideButton The button that opens the user guide.
+ * @property passwordField The input field for the user's password.
+ * @property customerSupportButton The button that opens customer support.
+ *
+ * @property notification The notification manager for displaying messages to the user.
+ * @property sessionController The controller responsible for managing user sessions.
+ * @property accountController The controller responsible for managing user accounts.
+ * @property navigationController The controller responsible for managing navigation between views.
+ * @property loginViewController The controller responsible for managing the login view logic.
+ */
 class LoginView : AppCompatActivity() {
 
     private lateinit var loginButton: Button

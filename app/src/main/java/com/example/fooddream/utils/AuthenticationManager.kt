@@ -23,6 +23,15 @@ import com.example.fooddream.views.VerifyEmailView
 import org.json.JSONObject
 import org.mindrot.jbcrypt.BCrypt
 
+/**
+ * AuthenticationManager is responsible for handling user authentication, including registration,
+ * login, password reset, and email verification.
+ *
+ * @property view The activity where the authentication is taking place.
+ * @property customer The customer object representing the user.
+ * @property navigationController The controller for managing navigation between activities/fragments.
+ * @property sessionController The controller for managing user sessions.
+ */
 class AuthenticationManager(
     private var view: AppCompatActivity,
     private val customer: Customer,
@@ -33,6 +42,18 @@ class AuthenticationManager(
     private var notification = Notification()
     private var customerRepository = CustomerRepository(view)
 
+    /**
+     * Function to register a new user account.
+     *
+     * @param email The email address of the user.
+     * @param fName The first name of the user.
+     * @param lName The last name of the user.
+     * @param password The password for the account.
+     * @param requestQueue The request queue for making network requests.
+     * @param url The URL for the registration endpoint.
+     *
+     * @throws Exception if an error occurs during the registration process.
+     */
     fun register(
         email: String,
         fName: String,
@@ -72,12 +93,21 @@ class AuthenticationManager(
                     Log.d("Volley Error", "$error")
                 })
             requestQueue.add(jsonObjectRequest)
-        } catch (error: Errors.LoginException) {
+        } catch (error: Exception) {
             Log.d("Registration Error", "$error")
         }
     }
 
-    // Function to allow users to login into their account.
+    /**
+     * Function to log in an existing user account.
+     *
+     * @param email The email address of the user.
+     * @param password The password for the account.
+     * @param requestQueue The request queue for making network requests.
+     * @param url The URL for the login endpoint.
+     *
+     * @throws Exception if an error occurs during the login process.
+     */
     fun login(
         email: String,
         password: String,
@@ -158,6 +188,16 @@ class AuthenticationManager(
         }
     }
 
+    /**
+     * Function to reset the password for an existing user account.
+     *
+     * @param email The email address of the user.
+     * @param password The new password for the account.
+     * @param requestQueue The request queue for making network requests.
+     * @param url The URL for the password reset endpoint.
+     *
+     * @throws Exception if an error occurs during the password reset process.
+     */
     fun resetPassword(
         email: String,
         password: String,
@@ -181,6 +221,7 @@ class AuthenticationManager(
                     else {
                         notification.sendNotification("${response.optString("message", "")}", view)
                         Log.d("Response", "$response")
+                        navigationController.navigateToActivity(LoginView::class.java)
                     }
                 },
                 { error ->
@@ -193,6 +234,16 @@ class AuthenticationManager(
         }
     }
 
+    /**
+     * Function to verify the email code entered by the user.
+     *
+     * @param submitButton The button to submit the verification code.
+     * @param codeField The field for entering the verification code.
+     * @param verificationCode The actual verification code sent to the user's email.
+     * @param typeView The type of view to be displayed after verification.
+     *
+     * @throws Exception if an error occurs during the verification process.
+     */
     fun verifyUserEmailCode(
         submitButton: Button,
         codeField: EditText,
@@ -234,6 +285,16 @@ class AuthenticationManager(
         }
     }
 
+    /**
+     * Function to send a verification email code to the user.
+     *
+     * @param email The email address of the user.
+     * @param requestQueue The request queue for making network requests.
+     * @param url The URL for the verification endpoint.
+     * @param typeView The type of view to be displayed after sending the verification code.
+     *
+     * @throws Exception if an error occurs during the email verification process.
+     */
     fun sendVerificationEmailCode(
         email: String,
         requestQueue: RequestQueue,
@@ -278,7 +339,14 @@ class AuthenticationManager(
         }
     }
 
-    // Function to check inputted password against stored hashed password.
+    /**
+     * Function to verify the password entered by the user.
+     *
+     * @param password The password entered by the user.
+     * @param hashedPassword The hashed password stored in the database.
+     *
+     * @throws Exception if an error occurs during the password verification process.
+     */
     private fun verifyPassword(
         password: String,
         hashedPassword: String
@@ -291,18 +359,13 @@ class AuthenticationManager(
         }
     }
 
-    // Function to hash passwords without showing the algorithm
-    fun setEncryptedPassword(password: String): Boolean {
-        return try {
-            encryptPassword(password).toString()
-            true
-        } catch (error: Errors.HashingException) {
-            Log.d("Hashing Error", "$error")
-            false
-        }
-    }
-
-    // Function for encrypting password with BCrypt algorithm
+    /**
+     * Function to encrypt the password using BCrypt hashing algorithm.
+     *
+     * @param password The password to be encrypted.
+     *
+     * @throws Exception if an error occurs during the password encryption process.
+     */
     private fun encryptPassword(password: String): String? {
         try {
             val salt = BCrypt.gensalt(12)

@@ -12,11 +12,26 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fooddream.R
-import com.example.fooddream.controllers.CustomerSupportViewController
+import com.example.fooddream.controllers.viewControllers.CustomerSupportViewController
 import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.messengers.CustomerSupport
 import com.example.fooddream.messengers.Notification
 
+/**
+ * CustomerSupportView is a Fragment that handles the user interface for customer support.
+ * It allows users to enter their email and message to contact customer support.
+ *
+ * @property submitButton Button for submitting the support request.
+ * @property exitTextView TextView for the exit button.
+ * @property emailField EditText for entering the email address.
+ * @property messageField EditText for entering the support message.
+ * @property supportButton ImageView to access the help section.
+ *
+ * @property navigationController Controller for managing navigation actions.
+ * @property customerSupport CustomerSupport object for handling customer support actions.
+ * @property notification Notification manager for displaying messages to the user.
+ * @property customerSupportViewController Controller for managing the customer support view logic.
+ */
 class CustomerSupportView : Fragment() {
 
     private lateinit var submitButton: Button

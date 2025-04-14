@@ -16,27 +16,46 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fooddream.R
 import com.example.fooddream.adapters.BasketAdapter
+import com.example.fooddream.controllers.viewControllers.BasketViewController
 import com.example.fooddream.controllers.NavigationController
-import com.example.fooddream.controllers.SessionController
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.BasketItem
 import com.example.fooddream.repositories.BasketRepository
 import java.util.Locale
 
+/**
+ * BasketView is a Fragment that displays the user's shopping basket.
+ * It allows the user to view, add, remove, and update items in the basket.
+ *
+ * @property recyclerView The RecyclerView that displays the list of basket items.
+ * @property basketList The list of items in the basket.
+ * @property basketAdapter The adapter for the RecyclerView.
+ * @property navigationController The controller for managing navigation between views.
+ * @property basketRepository The repository for managing basket data.
+ * @property customerRepository The repository for managing customer data.
+ * @property basketViewController The controller for managing the basket view.
+ * @property notification The notification manager for displaying messages to the user.
+ * @property itemCountTextView The TextView that displays the number of items in the basket.
+ * @property totalPriceTextView The TextView that displays the total price of items in the basket.
+ * @property checkoutButton The Button for proceeding to checkout.
+ */
 class BasketView : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var basketList: ArrayList<BasketItem>
     private lateinit var basketAdapter: BasketAdapter
     private lateinit var navigationController: NavigationController
-    private lateinit var sessionController: SessionController
     private lateinit var basketRepository: BasketRepository
     private lateinit var customerRepository: CustomerRepository
+    private lateinit var basketViewController: BasketViewController
     private lateinit var notification: Notification
     private lateinit var itemCountTextView: TextView
     private lateinit var totalPriceTextView: TextView
     private lateinit var checkoutButton: Button
 
+    /**
+     * Currency format for displaying prices in the UK locale.
+     */
     private val currencyFormat = NumberFormat.getCurrencyInstance(Locale.UK)
 
     override fun onCreateView(
@@ -50,83 +69,147 @@ class BasketView : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navigationController = NavigationController(requireActivity() as AppCompatActivity)
-        customerRepository = CustomerRepository(requireActivity() as AppCompatActivity)
-        basketRepository = BasketRepository(requireActivity() as AppCompatActivity)
-        notification = Notification()
-
         init(view)
-
     }
 
+    /**
+     * Initializes the BasketView by setting up the necessary controllers, view components, and UI actions.
+     *
+     * @param view The root view of the fragment.
+     *
+     * This method is called after the view is created to ensure that all UI elements are ready for interaction.
+     * It initializes the controllers, view components, and RecyclerView,
+     * and sets up click listeners for UI actions.
+     *
+     * @throws Exception if an error occurs while initializing the view.
+     */
     private fun init(view: View) {
-        try {
-            sessionController = SessionController(requireActivity() as AppCompatActivity)
+        initializeControllers(requireActivity() as AppCompatActivity)
+        initializeViewComponents(view)
+        initializeRecycler(view)
+        setupUIActions()
+    }
 
+    /**
+     * Initializes the controllers used in the BasketView.
+     *
+     * @param view The activity context.
+     *
+     * This method attempts to create instances of the NavigationController,
+     * BasketRepository, CustomerRepository, and Notification classes.
+     * If an exception occurs, it sends a notification to the user and logs the error.
+     *
+     * @throws Exception if an error occurs while initializing the controllers.
+     */
+    private fun initializeControllers(view: AppCompatActivity) {
+        try {
+            navigationController = NavigationController(view)
+            customerRepository = CustomerRepository(view)
+            basketRepository = BasketRepository(view)
+            notification = Notification()
+        } catch (e: Exception) {
+            Log.e("BasketView", "Error initializing controllers: ${e.message}")
+            notification.sendNotification("Error occurred while loading the basket page.", view)
+        }
+    }
+
+    /**
+     * Initializes the RecyclerView and its adapter for displaying basket items.
+     *
+     * @param view The root view of the fragment.
+     *
+     * This method sets up the RecyclerView with a GridLayoutManager and initializes the BasketAdapter.
+     * It also populates the basket list with data from the BasketRepository.
+     *
+     * @throws Exception if an error occurs while initializing the RecyclerView or its adapter.
+     */
+    private fun initializeRecycler(view: View) {
+        try {
             recyclerView = view.findViewById(R.id.basket_view)
             recyclerView.setHasFixedSize(true)
             recyclerView.layoutManager = GridLayoutManager(requireActivity() as AppCompatActivity, 1)
 
             basketList = ArrayList()
+
             basketAdapter = BasketAdapter(
                 requireActivity() as AppCompatActivity,
                 basketList,
-                { basketItem ->
-                    Log.d("RecyclerViewClick", "Clicked basketItem: ${basketItem.getItemName()} with ID: ${basketItem.getProductId()}")
-                    val bundle = Bundle().apply {
-                        putInt("ProductId", basketItem.getProductId())
-                    }
-                    val productViewFragment = ProductView().apply {
-                        arguments = bundle
-                    }
-                    navigationController.navigateToFragment(productViewFragment, R.id.fragment_container)
-                },
-                { product ->
-                    Log.d("AddToBasket", "Added product: ${product.getItemName()} to the basket")
-                    updateHeaderInfo()
-                },
-                { product ->
-                    Log.d("RemoveFromBasket", "Removed product: ${product.getItemName()} from the basket")
-                    updateHeaderInfo()
-                },
-                { product ->
-                    Log.d("IncrementQuantity", "Incremented product quantity: ${product.getItemName()} in the basket")
-                    updateHeaderInfo()
-                }
+                { basketItem -> basketViewController.onProductClick(basketItem) },
+                { basketItem -> basketViewController.onAddToBasket(
+                    basketItem,
+                    itemCountTextView,
+                    totalPriceTextView,
+                    basketRepository,
+                    customerRepository,
+                    requireActivity() as AppCompatActivity
+                ) },
+                { basketItem -> basketViewController.onRemoveFromBasket(
+                    basketItem,
+                    itemCountTextView,
+                    totalPriceTextView,
+                    basketRepository,
+                    customerRepository,
+                    requireActivity() as AppCompatActivity
+                ) },
+                { basketItem -> basketViewController.onIncrementQuantity(
+                    basketItem,
+                    itemCountTextView,
+                    totalPriceTextView,
+                    basketRepository,
+                    customerRepository,
+                    requireActivity() as AppCompatActivity
+                ) }
             )
             recyclerView.adapter = basketAdapter
+
+            basketViewController = BasketViewController(
+                navigationController,
+                notification,
+            )
+
+            basketViewController.addDataToList(
+                basketList,
+                basketAdapter,
+                basketRepository,
+                customerRepository,
+                requireActivity() as AppCompatActivity,
+            )
+
         } catch (e: Exception) {
             notification.sendNotification("Error while gathering basket items in basket.", requireActivity() as AppCompatActivity)
             Log.d("BasketView", "Error initializing RecyclerView: $e")
         }
-
-        initializeViewComponents(view)
-        addDataToList()
-        setListeners()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun addDataToList() {
+    /**
+     * Sets up the UI actions for the basket view, including click listeners for buttons.
+     *
+     * This method is called after initializing the view components to ensure that
+     * all UI elements are ready for interaction.
+     *
+     * @throws Exception if an error occurs while setting up UI actions.
+     */
+    private fun setupUIActions() {
         try {
-            basketList.addAll(basketRepository.getAllBasketItems(customerRepository.getCustomer()?.getAccountId()))
-            basketAdapter.notifyDataSetChanged()
+            basketViewController.setupClickListeners(
+                checkoutButton,
+                basketRepository,
+                customerRepository,
+                requireActivity() as AppCompatActivity
+            )
         } catch (e: Exception) {
-            notification.sendNotification("Error while loading basket items.", requireActivity() as AppCompatActivity)
-            Log.d("BasketView", "Error adding data to list: $e")
+            notification.sendNotification("Error while setting up basket page.", requireActivity() as AppCompatActivity)
+            Log.d("BasketView", "Error setting up UI actions: $e")
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    fun updateHeaderInfo() {
-        try {
-            itemCountTextView.text = "${basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId())} Items"
-            totalPriceTextView.text = currencyFormat.format(basketRepository.getBasketTotalPrice(customerRepository.getCustomer()?.getAccountId()))
-        } catch (e: Exception) {
-            notification.sendNotification("Error while getting number of items & total price of items in basket.", requireActivity() as AppCompatActivity)
-            Log.d("BasketView", "Error updating header info: $e")
-        }
-    }
-
+    /**
+     * Initializes the view components used in the BasketView.
+     *
+     * @param view The root view of the fragment.
+     *
+     * @throws Exception if an error occurs while initializing the view components.
+     */
     @SuppressLint("SetTextI18n")
     private fun initializeViewComponents(view: View) {
         try {
@@ -138,24 +221,6 @@ class BasketView : Fragment() {
         } catch (e: Exception) {
             notification.sendNotification("Error while loading basket page.", requireActivity() as AppCompatActivity)
             Log.d("BasketView", "Error initializing view components: $e")
-        }
-    }
-
-    private fun setListeners() {
-        try {
-            checkoutButton.setOnClickListener {
-                if (basketRepository.getBasketSize(customerRepository.getCustomer()?.getAccountId()) == 0) {
-                    notification.sendNotification("Basket is empty.", requireActivity() as AppCompatActivity)
-                    notification.sendNotification("Please add items to your basket before proceeding to checkout.", requireActivity() as AppCompatActivity)
-                    return@setOnClickListener
-                }
-                else {
-                    navigationController.navigateToFragment(CheckoutView(), R.id.fragment_container)
-                }
-            }
-        } catch (e: Exception) {
-            notification.sendNotification("Error while loading in basket page.", requireActivity() as AppCompatActivity)
-            Log.d("BasketView", "Error setting listeners: $e")
         }
     }
 }

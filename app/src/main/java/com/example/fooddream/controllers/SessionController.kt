@@ -2,6 +2,7 @@ package com.example.fooddream.controllers
 
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.fooddream.repositories.BasketRepository
 import com.example.fooddream.utils.SessionManager
 
 /**
@@ -17,6 +18,7 @@ class SessionController(private val view: AppCompatActivity) {
      * This instance is used to start, check, and clear user sessions.
      */
     private val sessionManager = SessionManager(view)
+    private val basketRepository = BasketRepository(view)
 
     /**
      * Starts a user session.
@@ -40,8 +42,10 @@ class SessionController(private val view: AppCompatActivity) {
     /**
      * Clears the user session.
      * This method sets the session to inactive and logs the action.
+     * It also clears the basket data.
      */
     fun clearUserSession() {
+        basketRepository.clearBasket()
         sessionManager.clearSession()
         Log.d("SessionController", "User session cleared.")
     }

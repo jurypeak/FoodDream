@@ -1,5 +1,6 @@
 package com.example.fooddream.messengers
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.util.Log
@@ -41,13 +42,47 @@ class Notification {
      *
      * @throws Exception if an error occurs while sending the delete prompt.
      */
+
+    @SuppressLint("MissingInflatedId")
     fun sendDeleteProductPrompt(view: Activity, onDecision: (Boolean) -> Unit) {
         try {
             val inflater = LayoutInflater.from(view)
             val viewPrompt = inflater.inflate(R.layout.deleteproductprompt_layout, null)
 
-            val deleteButton = viewPrompt.findViewById<Button>(R.id.dialogDelete_button)
-            val cancelButton = viewPrompt.findViewById<Button>(R.id.dialogCancel_button)
+            val deleteButton = viewPrompt.findViewById<Button>(R.id.dialogDeleteProduct_button)
+            val cancelButton = viewPrompt.findViewById<Button>(R.id.dialogCancelProduct_button)
+
+            val builder = AlertDialog.Builder(view, R.style.CustomAlertDialog)
+            builder.setView(viewPrompt)
+
+            val dialog = builder.create()
+
+            deleteButton.setOnClickListener {
+                dialog.dismiss()
+                onDecision(true)
+            }
+
+            cancelButton?.setOnClickListener {
+
+                dialog.dismiss()
+                onDecision(false)
+            }
+
+            dialog.setCanceledOnTouchOutside(true)
+            dialog.show()
+        } catch (e: Exception) {
+            sendNotification("Error occurred while loading the delete prompt.", view)
+            Log.e("Notification", "Error sending delete prompt: ${e.message}")
+        }
+    }
+
+    fun sendDeleteAccountPrompt(view: Activity, onDecision: (Boolean) -> Unit) {
+        try {
+            val inflater = LayoutInflater.from(view)
+            val viewPrompt = inflater.inflate(R.layout.deleteaccountprompt_layout, null)
+
+            val deleteButton = viewPrompt.findViewById<Button>(R.id.dialogDeleteAccount_button)
+            val cancelButton = viewPrompt.findViewById<Button>(R.id.dialogCancelAccount_button)
 
             val builder = AlertDialog.Builder(view, R.style.CustomAlertDialog)
             builder.setView(viewPrompt)

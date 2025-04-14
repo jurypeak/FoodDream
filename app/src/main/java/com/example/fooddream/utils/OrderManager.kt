@@ -24,6 +24,14 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.lang.Exception
 
+/**
+ * OrderManager is responsible for managing the order process in the application.
+ * It handles order placement, order items, address, and payment processing.
+ * This class interacts with the server to perform order-related operations.
+ * It uses Volley for network requests and handles JSON responses.
+ *
+ * @param view The activity context used for order management.
+ */
 class OrderManager(
     private val view: AppCompatActivity,
     private val customerRepository: CustomerRepository,
@@ -33,6 +41,28 @@ class OrderManager(
     private var notification = Notification()
     private var orderId = 0
 
+    /**
+     * Handles the order placement process.
+     *
+     * This method sends a JSON object to the server with the order details,
+     * including email, first name, last name, and account ID.
+     * It also handles the order items, address, and payment processing.
+     *
+     * @param email The email address of the user.
+     * @param fName The first name of the user.
+     * @param lName The last name of the user.
+     * @param address The shipping address for the order.
+     * @param town The town for the shipping address.
+     * @param postcode The postcode for the shipping address.
+     * @param paymentMethod The payment method selected by the user.
+     * @param requestQueue The Volley request queue for network operations.
+     * @param urlOrder The URL endpoint for placing the order on the server.
+     * @param urlPayment The URL endpoint for processing the payment on the server.
+     * @param urlAddress The URL endpoint for saving the address on the server.
+     * @param urlOrderItems The URL endpoint for saving the order items on the server.
+     *
+     * @throws Exception if an error occurs while placing the order.
+     */
     fun handleOrder(
         email: String,
         fName: String,
@@ -77,6 +107,7 @@ class OrderManager(
                             requestQueue,
                             urlPayment
                         )
+                        basketRepository.clearBasket()
                         notification.sendNotification("Order placed successfully", view)
                         Log.d("Response", "$response")
                         navigationController.navigateToActivity(CustomerCatalogView::class.java)
@@ -90,11 +121,19 @@ class OrderManager(
                     Log.d("Volley Error", "$error")
                 })
             requestQueue.add(jsonObjectRequest)
-        } catch (error: Errors.LoginException) {
+        } catch (error: kotlin.Exception) {
             Log.d("Order Error", "$error")
         }
     }
 
+    /**
+     * Handles the order items by sending them to the server.
+     *
+     * @param requestQueue The Volley request queue for network operations.
+     * @param url The URL endpoint for saving the order items on the server.
+     *
+     * @throws Exception if an error occurs while handling order items.
+     */
     fun handleOrderItems(
         requestQueue: RequestQueue,
         url: String,
@@ -124,12 +163,23 @@ class OrderManager(
                         Log.d("Volley Error", "$error")
                     })
                 requestQueue.add(jsonObjectRequest)
-            } catch (error: Errors.LoginException) {
+            } catch (error: Exception) {
                 Log.d("Order Error", "$error")
             }
         }
     }
 
+    /**
+     * Handles the address by sending it to the server.
+     *
+     * @param address The shipping address for the order.
+     * @param town The town for the shipping address.
+     * @param postcode The postcode for the shipping address.
+     * @param requestQueue The Volley request queue for network operations.
+     * @param url The URL endpoint for saving the address on the server.
+     *
+     * @throws Exception if an error occurs while handling the address.
+     */
     fun handleAddress(
         address: String,
         town: String,
@@ -160,11 +210,20 @@ class OrderManager(
                     Log.d("Volley Error", "$error")
                 })
             requestQueue.add(jsonObjectRequest)
-        } catch (error: Errors.LoginException) {
+        } catch (error: Exception) {
             Log.d("Order Error", "$error")
         }
     }
 
+    /**
+     * Handles the payment by sending it to the server.
+     *
+     * @param paymentMethod The payment method selected by the user.
+     * @param requestQueue The Volley request queue for network operations.
+     * @param url The URL endpoint for processing the payment on the server.
+     *
+     * @throws Exception if an error occurs while handling the payment.
+     */
     fun handlePayment(
         paymentMethod: String,
         requestQueue: RequestQueue,
@@ -192,11 +251,20 @@ class OrderManager(
                     Log.d("Volley Error", "$error")
                 })
             requestQueue.add(jsonObjectRequest)
-        } catch (error: Errors.LoginException) {
+        } catch (error: Exception) {
             Log.d("Order Error", "$error")
         }
     }
 
+    /**
+     * Fetches orders from the server and saves them to the local database.
+     *
+     * @param requestQueue The Volley request queue for network operations.
+     * @param url The URL endpoint for fetching orders from the server.
+     * @param accountId The ID of the account to fetch orders for.
+     *
+     * @throws Exception if an error occurs while fetching orders.
+     */
     fun getOrders(
         requestQueue: RequestQueue,
         url: String,

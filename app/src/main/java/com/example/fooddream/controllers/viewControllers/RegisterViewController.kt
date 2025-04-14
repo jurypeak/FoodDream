@@ -1,4 +1,4 @@
-package com.example.fooddream.controllers
+package com.example.fooddream.controllers.viewControllers
 
 import android.util.Log
 import android.widget.Button
@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
+import com.example.fooddream.controllers.AccountController
+import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.views.CustomerSupportView
 import com.example.fooddream.views.ResetPasswordEmailView

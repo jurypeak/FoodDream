@@ -1,7 +1,5 @@
 package com.example.fooddream.views
 
-import CustomerRepository
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
@@ -9,20 +7,33 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.toolbox.Volley
-import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
 import com.example.fooddream.adapters.CustomerCatalogAdapter
+import com.example.fooddream.controllers.viewControllers.CustomerCatalogController
 import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.controllers.ProductController
 import com.example.fooddream.controllers.SessionController
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Product
-import com.example.fooddream.utils.OrderManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
+/**
+ * CustomerCatalogView is an activity that displays a catalog of products for the customer.
+ * It allows the customer to view product details and add products to their basket.
+ *
+ * @property recyclerView The RecyclerView that displays the list of products.
+ * @property productList The list of products to be displayed in the RecyclerView.
+ * @property productAdapter The adapter for the RecyclerView.
+ * @property sessionController The controller for managing user sessions.
+ * @property productController The controller for managing product-related operations.
+ * @property navigationController The controller for managing navigation between views.
+ * @property customerCatalogController The controller for managing the customer catalog view.
+ * @property notification The notification manager for displaying messages to the user.
+ * @property homeButton The button for navigating to the home view.
+ * @property searchButton The button for searching products.
+ * @property basketButton The button for viewing the basket.
+ * @property accountButton The button for navigating to the account view.
+ * @property threeDotsButton The button for displaying additional options.
+ */
 class CustomerCatalogView : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
@@ -32,8 +43,7 @@ class CustomerCatalogView : AppCompatActivity() {
     private lateinit var productController: ProductController
     private lateinit var notification: Notification
     private lateinit var navigationController: NavigationController
-    private lateinit var orderManager: OrderManager
-    private lateinit var customerRepository: CustomerRepository
+    private lateinit var customerCatalogController: CustomerCatalogController
     private lateinit var homeButton: ImageView
     private lateinit var searchButton: ImageView
     private lateinit var basketButton: ImageView
@@ -45,110 +55,119 @@ class CustomerCatalogView : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.customer_catalog_page)
 
-        notification = Notification()
-
-        // https://medium.com/@rushabhprajapati20/mastering-kotlin-coroutines-in-android-8457a6e5dd12
-        // Not working
-        CoroutineScope(Dispatchers.Main).launch {
-            try {
-                val accountId = customerRepository.getCustomer()?.getAccountId()
-                if (accountId != null) {
-                    orderManager.getOrders(
-                        Volley.newRequestQueue(this@CustomerCatalogView),
-                        BuildConfig.URL_GET_ORDERS,
-                        accountId
-                    )
-                } else {
-                    Log.e("CustomerCatalogView", "Account ID is missing.")
-                }
-                init()
-            } catch (e: Exception) {
-                notification.sendNotification("Error failed to fetch orders.", this@CustomerCatalogView)
-                Log.e("CustomerCatalogView", "Error fetching orders: $e")
-                init()
-            }
-        }
+        init()
     }
 
+    /**
+     * Initializes the CustomerCatalogView by setting up the controllers, view components,
+     * and RecyclerView. It also sets up click listeners for UI actions.
+     *
+     * This method is called during the onCreate lifecycle method to set up the UI.
+     */
     private fun init() {
+        initializeControllers()
+        initializeViewComponents()
+        initializeRecycler()
+        setUIActions()
+    }
+
+    /**
+     * Initializes the controllers used in the CustomerCatalogView.
+     *
+     * This method creates instances of the SessionController, ProductController,
+     * NavigationController, and Notification classes.
+     *
+     * @throws Exception if an error occurs while initializing the controllers.
+     */
+    private fun initializeControllers() {
         try {
             sessionController = SessionController(this)
             productController = ProductController(this)
             navigationController = NavigationController(this)
+            notification = Notification()
+        } catch (e: Exception) {
+            notification.sendNotification("Error while loading customer catalog page.", this)
+            Log.e("CustomerCatalogView", "Error initializing controllers: $e")
+        }
+    }
 
+    /**
+     * Initializes the RecyclerView and its adapter for displaying products.
+     *
+     * This method sets up the RecyclerView with a GridLayoutManager and initializes the product adapter.
+     * It also creates an instance of the CustomerCatalogController to manage product-related actions.
+     *
+     * @throws Exception if an error occurs while initializing the RecyclerView.
+     */
+    private fun initializeRecycler() {
+        try {
             recyclerView = findViewById(R.id.customer_catalog_view)
             recyclerView.setHasFixedSize(true)
             recyclerView.layoutManager = GridLayoutManager(this, 2)
 
             productList = ArrayList()
+
             productAdapter = CustomerCatalogAdapter(
                 this,
                 productList,
-                { product ->
-                    Log.d(
-                        "RecyclerViewClick",
-                        "Clicked product: ${product.getProductName()} with ID: ${product.getProductId()}"
-                    )
-                    val bundle = Bundle().apply {
-                        putInt("ProductId", product.getProductId())
-                    }
-                    val productViewFragment = ProductView().apply {
-                        arguments = bundle
-                    }
-                    navigationController.navigateToFragment(
-                        productViewFragment,
-                        R.id.fragment_container
-                    )
-                },
-                { product ->
-                    Log.d("AddToBasket", "Added product: ${product.getProductName()} to the basket")
-                },
-                { product ->
-                    Log.d(
-                        "RemoveFromBasket",
-                        "Removed product: ${product.getProductName()} from the basket"
-                    )
-                },
-                { product ->
-                    Log.d(
-                        "IncrementQuantity",
-                        "Incremented product quantity: ${product.getProductName()} in the basket"
-                    )
-                }
+                { product -> customerCatalogController.onProductClick(product) },
+                { product -> customerCatalogController.onAddToBasket(product) },
+                { product -> customerCatalogController.onRemoveFromBasket(product) },
+                { product -> customerCatalogController.onIncrementQuantity(product) }
             )
             recyclerView.adapter = productAdapter
+
+            customerCatalogController = CustomerCatalogController(
+                navigationController,
+                productController,
+                notification
+            )
+
+            customerCatalogController.addDataToList(
+                this,
+                this,
+                productAdapter,
+                productList
+            )
         } catch (e: Exception) {
             notification.sendNotification("Error while loading customer catalog page.", this)
             Log.e("CustomerCatalogView", "Error initializing RecyclerView: $e")
         }
-
-        addDataToList()
-        initializeViewComponents()
-        setListeners()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun addDataToList() {
+    /**
+     * Sets up click listeners for UI actions such as navigating to different views.
+     *
+     * This method is called after initializing the view components to ensure that
+     * all UI elements are ready for interaction.
+     *
+     * @throws Exception if an error occurs while setting up UI actions.
+     */
+    private fun setUIActions() {
         try {
-            productController.getProductsInDB(
-                Volley.newRequestQueue(this),
-                BuildConfig.URL_PRODUCTS,
-                null
-            ) { products ->
-                if (products != null) {
-                    productList.clear()
-                    productList.addAll(products)
-                    productAdapter.notifyDataSetChanged()
-                } else {
-                    Log.e("Product Display Error", "Failed to display products.")
-                }
-            }
+            customerCatalogController.setupClickListeners(
+                this,
+                productAdapter,
+                productList,
+                homeButton,
+                searchButton,
+                basketButton,
+                accountButton,
+                threeDotsButton
+            )
         } catch (e: Exception) {
-            notification.sendNotification("Error occurred while loading the catalog page.", this)
-            Log.d("Catalog Initialization Error", "$e")
+            notification.sendNotification("Error while setting UI actions.", this)
+            Log.e("CustomerCatalogView", "Error setting UI actions: $e")
         }
     }
 
+    /**
+     * Initializes the view components such as buttons and other UI elements.
+     *
+     * This method is called during the onCreate lifecycle method to set up the UI.
+     *
+     * @throws Exception if an error occurs while initializing view components.
+     */
     private fun initializeViewComponents() {
         try {
             homeButton = findViewById(R.id.home_button)
@@ -161,84 +180,22 @@ class CustomerCatalogView : AppCompatActivity() {
             Log.e("CustomerCatalogView", "Error initializing view components", e)
         }
     }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun setListeners() {
-        try {
-            homeButton.setOnClickListener {
-                homeButton.setImageResource(R.drawable.house_red)
-                basketButton.setImageResource(R.drawable.basket)
-                accountButton.setImageResource(R.drawable.user)
-                searchButton.setImageResource(R.drawable.search)
-                threeDotsButton.setImageResource(R.drawable.dots)
-                navigationController.navigateToActivity(CustomerCatalogView::class.java)
-            }
-            searchButton.setOnClickListener {
-                searchButton.setImageResource(R.drawable.search_red)
-                basketButton.setImageResource(R.drawable.basket)
-                accountButton.setImageResource(R.drawable.user)
-                homeButton.setImageResource(R.drawable.house)
-                threeDotsButton.setImageResource(R.drawable.dots)
-                productList.clear()
-                productAdapter.notifyDataSetChanged()
-                navigationController.navigateToFragment(
-                    CustomerSearchCatalogView(),
-                    R.id.fragment_container
-                )
-            }
-            basketButton.setOnClickListener {
-                basketButton.setImageResource(R.drawable.basket_red)
-                searchButton.setImageResource(R.drawable.search)
-                accountButton.setImageResource(R.drawable.user)
-                homeButton.setImageResource(R.drawable.house)
-                threeDotsButton.setImageResource(R.drawable.dots)
-                productList.clear()
-                productAdapter.notifyDataSetChanged()
-                navigationController.navigateToFragment(
-                    BasketView(),
-                    R.id.fragment_container
-                )
-            }
-            accountButton.setOnClickListener {
-                accountButton.setImageResource(R.drawable.user_red)
-                searchButton.setImageResource(R.drawable.search)
-                basketButton.setImageResource(R.drawable.basket)
-                homeButton.setImageResource(R.drawable.house)
-                threeDotsButton.setImageResource(R.drawable.dots)
-                productList.clear()
-                productAdapter.notifyDataSetChanged()
-                navigationController.navigateToFragment(
-                    AccountView(),
-                    R.id.fragment_container
-                )
-            }
-            threeDotsButton.setOnClickListener {
-                threeDotsButton.setImageResource(R.drawable.dots_red)
-                searchButton.setImageResource(R.drawable.search)
-                basketButton.setImageResource(R.drawable.basket)
-                accountButton.setImageResource(R.drawable.user)
-                homeButton.setImageResource(R.drawable.house)
-                productList.clear()
-                navigationController.navigateToFragment(
-                    ThreeDotsView(),
-                    R.id.fragment_container
-                )
-            }
-        } catch (e: Exception) {
-            notification.sendNotification("Error occurred while loading customer catalog page.", this)
-            Log.d("Catalog Initialization Error", "$e")
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        sessionController.clearUserSession()
-        Log.d("LoginView", "Session cleared on pause.")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        sessionController.clearUserSession()
-        Log.d("LoginView", "Session cleared on stop.")
-    }
 }
+//    /**
+//     * Clears the user session when the activity is paused or stopped.
+//     */
+//    override fun onPause() {
+//        super.onPause()
+//        sessionController.clearUserSession()
+//        Log.d("LoginView", "Session cleared on pause.")
+//    }
+//
+//    /**
+//     * Clears the user session when the activity is stopped.
+//     */
+//    override fun onStop() {
+//        super.onStop()
+//        sessionController.clearUserSession()
+//        Log.d("LoginView", "Session cleared on stop.")
+//    }
+//}

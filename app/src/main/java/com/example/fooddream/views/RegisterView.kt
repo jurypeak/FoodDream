@@ -14,9 +14,27 @@ import androidx.fragment.app.Fragment
 import com.example.fooddream.R
 import com.example.fooddream.controllers.AccountController
 import com.example.fooddream.controllers.NavigationController
-import com.example.fooddream.controllers.RegisterViewController
+import com.example.fooddream.controllers.viewControllers.RegisterViewController
 import com.example.fooddream.messengers.Notification
 
+/**
+ * RegisterView is a Fragment that handles the user interface for user registration.
+ * It allows users to enter their email, name, and password to create a new account.
+ *
+ * @property registerButton Button for submitting the registration form.
+ * @property loginTextView TextView for navigating to the login page.
+ * @property forgotPasswordButton TextView for navigating to the forgot password page.
+ * @property emailField EditText for entering the email address.
+ * @property passwordField EditText for entering the password.
+ * @property nameField EditText for entering the user's name.
+ * @property userGuideButton ImageView to access the user guide.
+ * @property customerSupportButton ImageView to access the customer support page.
+ *
+ * @property navigationController Controller for managing navigation actions.
+ * @property registerViewController Controller for managing the registration view logic.
+ * @property accountController Controller for managing account-related actions.
+ * @property notification Notification manager for displaying messages to the user.
+ */
 class RegisterView : Fragment() {
     private lateinit var registerButton: Button
     private lateinit var loginTextView: TextView

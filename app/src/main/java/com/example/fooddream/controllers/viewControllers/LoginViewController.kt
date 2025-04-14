@@ -1,4 +1,4 @@
-package com.example.fooddream.controllers
+package com.example.fooddream.controllers.viewControllers
 
 import android.app.Activity
 import android.content.Intent
@@ -9,6 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
+import com.example.fooddream.controllers.AccountController
+import com.example.fooddream.controllers.NavigationController
+import com.example.fooddream.controllers.SessionController
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.views.CustomerCatalogView
 import com.example.fooddream.views.CustomerSupportView

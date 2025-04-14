@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#000">
@@ -8,13 +7,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
-        android:orientation="vertical"
-        tools:ignore="UselessParent">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/delete_product"
+            android:text="Delete Account?"
             android:textSize="24sp"
             android:textColor="#FF5555"
             android:textStyle="bold"/>
@@ -25,26 +23,26 @@
             android:textSize="16sp"
             android:textColor="#FFFFFF"
             android:layout_marginTop="10dp"
-            android:text="@string/are_you_sure_you_want_to_delete_this_product_this_action_cannot_be_undone"/>
+            android:text="Are you sure you want to delete your? This action cannot be undone."/>
 
         <Button
-            android:id="@+id/dialogDeleteProduct_button"
+            android:id="@+id/dialogDeleteAccount_button"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="30dp"
             android:textColor="@color/white"
-            android:text="@string/delete"
+            android:text="Delete"
             android:textAllCaps="false"
             android:textSize="16sp"
             android:backgroundTint="#FF5555"/>
 
         <Button
-            android:id="@+id/dialogCancelProduct_button"
+            android:id="@+id/dialogCancelAccount_button"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
             android:textColor="@color/white"
-            android:text="@string/cancel"
+            android:text="Cancel"
             android:textAllCaps="false"
             android:textSize="16sp"
             android:backgroundTint="#888888"/>
@@ -53,4 +51,3 @@
     </LinearLayout>
 
 </RelativeLayout>
-

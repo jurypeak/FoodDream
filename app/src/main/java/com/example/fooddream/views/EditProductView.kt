@@ -1,9 +1,7 @@
 package com.example.fooddream.views
 
 import com.example.fooddream.repositories.ProductRepository
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,18 +9,35 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TableLayout
-import android.widget.TableRow
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.android.volley.toolbox.Volley
 import com.example.fooddream.R
-import com.example.fooddream.BuildConfig
+import com.example.fooddream.controllers.viewControllers.EditProductViewController
 import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.controllers.ProductController
 import com.example.fooddream.messengers.Notification
-import com.example.fooddream.models.Ingredient
 import com.example.fooddream.repositories.IngredientRepository
 
+/**
+ * EditProductView is a Fragment that allows the admin to edit an existing product.
+ * It contains fields for product details and a button to submit the changes.
+ *
+ * @property ingredientTable TableLayout for displaying ingredients.
+ * @property confirmButton Button to confirm the changes.
+ * @property imageURL EditText for entering the product image URL.
+ * @property productNameEditView EditText for entering the product name.
+ * @property productDescriptionEditView EditText for entering the product description.
+ * @property productPriceEditView EditText for entering the product price.
+ * @property productCategoryEditView EditText for entering the product category.
+ * @property productStockEditView EditText for entering the product stock.
+ * @property productCOEditView EditText for entering the product CO (Country of Origin).
+ *
+ * @property productController Controller for managing product-related actions.
+ * @property navigationController Controller for managing navigation actions.
+ * @property editProductViewController Controller for managing the edit product view logic.
+ * @property ingredientRepository Repository for managing ingredients.
+ * @property notification Notification manager for displaying messages to the user.
+ */
 class EditProductView : Fragment() {
     private lateinit var ingredientTable: TableLayout
     private lateinit var confirmButton: Button
@@ -36,6 +51,7 @@ class EditProductView : Fragment() {
 
     private lateinit var productController: ProductController
     private lateinit var navigationController: NavigationController
+    private lateinit var editProductViewController: EditProductViewController
     private lateinit var productRepository: ProductRepository
     private lateinit var ingredientRepository: IngredientRepository
     private lateinit var notification: Notification
@@ -50,20 +66,88 @@ class EditProductView : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        productController = ProductController(requireActivity() as AppCompatActivity)
-        navigationController = NavigationController(requireActivity() as AppCompatActivity)
-        productRepository = ProductRepository(requireActivity() as AppCompatActivity)
-        ingredientRepository = IngredientRepository(requireActivity() as AppCompatActivity)
-        notification = Notification()
-
         init(view)
     }
 
+    /**
+     * Initializes the EditProductView by setting up controllers, view components, and UI actions.
+     *
+     * @param view The root view of the fragment.
+     */
     private fun init(view: View) {
+        initializeControllers(requireActivity() as AppCompatActivity)
         initializeViewComponents(view)
-        setUpListeners()
+        setUIActions()
     }
 
+    /**
+     * Initializes the controllers used in the EditProductView.
+     *
+     * @param view The activity context.
+     *
+     * This method attempts to create instances of the ProductController, NavigationController,
+     * ProductRepository, IngredientRepository, and Notification classes.
+     * If an exception occurs, it sends a notification to the user and logs the error.
+     *
+     * @throws Exception if an error occurs while initializing the controllers.
+     */
+    private fun initializeControllers(view: AppCompatActivity) {
+        try {
+            productController = ProductController(view)
+            navigationController = NavigationController(view)
+            productRepository = ProductRepository(view)
+            ingredientRepository = IngredientRepository(view)
+            notification = Notification()
+
+            editProductViewController = EditProductViewController(
+                productController,
+                notification
+            )
+        } catch (e: Exception) {
+            notification.sendNotification("Error while initializing controllers.", view)
+            Log.e("EditProductView", "Error initializing controllers", e)
+        }
+    }
+
+    /**
+     * Sets up the UI actions for the edit product view.
+     * This method configures click listeners for various UI components.
+     *
+     * @throws Exception if an error occurs while setting up UI actions.
+     */
+    private fun setUIActions() {
+        try {
+            var productId = arguments?.getInt("ProductId") ?: -1
+            editProductViewController.setupClickListeners(
+                requireActivity() as AppCompatActivity,
+                requireContext(),
+                productId,
+                confirmButton,
+                imageURL,
+                productNameEditView,
+                productDescriptionEditView,
+                productPriceEditView,
+                productCategoryEditView,
+                productStockEditView,
+                productCOEditView,
+                ingredientTable,
+            )
+        } catch (e: Exception) {
+            notification.sendNotification("Error while setting UI actions.", requireActivity() as AppCompatActivity)
+            Log.e("EditProductView", "Error setting UI actions", e)
+        }
+    }
+
+    /**
+     * Initializes the view components used in the EditProductView.
+     *
+     * @param view The root view of the fragment.
+     *
+     * This method attempts to set up the UI components for editing a product.
+     * If an exception occurs, it sends a notification to the user and logs the error.
+     *
+     * @throws Exception if an error occurs while initializing the view components.
+     */
     private fun initializeViewComponents(view: View) {
         try {
             var productId = arguments?.getInt("ProductId") ?: -1
@@ -92,121 +176,16 @@ class EditProductView : Fragment() {
                 productCOEditView.setText(it.getProductCO())
 
                 val ingredients = ingredientRepository.getIngredients(productId)
-                populateIngredients(ingredients)
+                editProductViewController.populateIngredients(
+                    requireContext(),
+                    requireActivity() as AppCompatActivity,
+                    ingredientTable,
+                    ingredients,
+                )
             }
         } catch (e: Exception) {
             notification.sendNotification("Error while loading edit product page.", requireActivity() as AppCompatActivity)
             Log.e("EditProductView", "Error initializing view components", e)
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun populateIngredients(ingredients: List<Ingredient>) {
-        try {
-            for (ingredient in ingredients) {
-                val row = TableRow(requireContext())
-
-                val nameInput = EditText(requireContext()).apply {
-                    setText(ingredient.getIngredientName())
-                    layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-                    inputType = InputType.TYPE_CLASS_TEXT
-                    maxLines = 1
-                }
-
-                val weightInput = EditText(requireContext()).apply {
-                    setText(ingredient.getWeight().toString())
-                    layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-                    inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-                    maxLines = 1
-                }
-
-                val allergensInput = EditText(requireContext()).apply {
-                    setText(ingredient.getAllergens())
-                    layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-                    inputType = InputType.TYPE_CLASS_TEXT
-                    maxLines = 1
-                }
-
-                val removeButton = Button(requireContext()).apply {
-                    text = "Remove"
-                    layoutParams = TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT)
-                    setOnClickListener {
-                        ingredientTable.removeView(row)
-                    }
-                }
-
-                row.addView(nameInput)
-                row.addView(weightInput)
-                row.addView(allergensInput)
-                row.addView(removeButton)
-
-                ingredientTable.addView(row)
-            }
-        } catch (e: Exception) {
-            notification.sendNotification("Error while getting ingredients for product.", requireActivity() as AppCompatActivity)
-            Log.e("EditProductView", "Error populating ingredients", e)
-        }
-    }
-
-
-    @SuppressLint("SetTextI18n")
-    private fun setUpListeners() {
-        try {
-            var productId = arguments?.getInt("ProductId") ?: -1
-
-            confirmButton.setOnClickListener {
-                if (
-                    imageURL.text.isEmpty() ||
-                    productNameEditView.text.isEmpty() ||
-                    productDescriptionEditView.text.isEmpty() ||
-                    productPriceEditView.text.isEmpty() ||
-                    productCategoryEditView.text.isEmpty() ||
-                    productStockEditView.text.isEmpty() ||
-                    productCOEditView.text.isEmpty()
-                ) {
-                    notification.sendNotification(
-                        "Please fill in all fields",
-                        requireActivity() as AppCompatActivity
-                    )
-                    return@setOnClickListener
-                }
-
-                if (ingredientTable.childCount <= 1) {
-                    notification.sendNotification(
-                        "Please add at least one ingredient",
-                        requireActivity() as AppCompatActivity
-                    )
-                    return@setOnClickListener
-                }
-
-                if (productPriceEditView.text.toString().toDouble() <= 0) {
-                    notification.sendNotification(
-                        "Price must be greater than 0",
-                        requireActivity() as AppCompatActivity
-                    )
-                    return@setOnClickListener
-                }
-                else {
-                    productController.editProduct(
-                        productId,
-                        imageURL.text.toString(),
-                        productNameEditView.text.toString(),
-                        productDescriptionEditView.text.toString(),
-                        productPriceEditView.text.toString().toDouble(),
-                        productCategoryEditView.text.toString(),
-                        productStockEditView.text.toString().toInt(),
-                        productCOEditView.text.toString(),
-                        productController.collectIngredients(ingredientTable) ?: return@setOnClickListener,
-                        BuildConfig.URL_UPDATE_PRODUCT,
-                        BuildConfig.URL_UPDATE_INGREDIENT,
-                        Volley.newRequestQueue(requireContext()),
-                        notification
-                    )
-                }
-            }
-        } catch (e: Exception) {
-            notification.sendNotification("Error while loading edit product page.", requireActivity() as AppCompatActivity)
-            Log.e("EditProductView", "Error setting up listeners", e)
         }
     }
 }

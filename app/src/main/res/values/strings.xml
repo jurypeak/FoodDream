@@ -79,4 +79,8 @@
     <string name="country_of_origin">Country of Origin</string>
     <string name="edit_product">Edit Product</string>
     <string name="confirm">Confirm</string>
+    <string name="delete_product">Delete Product?</string>
+    <string name="are_you_sure_you_want_to_delete_this_product_this_action_cannot_be_undone">Are you sure you want to delete this product? This action cannot be undone.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -9,28 +9,48 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fooddream.R
+import com.example.fooddream.controllers.viewControllers.CheckoutViewController
 import com.example.fooddream.controllers.NavigationController
 import com.example.fooddream.controllers.OrderController
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.repositories.BasketRepository
 import java.util.Locale
 
+/**
+ * CheckoutView is a Fragment that displays the checkout screen for the user to enter their details
+ * and proceed with the payment.
+ *
+ * @constructor Creates an instance of CheckoutView.
+ *
+ * @property navigationController Manages navigation actions.
+ * @property orderController Manages order-related actions.
+ * @property customerRepository Handles customer data operations.
+ * @property checkoutViewController Controller for managing the checkout view logic.
+ * @property notification Notification manager for displaying messages to the user.
+ * @property basketRepository Handles basket data operations.
+ * @property itemCountTextView TextView for displaying the number of items in the basket.
+ * @property totalPriceTextView TextView for displaying the total price of items in the basket.
+ * @property emailView EditText for entering the user's email.
+ * @property nameView EditText for entering the user's name.
+ * @property addressView EditText for entering the user's address.
+ * @property postcodeView EditText for entering the user's postcode.
+ * @property townView EditText for entering the user's town.
+ * @property paymentItem String representing the selected payment method.
+ * @property payButton Button for proceeding with payment.
+ */
 class CheckoutView : Fragment() {
 
     private lateinit var navigationController: NavigationController
     private lateinit var orderController: OrderController
     private lateinit var customerRepository: CustomerRepository
+    private lateinit var checkoutViewController: CheckoutViewController
     private lateinit var notification: Notification
     private lateinit var basketRepository: BasketRepository
-    private lateinit var autoCompleteTextView: AutoCompleteTextView
     private lateinit var itemCountTextView: TextView
     private lateinit var totalPriceTextView: TextView
     private lateinit var emailView: EditText
@@ -40,10 +60,11 @@ class CheckoutView : Fragment() {
     private lateinit var townView: EditText
     private lateinit var paymentItem: String
     private lateinit var payButton: Button
-    private lateinit var adapterItems: ArrayAdapter<String>
 
+    /**
+     * Currency format for displaying prices in the UK locale.
+     */
     private val currencyFormat = NumberFormat.getCurrencyInstance(Locale.UK)
-    private val paymentItems = listOf("Debit/Credit Card", "PayPal", "Google Pay")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,31 +76,81 @@ class CheckoutView : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navigationController = NavigationController(requireActivity() as AppCompatActivity)
-        orderController = OrderController(requireActivity() as AppCompatActivity)
-        basketRepository = BasketRepository(requireActivity() as AppCompatActivity)
-        customerRepository = CustomerRepository(requireActivity() as AppCompatActivity)
-        notification = Notification()
-
         init(view)
-
     }
 
+    /**
+     * Initializes the CheckoutView by setting up the controllers, view components, and UI actions.
+     *
+     * @param view The root view of the fragment.
+     *
+     * @throws Exception if an error occurs while initializing the view components or setting up the UI actions.
+     */
     private fun init(view: View) {
-        try {
-            autoCompleteTextView = view.findViewById(R.id.auto_complete_text)
-            adapterItems = ArrayAdapter<String>(requireContext(), R.layout.list_item, paymentItems)
+        initializeControllers(requireActivity() as AppCompatActivity)
+        initializeViewComponents(view)
+        checkoutViewController.initializeCheckoutScreen(
+            requireActivity() as AppCompatActivity,
+            requireContext(),
+            notification
+        )
+        setUIActions()
+    }
 
-            autoCompleteTextView.setAdapter(adapterItems)
+    /**
+     * Initializes the controllers used in the CheckoutView.
+     *
+     * @param view The activity context.
+     *
+     * @throws Exception if an error occurs while initializing the controllers.
+     */
+    private fun initializeControllers(view: AppCompatActivity) {
+        try {
+            navigationController = NavigationController(view)
+            orderController = OrderController(view)
+            basketRepository = BasketRepository(view)
+            customerRepository = CustomerRepository(view)
+            notification = Notification()
+
+            checkoutViewController = CheckoutViewController()
+        } catch (e: Exception) {
+            Log.e("CheckoutView", "Error initializing controllers: ${e.message}")
+            notification.sendNotification("Error occurred while loading the checkout page.", requireActivity() as AppCompatActivity)
+        }
+    }
+
+    /**
+     * Sets up the UI actions for the checkout view.
+     * This method configures click listeners for various UI components.
+     *
+     * @throws Exception if an error occurs while setting up UI actions.
+     */
+    private fun setUIActions() {
+        try {
+            checkoutViewController.setupClickListeners(
+                requireActivity() as AppCompatActivity,
+                orderController,
+                notification,
+                payButton,
+                emailView,
+                nameView,
+                addressView,
+                postcodeView,
+                townView,
+            )
         } catch (e: Exception) {
             notification.sendNotification("Error while loading checkout page.", requireActivity() as AppCompatActivity)
-            Log.e("CheckoutView", "Error initializing AutoCompleteTextView: ${e.message}")
+            Log.e("CheckoutView", "Error setting UI actions: ${e.message}")
         }
-
-        initializeViewComponents(view)
-        setListeners()
     }
 
+    /**
+     * Initializes the view components used in the CheckoutView.
+     *
+     * @param view The root view of the fragment.
+     *
+     * @throws Exception if an error occurs while initializing the view components.
+     */
     @SuppressLint("SetTextI18n")
     private fun initializeViewComponents(view: View) {
         try {
@@ -99,28 +170,6 @@ class CheckoutView : Fragment() {
         } catch (e: Exception) {
             notification.sendNotification("Error while loading checkout page.", requireActivity() as AppCompatActivity)
             Log.e("CheckoutView", "Error initializing view components: ${e.message}")
-        }
-    }
-
-    private fun setListeners() {
-        try {
-            autoCompleteTextView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-                paymentItem = parent.getItemAtPosition(position).toString()
-            }
-            payButton.setOnClickListener {
-                orderController.startOrder(
-                    emailView,
-                    nameView,
-                    addressView,
-                    postcodeView,
-                    townView,
-                    paymentItem,
-                    requireActivity() as AppCompatActivity
-                )
-            }
-        } catch (e: Exception) {
-            notification.sendNotification("Error while loading checkout page.", requireActivity() as AppCompatActivity)
-            Log.e("CheckoutView", "Error setting listeners: ${e.message}")
         }
     }
 }

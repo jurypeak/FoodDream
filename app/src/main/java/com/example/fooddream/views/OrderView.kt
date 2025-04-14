@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fooddream.R
 import com.example.fooddream.adapters.OrderAdapter
 import com.example.fooddream.controllers.NavigationController
-import com.example.fooddream.controllers.SessionController
+import com.example.fooddream.controllers.viewControllers.OrderViewController
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.OrderItem
 import com.example.fooddream.repositories.AddressRepository
@@ -23,14 +23,30 @@ import com.example.fooddream.repositories.OrderItemRepository
 import com.example.fooddream.repositories.OrderRepository
 import com.example.fooddream.repositories.PaymentRepository
 
+/**
+ * OrderView is a Fragment that displays the details of a specific order.
+ * It allows the user to view the order items, customer information, and payment details.
+ *
+ * @property recyclerView The RecyclerView that displays the list of order items.
+ * @property orderList The list of order items to be displayed in the RecyclerView.
+ * @property orderAdapter The adapter for the RecyclerView.
+ * @property navigationController The controller for managing navigation between views.
+ * @property orderViewController The controller for managing the order view.
+ * @property notification The notification manager for displaying messages to the user.
+ * @property customerRepository The repository for managing customer data.
+ * @property orderRepository The repository for managing order data.
+ * @property orderItemRepository The repository for managing order item data.
+ * @property paymentRepository The repository for managing payment data.
+ * @property addressRepository The repository for managing address data.
+ */
 class OrderView : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var orderList: ArrayList<OrderItem>
     private lateinit var orderAdapter: OrderAdapter
     private lateinit var navigationController: NavigationController
+    private lateinit var orderViewController: OrderViewController
     private lateinit var notification: Notification
-    private lateinit var sessionController: SessionController
     private lateinit var customerRepository: CustomerRepository
     private lateinit var orderRepository: OrderRepository
     private lateinit var orderItemRepository: OrderItemRepository
@@ -56,68 +72,95 @@ class OrderView : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navigationController = NavigationController(requireActivity() as AppCompatActivity)
-        notification = Notification()
-
         init(view)
     }
 
+    /**
+     * Initializes the OrderView by setting up the controllers, view components,
+     * and the RecyclerView for displaying order items.
+     *
+     * @param view The root view of the fragment.
+     */
     private fun init(view: View) {
+        initializeControllers()
+        initializeViewComponents(view)
+        initializeRecycler(view)
+    }
+
+    /**
+     * Initializes the RecyclerView and its adapter.
+     *
+     * @param view The root view of the fragment.
+     *
+     * This method sets up the RecyclerView, its layout manager, and its adapter.
+     * It also populates the order items into the RecyclerView using the OrderViewController.
+     *
+     * @throws Exception if an error occurs during initialization.
+     */
+    fun initializeRecycler(view: View) {
         try {
-            sessionController = SessionController(requireActivity() as AppCompatActivity)
-            customerRepository = CustomerRepository(requireActivity() as AppCompatActivity)
-            orderRepository = OrderRepository(requireActivity() as AppCompatActivity)
-            paymentRepository = PaymentRepository(requireActivity() as AppCompatActivity)
-            orderItemRepository = OrderItemRepository(requireActivity() as AppCompatActivity)
-            addressRepository = AddressRepository(requireActivity() as AppCompatActivity)
+            val orderId = arguments?.getInt("orderId") ?: 0
 
             recyclerView = view.findViewById(R.id.order_view)
             recyclerView.setHasFixedSize(true)
             recyclerView.layoutManager = GridLayoutManager(requireActivity() as AppCompatActivity, 1)
 
             orderList = ArrayList()
+
             orderAdapter = OrderAdapter(
                 requireActivity() as AppCompatActivity,
                 orderList
-            ) { order ->
-                val bundle = Bundle().apply {
-                    putInt("ProductId", order.getProductId())
-                }
-                val productViewFragment = ProductView().apply {
-                    arguments = bundle
-                }
-                navigationController.navigateToFragment(productViewFragment, R.id.fragment_container)
-            }
+            ) { order -> orderViewController.onProductClick(requireActivity() as AppCompatActivity, order) }
             recyclerView.adapter = orderAdapter
+
+            orderViewController = OrderViewController(
+                navigationController,
+                notification,
+            )
+
+            orderViewController.addDataToList(
+                requireActivity() as AppCompatActivity,
+                orderId,
+                orderList,
+                orderItemRepository,
+                orderAdapter,
+            )
         } catch (e: Exception) {
             notification.sendNotification("Error while gathering order items in order view.", requireActivity() as AppCompatActivity)
             Log.e("OrderView", "Error initializing view components: ${e.message}")
         }
-
-        initializeViewComponents(view)
-        addDataToList()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun addDataToList() {
+    /**
+     * Initializes the controllers used in the OrderView.
+     *
+     * @throws Exception if an error occurs while initializing the controllers.
+     */
+    fun initializeControllers() {
         try {
-            val allOrderItems = ArrayList<OrderItem>()
-
-            val orderId = arguments?.getInt("orderId") ?: 0
-            Log.d("OrderView", "Order ID: $orderId")
-            val orderItem = orderItemRepository.getOrderItems(orderId)
-            allOrderItems.addAll(orderItem)
-
-            orderList.clear()
-            orderList.addAll(allOrderItems)
-
-            orderAdapter.notifyDataSetChanged()
+            orderRepository = OrderRepository(requireActivity() as AppCompatActivity)
+            customerRepository = CustomerRepository(requireActivity() as AppCompatActivity)
+            addressRepository = AddressRepository(requireActivity() as AppCompatActivity)
+            paymentRepository = PaymentRepository(requireActivity() as AppCompatActivity)
+            orderItemRepository = OrderItemRepository(requireActivity() as AppCompatActivity)
+            navigationController = NavigationController(requireActivity() as AppCompatActivity)
+            notification = Notification()
         } catch (e: Exception) {
-            notification.sendNotification("Error while gathering order items in order view.", requireActivity() as AppCompatActivity)
-            Log.e("OrderView", "Error adding data to list: ${e.message}")
+            notification.sendNotification("Error while loading order view.", requireActivity() as AppCompatActivity)
+            Log.e("OrderView", "Error initializing controllers: $e")
         }
     }
 
+    /**
+     * Initializes the view components of the OrderView.
+     *
+     * @param view The root view of the fragment.
+     *
+     * This method sets up the TextViews for displaying order details such as email, name,
+     * address, postcode, town, payment method, date, and total amount.
+     *
+     * @throws Exception if an error occurs while initializing the view components.
+     */
     @SuppressLint("SetTextI18n")
     private fun initializeViewComponents(view: View) {
         try {

@@ -14,11 +14,8 @@ interface ICustomerController {
         emailField: EditText
     )
 
-    fun handleResetPassword(
+    fun handleNewResetPassword(
         passwordField: EditText
     )
-
-    fun startSession()
-    fun clearSession()
 }
 

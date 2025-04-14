@@ -1,6 +1,7 @@
 package com.example.fooddream.interfaces
 
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.RequestQueue
 
 interface IAccountController {
@@ -25,10 +26,17 @@ interface IAccountController {
     fun validateNewResetPassword(
         passwordField: EditText
     )
-    fun deleteAccount(): Boolean
-    fun viewAccountDetails(): String
-    fun editEmail(newEmail: String)
-    fun editName(newFName: String, newLName: String)
-    fun editPassword(newPassword: String)
-    fun logout(sessionId: Int): Boolean
+    fun deleteAccount(
+        view: AppCompatActivity,
+        requestQueue: RequestQueue,
+        url: String
+    )
+    fun editAccountDetails(
+        view: AppCompatActivity,
+        fName: String,
+        lName: String,
+        email: String,
+        password: String,
+    )
+    fun logout()
 }

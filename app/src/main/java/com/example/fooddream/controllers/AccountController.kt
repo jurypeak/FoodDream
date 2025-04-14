@@ -13,6 +13,7 @@ import com.example.fooddream.interfaces.IAccountController
 import com.example.fooddream.messengers.Errors
 import com.example.fooddream.messengers.Notification
 import com.example.fooddream.models.Customer
+import com.example.fooddream.utils.AccountManager
 import com.example.fooddream.utils.AuthenticationManager
 import com.example.fooddream.views.LoginView
 import com.example.fooddream.views.VerifyEmailView
@@ -37,9 +38,11 @@ class AccountController(private var view: AppCompatActivity): IAccountController
     // Repositories, controllers and managers for handling user data and actions.
     private var customerRepository = CustomerRepository(view)
     private var notification = Notification()
+    private var basketRepository = com.example.fooddream.repositories.BasketRepository(view)
     private var navigationController = NavigationController(view)
     private var sessionController = SessionController(view)
     private var validateManager = com.example.fooddream.utils.ValidateManager()
+    private var accountManager = AccountManager(view)
     private var authenticationManager = AuthenticationManager(
         view,
         customer,
@@ -201,6 +204,8 @@ class AccountController(private var view: AppCompatActivity): IAccountController
                 notification.sendNotification("Invalid email format.", emailField.context as AppCompatActivity)
             }
             else {
+                customer.setEmail(email)
+                customerRepository.saveCustomer(customer)
                 val bundle = Bundle().apply {
                     putString("email", email)
                     putString("typeView", "Reset Password")
@@ -241,7 +246,7 @@ class AccountController(private var view: AppCompatActivity): IAccountController
             else {
                 try {
                     authenticationManager.resetPassword(
-                        customer.getEmail(),
+                        customerRepository.getCustomer()?.getEmail().toString(),
                         password,
                         Volley.newRequestQueue(view),
                         BuildConfig.URL_RESETPASSWORD
@@ -257,71 +262,81 @@ class AccountController(private var view: AppCompatActivity): IAccountController
         }
     }
 
-    override fun viewAccountDetails(): String {
-        // Did not have time to fix MVC model to implement this function.
-        return ""
-    }
-
-    // Did not have time to fix MVC model to implement this function.
-    override fun deleteAccount(): Boolean {
-        return try {
-            true
-        } catch (error: Errors.DeletionException) {
-            Log.d("Deletion Error", "$error")
-            false
-        }
-    }
-
-    // Did not have time to fix MVC model to implement this function.
-    override fun editEmail(newEmail: String) {
+    /**
+     * Deletes the user account by calling the account manager.
+     *
+     * @param view The activity context used to initialize the controllers.
+     * @param requestQueue The request queue for network operations.
+     * @param url The URL for deleting the account.
+     *
+     * @throws Exception if an error occurs during the process.
+     */
+    override fun deleteAccount(
+        view: AppCompatActivity,
+        requestQueue: RequestQueue,
+        url: String
+    ) {
         try {
-            customer.setEmail(newEmail)
-        } catch (error: Errors.SetException) {
-            Log.d("Set Error", "$error")
-        }
-    }
-
-    // Did not have time to fix MVC model to implement this function.
-    override fun editName(newFName: String, newLName: String) {
-        try {
-            customer.setFName(newFName)
-            customer.setLName(newLName)
-        } catch (error: Errors.SetException) {
-            Log.d("Set Error", "$error")
-        }
-    }
-
-    // Did not have time to fix MVC model to implement this function.
-    override fun editPassword(newPassword: String) {
-        try {
-            authenticationManager.setEncryptedPassword(newPassword)
-        } catch (error: Errors.HashingException) {
-            Log.d("Hashing Error", "$error")
+            accountManager.deleteAccount(
+                view,
+                requestQueue,
+                url
+            )
+        } catch (error: Exception) {
+            notification.sendNotification("Error occurred while deleting account", view)
+            Log.d("AccountController Error", "$error")
         }
     }
 
     /**
-     * Logs out the user by clearing the session and deleting the local customer account data.
+     * Edits the account details of the user by calling the account manager.
      *
-     * @param sessionId The session ID of the user.
+     * @param view The activity context used to initialize the controllers.
+     * @param fName The first name of the user.
+     * @param lName The last name of the user.
+     * @param email The email address of the user.
+     * @param password The new password for the user.
      *
-     * @return true if logout is successful, false otherwise.
+     * @throws Exception if an error occurs during the process.
+     */
+    override fun editAccountDetails(
+        view: AppCompatActivity,
+        fName: String,
+        lName: String,
+        email: String,
+        password: String,
+    ) {
+        try {
+            accountManager.updateAccount(
+                email,
+                fName,
+                lName,
+                password,
+                view,
+                Volley.newRequestQueue(view),
+                BuildConfig.URL_UPDATE_ACCOUNT
+            )
+        } catch (error: Errors.SetException) {
+            Log.d("AccountController Error", "$error")
+        }
+    }
+
+    /**
+     * Logs out the user by clearing the session and navigating to the login view.
      *
      * @throws Exception if an error occurs during the logout process.
      */
     override fun logout(
-        sessionId: Int
-    ): Boolean {
+    ) {
         try {
+            basketRepository.clearBasket()
             sessionController.clearUserSession()
             customerRepository.deleteCustomer()
             navigationController.navigateToActivity(LoginView::class.java)
             notification.sendNotification("Logged out successfully", view)
-            return true
         } catch (error: Exception) {
             notification.sendNotification("Error occurred while logging out", view)
             Log.d("Logout Error", "$error")
         }
-        return false
     }
 }

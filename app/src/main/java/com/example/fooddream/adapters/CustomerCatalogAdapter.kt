@@ -3,11 +3,13 @@ package com.example.fooddream.adapters
 import CustomerRepository
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.provider.CalendarContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -66,18 +68,28 @@ class CustomerCatalogAdapter(
         holder.stockTextView.text = (product.getProductStock().toString())
 
         /**
-         * Check if the product is out of stock and update the UI accordingly.
-         * If the product is out of stock, disable the add button and change its text color to red.
+         * Check the product stock and update the UI accordingly.
+         * If the product is out of stock, show "Out of Stock" message and disable the add button.
+         * If the product is low on stock, show "Low Stock" message.
+         * Otherwise, show the available stock quantity.
          */
-        basketRepository.getBasketItem(product.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity()?.let {
-            if (it >= product.getProductStock()) {
-                holder.addTextView.isEnabled = false
+        when {
+            product.getProductStock() == 0 -> {
+                holder.stockTextView.text = product.getProductStock().toString()
+                holder.stockTextView.setTextColor(Color.RED)
                 holder.addTextView.text = "Out of Stock"
                 holder.addTextView.setTextColor(Color.RED)
-            } else {
-                holder.addTextView.isEnabled = true
-                holder.addTextView.text = "Add to Basket"
-                holder.addTextView.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+                holder.minusImageView.visibility = View.GONE
+                holder.addImageView.visibility = View.GONE
+                holder.addTextView.isEnabled = false
+            }
+            product.getProductStock() < 5 -> {
+                holder.stockTextView.text = "Low Stock"
+                holder.stockTextView.setTextColor(Color.GRAY)
+            }
+            else -> {
+                holder.stockTextView.text = (product.getProductStock().toString())
+                holder.stockTextView.setTextColor(Color.GREEN)
             }
         }
 
@@ -146,7 +158,7 @@ class CustomerCatalogAdapter(
                 if (it1 > 1) {
                     basketRepository.decrementQuantity(product.getProductId(), customerRepository.getCustomer()?.getAccountId())
                     holder.addTextView.text = basketRepository.getBasketItem(
-                         product.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity().toString()
+                        product.getProductId(), customerRepository.getCustomer()?.getAccountId())?.getQuantity().toString()
                     holder.addTextView.setTextColor(Color.BLACK)
                 }
                 if (it1 <= 1) {
@@ -158,7 +170,6 @@ class CustomerCatalogAdapter(
                     holder.addTextView.setTextColor(Color.BLACK)
                 }
             }
-
             onRemoveFromBasketClick(product)
         }
 
@@ -184,10 +195,8 @@ class CustomerCatalogAdapter(
                     holder.addTextView.setTextColor(Color.BLACK)
                 }
             }
-
             onIncrementItemQuantityClick(product)
         }
-
     }
 
     /**

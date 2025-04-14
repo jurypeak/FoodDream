@@ -19,8 +19,22 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.lang.Exception
 
+/**
+ * ProductController is responsible for handling product-related operations in the application.
+ * It interacts with the ProductRepository and IngredientRepository to manage product data.
+ *
+ * @param view The AppCompatActivity context for displaying notifications and managing UI interactions.
+ */
 class ProductController (private val view: AppCompatActivity) {
 
+    /**
+     * Fetches products from the database and saves them to the local repository.
+     *
+     * @param requestQueue The RequestQueue for making network requests.
+     * @param url The URL to fetch products from.
+     * @param searchQuery Optional search query to filter products.
+     * @param callback Callback function to handle the fetched products.
+     */
     fun getProductsInDB(
         requestQueue: RequestQueue,
         url: String,
@@ -106,9 +120,23 @@ class ProductController (private val view: AppCompatActivity) {
             callback(null)
         }
     }
-    fun updateProduct() {
 
-    }
+    /**
+     * Adds a new product to the database and saves it to the local repository.
+     *
+     * @param imageURL The URL of the product image.
+     * @param productName The name of the product.
+     * @param productDescription The description of the product.
+     * @param productPrice The price of the product.
+     * @param productCategory The category of the product.
+     * @param productStock The stock quantity of the product.
+     * @param productCO The CO (carbon offset) value of the product.
+     * @param ingredients Optional list of ingredients for the product.
+     * @param urlAddProduct The URL to add a new product.
+     * @param urlAddIngredient The URL to add ingredients for the product.
+     * @param requestQueue The RequestQueue for making network requests.
+     * @param notification The Notification object for displaying messages to the user.
+     */
     fun addProduct(
         imageURL: String,
         productName: String,
@@ -159,6 +187,16 @@ class ProductController (private val view: AppCompatActivity) {
             Log.d("Add Product Error", "$error")
         }
     }
+
+    /**
+     * Adds ingredients to a product in the database.
+     *
+     * @param productId The ID of the product to which the ingredients belong.
+     * @param ingredients The list of ingredients to add.
+     * @param url The URL to add ingredients.
+     * @param requestQueue The RequestQueue for making network requests.
+     * @param notification The Notification object for displaying messages to the user.
+     */
     fun addIngredient(
         productId: Int,
         ingredients: ArrayList<Ingredient>?,
@@ -207,6 +245,12 @@ class ProductController (private val view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Collects ingredients from a TableLayout and returns them as an ArrayList of Ingredient objects.
+     *
+     * @param ingredientTable The TableLayout containing the ingredients.
+     * @return An ArrayList of Ingredient objects, or null if an error occurs.
+     */
     fun collectIngredients(ingredientTable: TableLayout): ArrayList<Ingredient>? {
         try {
             val ingredients = ArrayList<Ingredient>()
@@ -238,6 +282,15 @@ class ProductController (private val view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Removes a product from the database.
+     *
+     * @param productId The ID of the product to remove.
+     * @param url The URL to remove the product.
+     * @param requestQueue The RequestQueue for making network requests.
+     * @param notification The Notification object for displaying messages to the user.
+     * @param navigationController The NavigationController for navigating between activities.
+     */
     fun removeProduct(
         productId: Int,
         url: String,
@@ -275,6 +328,23 @@ class ProductController (private val view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Edits an existing product in the database.
+     *
+     * @param productId The ID of the product to edit.
+     * @param imageURL The URL of the product image.
+     * @param productName The name of the product.
+     * @param productDescription The description of the product.
+     * @param productPrice The price of the product.
+     * @param productCategory The category of the product.
+     * @param productStock The stock quantity of the product.
+     * @param productCO The CO (carbon offset) value of the product.
+     * @param ingredients Optional list of ingredients for the product.
+     * @param urlAddProduct The URL to edit a product.
+     * @param urlAddIngredient The URL to add ingredients for the edited product.
+     * @param requestQueue The RequestQueue for making network requests.
+     * @param notification The Notification object for displaying messages to the user.
+     */
     fun editProduct(
         productId: Int,
         imageURL: String,
@@ -328,6 +398,13 @@ class ProductController (private val view: AppCompatActivity) {
         }
     }
 
+    /**
+     * Finds the ID of ingredients by their names and updates the ingredient list.
+     *
+     * @param ingredients The list of ingredients to find IDs for.
+     * @param productId The ID of the product to which the ingredients belong.
+     * @return An updated list of ingredients with their IDs set.
+     */
     fun findIdByIngredientName(
         ingredients: ArrayList<Ingredient>?,
         productId: Int
@@ -365,7 +442,15 @@ class ProductController (private val view: AppCompatActivity) {
         return updatedIngredients
     }
 
-
+    /**
+     * Adds ingredients to a product in the database.
+     *
+     * @param productId The ID of the product to which the ingredients belong.
+     * @param ingredients The list of ingredients to add.
+     * @param url The URL to add ingredients.
+     * @param requestQueue The RequestQueue for making network requests.
+     * @param notification The Notification object for displaying messages to the user.
+     */
     fun editIngredient(
         productId: Int,
         ingredients: ArrayList<Ingredient>?,
