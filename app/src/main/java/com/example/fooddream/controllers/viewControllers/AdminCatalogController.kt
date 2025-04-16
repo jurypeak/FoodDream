@@ -2,11 +2,9 @@ package com.example.fooddream.controllers.viewControllers
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.toolbox.Volley
 import com.example.fooddream.BuildConfig
 import com.example.fooddream.R
@@ -26,30 +24,26 @@ import com.example.fooddream.views.ThreeDotsView
  * AdminCatalogController is responsible for managing the admin catalog view in the application.
  * It handles user interactions, product management, and navigation within the admin catalog.
  *
- * @property context The context of the activity.
  * @property productController Controller for managing product-related actions.
  * @property navigationController Controller for managing navigation actions.
  * @property notification Notification manager for displaying messages to the user.
  * @property productAdapter Adapter for displaying products in the catalog.
  */
 class AdminCatalogController(
-    private val context: Context,
     private val productController: ProductController,
     private val navigationController: NavigationController,
     private val notification: Notification,
-    private val productAdapter: AdminCatalogAdapter
+    private val productAdapter: AdminCatalogAdapter,
+    private val productList: ArrayList<Product>
 ) {
 
     /**
-     * Initializes the controller with the provided parameters.
+     * Handles the click event on a product in the catalog.
      *
-     * @param context The context of the activity.
-     * @param productController Controller for managing product-related actions.
-     * @param navigationController Controller for managing navigation actions.
-     * @param notification Notification manager for displaying messages to the user.
-     * @param productAdapter Adapter for displaying products in the catalog.
+     * @param product The product that was clicked.
      */
     fun onProductClick(product: Product) {
+        Log.d("Product Clicked", "Product ID: ${product.getProductId()}")
         val bundle = Bundle().apply {
             putInt("ProductId", product.getProductId())
         }
@@ -79,13 +73,13 @@ class AdminCatalogController(
      *
      * @param product The product to be deleted.
      */
-    fun onDeleteProductClick(product: Product) {
-        notification.sendDeleteProductPrompt(context as AppCompatActivity) { confirmed ->
+    fun onDeleteProductClick(product: Product, view: Activity) {
+        notification.sendDeleteProductPrompt(view) { confirmed ->
             if (confirmed) {
                 productController.removeProduct(
                     product.getProductId(),
                     BuildConfig.URL_DELETE_PRODUCT,
-                    Volley.newRequestQueue(context),
+                    Volley.newRequestQueue(view),
                     notification,
                     navigationController
                 )
@@ -94,13 +88,15 @@ class AdminCatalogController(
     }
 
     /**
-     * Handles the click event for adding a product to the basket.
+     * Initializes the AdminCatalogController with the provided parameters.
      *
-     * @param product The product to be added to the basket.
+     * @param productController The controller for managing product-related actions.
+     * @param navigationController The controller for managing navigation actions.
+     * @param notification The notification manager for displaying messages to the user.
+     * @param productAdapter The adapter for displaying products in the catalog.
      */
     @SuppressLint("NotifyDataSetChanged")
     fun addDataToList(
-        productList: ArrayList<Product>,
         view: Activity,
     ) {
         try {
@@ -136,7 +132,6 @@ class AdminCatalogController(
     @SuppressLint("NotifyDataSetChanged")
     fun setupClickListeners(
         view: Activity,
-        productList: ArrayList<Product>,
         homeButton: ImageView,
         searchButton: ImageView,
         plusButton: ImageView,

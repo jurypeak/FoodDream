@@ -1,6 +1,8 @@
 package com.example.fooddream.adapters
 
 import android.annotation.SuppressLint
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,6 +72,8 @@ class AdminCatalogAdapter(
             onEditProductClick(product)
         }
     }
+
+
 
     /**
      * Returns the total number of items in the product list.

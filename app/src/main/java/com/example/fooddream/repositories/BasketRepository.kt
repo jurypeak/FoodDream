@@ -174,12 +174,19 @@ class BasketRepository(private var view: AppCompatActivity) {
      * Clears all basket items from SharedPreferences.
      * This effectively empties the entire basket.
      *
+     * This method nearly single handedly destroyed this application.
+     *
      * @throws Exception if an error occurs while clearing the basket.
      */
     fun clearBasket() {
         try {
-            sharedPreferences.edit() {
-                clear()
+            val keys = sharedPreferences.all.keys
+            for (key in keys) {
+                if (key.startsWith("basketItem_")) {
+                    sharedPreferences.edit() {
+                        remove(key)
+                    }
+                }
             }
         } catch (e: Exception) {
             Log.e("BasketRepository", "Error clearing basket: ${e.message}")

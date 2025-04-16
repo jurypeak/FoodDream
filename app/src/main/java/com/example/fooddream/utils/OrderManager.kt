@@ -383,5 +383,4 @@ class OrderManager(
             Log.e("Product Fetch Error", "$error")
         }
     }
-
 }

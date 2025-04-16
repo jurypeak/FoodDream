@@ -73,9 +73,10 @@ class ProductView : Fragment() {
     private fun init(view: View) {
         try {
             var productId = arguments?.getInt("ProductId") ?: -1
+            Log.d("ProductView", "Product ID: $productId")
 
-            initializeViewComponents(view)
             initializeControllers(requireActivity() as AppCompatActivity)
+            initializeViewComponents(view)
             productViewController.initializeProductScreen(
                 requireActivity() as AppCompatActivity,
                 productId,

@@ -89,21 +89,21 @@ class AdminCatalogView : AppCompatActivity() {
                 this,
                 productList,
                 { product -> adminCatalogController.onProductClick(product) },
-                { product -> adminCatalogController.onDeleteProductClick(product) },
+                { product -> adminCatalogController.onDeleteProductClick(product, this) },
                 { product -> adminCatalogController.onEditProductClick(product) }
             )
-            recyclerView.adapter = productAdapter
 
             adminCatalogController = AdminCatalogController(
-                this,
                 productController,
                 navigationController,
                 notification,
-                productAdapter
+                productAdapter,
+                productList
             )
 
+            recyclerView.adapter = productAdapter
+
             adminCatalogController.addDataToList(
-                productList,
                 this
             )
         } catch (error: Exception) {
@@ -144,7 +144,6 @@ class AdminCatalogView : AppCompatActivity() {
         try {
             adminCatalogController.setupClickListeners(
                 this,
-                productList,
                 homeButton,
                 searchButton,
                 plusButton,
@@ -173,23 +172,5 @@ class AdminCatalogView : AppCompatActivity() {
             notification.sendNotification("Error occurred while loading the catalog.", this)
             Log.d("Catalog Initialization Error", "$error")
         }
-    }
-
-    /**
-     * Clears the user session when the activity is paused or stopped.
-     */
-    override fun onPause() {
-        super.onPause()
-        sessionController.clearUserSession()
-        Log.d("LoginView", "Session cleared on pause.")
-    }
-
-    /**
-     * Clears the user session when the activity is stopped.
-     */
-    override fun onStop() {
-        super.onStop()
-        sessionController.clearUserSession()
-        Log.d("LoginView", "Session cleared on stop.")
     }
 }
