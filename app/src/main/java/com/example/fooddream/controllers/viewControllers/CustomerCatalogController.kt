@@ -35,33 +35,6 @@ class CustomerCatalogController(
     private val notification: Notification
 ) {
 
-//    fun initializeCustomerCatalogScreen(
-//        customerRepository: CustomerRepository,
-//        orderManager: OrderManager,
-//        view: Activity,
-//    ) {
-//        // https://medium.com/@rushabhprajapati20/mastering-kotlin-coroutines-in-android-8457a6e5dd12
-//        // Not working
-//        CoroutineScope(Dispatchers.Main).launch {
-//            try {
-//                val accountId = customerRepository.getCustomer()?.getAccountId()
-//                if (accountId != null) {
-//                    orderManager.getOrders(
-//                        Volley.newRequestQueue(view),
-//                        BuildConfig.URL_GET_ORDERS,
-//                        accountId
-//                    )
-//                } else {
-//                    Log.e("CustomerCatalogView", "Account ID is missing.")
-//                }
-//            } catch (e: Exception) {
-//                notification.sendNotification("Error failed to fetch orders.", view)
-//                Log.e("CustomerCatalogView", "Error fetching orders: $e")
-//            }
-//        }
-//    }
-
-
     /**
      * Handles the click event on a product in the catalog.
      *

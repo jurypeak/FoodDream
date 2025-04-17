@@ -307,15 +307,33 @@ class AccountController(private var view: AppCompatActivity): IAccountController
         password: String,
     ) {
         try {
-            accountManager.updateAccount(
-                email,
-                fName,
-                lName,
-                password,
-                view,
-                Volley.newRequestQueue(view),
-                BuildConfig.URL_UPDATE_ACCOUNT
-            )
+            if (!validateManager.isValidEmail(email)) {
+                notification.sendNotification("Invalid email format.", view)
+                return
+            }
+            if (!validateManager.isValidPassword(password)) {
+                notification.sendNotification("Invalid password format. Password size must be larger than or equal to 6", view)
+                return
+            }
+            if (!validateManager.isValidName(fName)) {
+                notification.sendNotification("Invalid first name format.", view)
+                return
+            }
+            if (!validateManager.isValidName(lName)) {
+                notification.sendNotification("Invalid last name format.", view)
+                return
+            }
+            else {
+                accountManager.updateAccount(
+                    email,
+                    fName,
+                    lName,
+                    password,
+                    view,
+                    Volley.newRequestQueue(view),
+                    BuildConfig.URL_UPDATE_ACCOUNT
+                )
+            }
         } catch (error: Errors.SetException) {
             Log.d("AccountController Error", "$error")
         }

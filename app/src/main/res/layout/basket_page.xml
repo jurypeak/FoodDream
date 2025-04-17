@@ -19,7 +19,7 @@
 
             <TextView
                 android:id="@+id/priceText"
-                android:layout_width="124dp"
+                android:layout_width="276dp"
                 android:layout_height="wrap_content"
                 android:paddingStart="18dp"
                 android:paddingTop="18dp"
@@ -27,6 +27,7 @@
                 android:textStyle="bold"
                 android:text="@string/price"
                 android:textColor="#ffffff"
+                android:maxLines="1"
                 android:textSize="32sp"
                 tools:ignore="RtlSymmetry" />
 
@@ -37,7 +38,6 @@
                 android:textColor="@color/white"
                 android:text="@string/checkout"
                 android:layout_marginTop="16dp"
-                android:layout_marginStart="148dp"
                 android:layout_toEndOf="@+id/priceText"
                 android:backgroundTint="#ff5555" />
 

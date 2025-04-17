@@ -44,6 +44,8 @@ class AccountViewController(
     private val notification: Notification,
 ) {
 
+    private val validateManager = com.example.fooddream.utils.ValidateManager()
+
     /**
      * Checks if there are any orders associated with the user account.
      * If orders exist, it updates the order details in the UI.
@@ -140,19 +142,24 @@ class AccountViewController(
                 val nameParts = fullName.split(" ")
                 val fName = nameParts.getOrNull(0) ?: ""
                 val lName = nameParts.getOrNull(1) ?: ""
-                customerRepository.updateCustomer(
-                    fName,
-                    lName,
-                    emailField.text.toString(),
-                    passwordField.text.toString()
-                )
-                accountController.editAccountDetails(
-                    view,
-                    fName,
-                    lName,
-                    emailField.text.toString(),
-                    passwordField.text.toString()
-                )
+                if (!validateManager.isValidPassword(passwordField.text.toString())) {
+                    notification.sendNotification("Password must be at least 6 characters long.", view)
+                    return@setOnClickListener
+                } else {
+                    customerRepository.updateCustomer(
+                        fName,
+                        lName,
+                        emailField.text.toString(),
+                        passwordField.text.toString()
+                    )
+                    accountController.editAccountDetails(
+                        view,
+                        fName,
+                        lName,
+                        emailField.text.toString(),
+                        passwordField.text.toString()
+                    )
+                }
             }
             deleteAccountButton.setOnClickListener {
                 notification.sendDeleteAccountPrompt(context as AppCompatActivity) { confirmed ->

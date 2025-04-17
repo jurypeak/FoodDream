@@ -1,4 +1,4 @@
-package com.example.fooddream.model
+package com.example.fooddream.unitTests.model
 
 import com.example.fooddream.models.Manager
 import kotlin.test.BeforeTest

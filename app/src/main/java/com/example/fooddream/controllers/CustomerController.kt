@@ -14,7 +14,6 @@ import com.example.fooddream.interfaces.ICustomerController
 class CustomerController(view: AppCompatActivity): ICustomerController {
 
     private var accountController = AccountController(view)
-    private var sessionController = SessionController(view)
 
     /**
      * NavigationController instance to manage navigation actions.
